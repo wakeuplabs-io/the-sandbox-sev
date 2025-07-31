@@ -11,8 +11,8 @@
     "rootDir": ".",
     "outDir": ".dist",
     "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedParameters": true
   },
-  "include": ["./**/*", "./**/*.json"],
-  "exclude": ["node_modules", ".dist"]
+  "include": ["./**/*", "./**/*.json", "./**/*.ts"],
+  "exclude": ["node_modules", ".dist", "artifacts", "cache", "ignition/deployments"]
 }

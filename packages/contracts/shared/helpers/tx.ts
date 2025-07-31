@@ -1,9 +1,4 @@
-import {
-  Abi,
-  Address,
-  TransactionReceipt,
-  WriteContractParameters,
-} from "viem";
+import { Abi, Address, TransactionReceipt, WriteContractParameters } from "viem";
 import { Clients } from "../types";
 
 export async function executeAndWait<ABI = any>(

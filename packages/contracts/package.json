@@ -1,42 +1,45 @@
 {
-    "name": "@the-sandbox-sev/contracts",
-    "version": "1.0.0",
-    "description": "Package for web3 related code like contracts and utils",
-    "main": "index.js",
-    "scripts": {
-        "compile": "npx hardhat compile && npm run types",
-        "build": "npm run compile",
-        "types": "wagmi generate",
-        "deploy": "npx hardhat ignition deploy ./ignition/modules/all.ts",
-        "deploy:testnet": "npm run deploy -- --network testnet --verify",
-        "deploy:mainnet": "npm run deploy -- --network mainnet --verify",
-        "test": "npx hardhat test",
-        "lint": "eslint . --ext .ts --max-warnings 0",
-        "lint:fix": "eslint . --ext .ts --fix",
-        "format": "prettier --write .",
-        "format:check": "prettier --check ."
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/wakeuplabs-io"
-    },
-    "keywords": [
-        "web3",
-        "solidity",
-        "blockchain"
-    ],
-    "author": "Wake Up Labs",
-    "license": "ISC",
-    "dependencies": {
-        "@nomicfoundation/hardhat-chai-matchers": "2.1.0",
-        "@openzeppelin/contracts": "5.4.0",
-        "@wagmi/cli": "^2.3.2",
-        "hardhat": "^2.26.1",
-        "mocha": "11.7.1",
-        "viem": "2.33.2"
-    },
-    "devDependencies": {
-        "@types/mocha": "10.0.10",
-        "ts-node": "10.9.2"
-    }
+  "name": "@the-sandbox-sev/contracts",
+  "version": "1.0.0",
+  "description": "Package for web3 related code like contracts and utils",
+  "main": "index.js",
+  "scripts": {
+    "compile": "npx hardhat compile && npm run types",
+    "build": "npm run compile",
+    "types": "wagmi generate",
+    "deploy": "npx hardhat ignition deploy ./ignition/modules/all.ts",
+    "deploy:testnet": "npm run deploy -- --network testnet --verify",
+    "deploy:mainnet": "npm run deploy -- --network mainnet --verify",
+    "test": "npx hardhat test",
+    "lint": "eslint . --ext .ts --max-warnings 0",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wakeuplabs-io"
+  },
+  "keywords": [
+    "web3",
+    "solidity",
+    "blockchain"
+  ],
+  "author": "Wake Up Labs",
+  "license": "ISC",
+  "dependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "2.1.0",
+    "@nomicfoundation/hardhat-toolbox-viem": "^4.1.0",
+    "@openzeppelin/contracts": "^5.4.0",
+    "@wagmi/cli": "^2.3.2",
+    "dotenv": "^17.2.1",
+    "mocha": "11.7.1",
+    "solidity-coverage": "^0.8.16",
+    "viem": "2.33.2"
+  },
+  "devDependencies": {
+    "@types/mocha": "10.0.10",
+    "hardhat": "^2.26.1",
+    "ts-node": "10.9.2"
+  }
 }
