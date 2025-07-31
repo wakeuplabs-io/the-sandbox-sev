@@ -1,7 +1,7 @@
 /**
  * @fileoverview Main configuration for the Hono API application
  * This file configures and exports the main Hono application instance,
- * including CORS middleware, OpenAPI documentation, and routing.
+ * including CORS middleware and routing.
  *
  * @module app
  */
@@ -9,14 +9,13 @@
 import createApp from "./lib/create-app";
 import env from "./env";
 import { cors } from "hono/cors";
-import configureOpenAPI from "./lib/configure-open-api";
-import index from "./routes/index.route";
-import example from "./routes/example/example.index";
+import index from "./domain/index.route";
+import example from "./domain/example/example.index";
 
 /**
  * Main Hono application instance
- * Created using the createApp factory function that configures OpenAPIHono with custom bindings
- * @type {import('./lib/types').AppOpenAPI}
+ * Created using the createApp factory function that configures Hono with custom bindings
+ * @type {import('./lib/types').App}
  */
 const app = createApp();
 
@@ -38,16 +37,10 @@ app.use(
 
 /**
  * Array of available API routes
- * Each route is an OpenAPIHono instance with its own definitions
- * @type {Array<import('./lib/types').AppOpenAPI>}
+ * Each route is a Hono instance with its own definitions
+ * @type {Array<import('./lib/types').App>}
  */
 const routes = [index, example];
-
-/**
- * Configures OpenAPI/Swagger documentation for the API
- * This enables the /doc and /reference endpoints for documentation
- */
-configureOpenAPI(app);
 
 /**
  * Registers all routes under the '/api' prefix
@@ -61,13 +54,13 @@ routes.forEach((route) => {
  * Defines the API base routes with their respective endpoints
  * - / : Index route that returns basic API information
  * - /example : Example route that demonstrates basic endpoint structure
- * @type {import('./lib/types').AppOpenAPI}
+ * @type {import('./lib/types').App}
  */
 const apiRoutes = app.basePath("/api").route("/", index).route("/example", example);
 
 /**
  * Exported type that represents the API route structure
- * Useful for client-side typing and documentation
+ * Useful for client-side typing
  */
 export type AppType = typeof apiRoutes;
 

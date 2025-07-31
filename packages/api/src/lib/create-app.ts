@@ -1,65 +1,65 @@
 /**
  * @fileoverview Factory functions for creating Hono application instances
  * This file provides utilities for creating and configuring Hono applications
- * with OpenAPI support, middleware, and error handling.
+ * with middleware and error handling.
  *
  * @module lib/create-app
  */
 
-import type { Schema } from "hono";
-import { OpenAPIHono } from "@hono/zod-openapi";
+import { Hono } from "hono";
 import { requestId } from "hono/request-id";
-import { notFound, onError, serveEmojiFavicon } from "stoker/middlewares";
-import { defaultHook } from "stoker/openapi";
 import { pinoLogger } from "../middlewares/pino-logger";
 
-import type { AppBindings, AppOpenAPI } from "./types";
+import type { AppBindings, App } from "./types";
 
 /**
- * Creates a new OpenAPIHono router instance with default configurations
- * @returns {AppOpenAPI} A configured OpenAPIHono router instance
+ * Creates a new Hono router instance with default configurations
+ * @returns {App} A configured Hono router instance
  * @description
  * Creates a new router with:
  * - Custom AppBindings for type safety
  * - Strict mode disabled
- * - Default OpenAPI hook configuration
  */
 export function createRouter() {
-  return new OpenAPIHono<AppBindings>({
+  return new Hono<AppBindings>({
     strict: false,
-    defaultHook,
   });
 }
 
 /**
  * Creates and configures the main application instance with all necessary middleware
- * @returns {AppOpenAPI} A fully configured Hono application instance
+ * @returns {App} A fully configured Hono application instance
  * @description
  * Sets up an application with:
  * - Request ID tracking
- * - Emoji favicon (📝)
  * - Pino logging middleware
  * - Custom 404 handler
  * - Global error handler
  */
 export default function createApp() {
   const app = createRouter();
-  app.use(requestId()).use(serveEmojiFavicon("📝")).use(pinoLogger());
+  app.use(requestId()).use(pinoLogger());
 
-  app.notFound(notFound);
-  app.onError(onError);
+  app.notFound((c) => {
+    return c.json({ error: "Not Found" }, 404);
+  });
+  
+  app.onError((err, c) => {
+    console.error(err);
+    return c.json({ error: "Internal Server Error" }, 500);
+  });
+  
   return app;
 }
 
 /**
  * Creates a test application instance with a specific router
- * @template S - Schema type extending Hono's base Schema
- * @param {AppOpenAPI<S>} router - The router to attach to the test application
- * @returns {AppOpenAPI} A configured test application instance
+ * @param {App} router - The router to attach to the test application
+ * @returns {App} A configured test application instance
  * @description
  * Useful for testing routes in isolation. Creates a minimal application
  * with the provided router mounted at the root path.
  */
-export function createTestApp<S extends Schema>(router: AppOpenAPI<S>) {
+export function createTestApp(router: App) {
   return createApp().route("/", router);
 }

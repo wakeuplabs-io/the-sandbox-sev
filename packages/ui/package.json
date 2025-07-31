@@ -10,28 +10,28 @@
     "routes": "@tanstack/router-vite-plugin generate"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.40.0",
-    "@tanstack/react-router": "^1.114.17",
-    "@tanstack/router-cli": "^1.114.17",
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
-    "dotenv": "16.4.7"
+    "@tanstack/react-query": "^5.83.1",
+    "@tanstack/react-router": "^1.130.9",
+    "@tanstack/router-cli": "^1.130.9",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "dotenv": "17.2.1"
   },
   "devDependencies": {
-    "@tanstack/router-devtools": "^1.114.17",
-    "@tanstack/router-vite-plugin": "^1.114.17",
-    "@types/react": "19.0.10",
-    "@types/react-dom": "19.0.4",
-    "@vitejs/plugin-react-swc": "3.8.0",
-    "autoprefixer": "^10.4.17",
-    "daisyui": "5.0.3",
-    "postcss": "^8.4.35",
-    "tailwindcss": "^3.4.1",
-    "typescript": "5.8.2",
-    "vite": "6.2.1",
+    "@tanstack/router-devtools": "^1.130.9",
+    "@tanstack/router-vite-plugin": "^1.130.9",
+    "@types/react": "19.1.9",
+    "@types/react-dom": "19.1.7",
+    "@vitejs/plugin-react-swc": "3.11.0",
+    "autoprefixer": "^10.4.21",
+    "daisyui": "5.0.50",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.11",
+    "typescript": "5.8.3",
+    "vite": "7.0.6",
     "vite-tsconfig-paths": "5.1.4"
   },
   "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "4.35.0"
+    "@rollup/rollup-linux-x64-gnu": "4.46.2"
   }
 }

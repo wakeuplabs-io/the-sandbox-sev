@@ -1,0 +1,115 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Key Principles
+Write concise, technical responses with accurate TypeScript examples
+Use functional, declarative programming patterns
+Prefer iteration and modularization over duplication
+Use descriptive variable names with auxiliary verbs (e.g., isLoading, hasError)
+Use kebab-case for directories and files (e.g., components/auth-wizard, user-profile.tsx)
+Favor named exports for components and functions
+Code Style & Conventions
+Use function keyword for pure functions and components
+Omit semicolons unless required for disambiguation
+Use single quotes for strings (except to avoid escaping)
+Use tabs for indentation
+Use strict equality (===) instead of loose equality (==)
+Limit line length to 80-100 characters
+Use trailing commas in multiline object/array literals
+Add space after keywords and before function declaration parentheses
+Naming Conventions
+PascalCase: Components, Type definitions, Interfaces
+camelCase: Variables, functions, methods, hooks, properties, props
+kebab-case: Directory names, file names
+UPPERCASE: Environment variables, constants, global configurations
+Event handlers: Prefix with handle (e.g., handleClick, handleSubmit)
+Boolean variables: Prefix with verbs (e.g., isLoading, hasError, canSubmit)
+Custom hooks: Prefix with use (e.g., useAuth, useForm)
+TypeScript Guidelines
+Use TypeScript for all code
+Prefer interfaces over types for object structures
+Avoid enums, use const objects or maps instead
+Use type guards for handling potential undefined/null values
+Apply generics where type flexibility is needed
+Utilize TypeScript utility types (Partial, Pick, Omit)
+Enable strict mode in tsconfig
+React Best Practices
+Use functional components with TypeScript interfaces
+Use declarative JSX
+Use function keyword for components, not const
+Implement proper component composition
+Extract reusable logic into custom hooks
+Use React.memo() strategically for performance
+Implement proper cleanup in useEffect hooks
+Use useCallback for memoizing callback functions
+Use useMemo for expensive computations
+Avoid inline function definitions in JSX
+File Structure
+text
+Apply to .env
+ComponentFile.tsx:
+1. Exported component
+2. Subcomponents
+3. Helper functions
+4. Static content
+5. Types/interfaces
+Error Handling & Validation
+Handle errors and edge cases at the beginning of functions
+Use early returns for error conditions (guard clauses)
+Place the happy path last in the function
+Avoid unnecessary else statements; use if-return pattern
+Use Zod for schema validation
+Implement proper error logging and user-friendly error messages
+Use custom error types for consistent error handling
+UI & Styling
+Use Tailwind CSS for utility-first styling
+Use DaisyUI components for consistent design
+Implement mobile-first, responsive design
+Ensure color contrast ratios meet accessibility standards
+Use CSS variables for theme colors and spacing
+Optimize images: WebP format, size data, lazy loading
+State Management
+Use useState for component-level state
+Use useReducer for complex state
+Use useContext for shared state
+Use TanStack Query for server state management
+Implement proper state initialization
+Form Handling
+Use react-hook-form for form management
+Use Zod for form validation with @hookform/resolvers
+Implement proper error messages
+Use proper form libraries
+Performance Optimization
+Implement code splitting using dynamic imports
+Use import alias when available
+Use proper key props in lists (avoid using index as key)
+Implement proper loading states
+Use Suspense with fallback for async components
+Optimize bundle size and loading performance
+Testing
+Write thorough unit tests for functions and components
+Use Jest and React Testing Library
+Follow Arrange-Act-Assert pattern
+Mock external dependencies and API calls
+Focus on user workflows for integration tests
+Security
+Implement input sanitization to prevent XSS attacks
+Use proper authentication methods
+Validate all user inputs with Zod schemas
+Use environment variables for sensitive data
+Documentation
+Use JSDoc for documentation
+Document all public functions, interfaces, and components
+Add examples when appropriate
+Keep descriptions clear and concise
+Use proper markdown formatting
+Project-Specific Guidelines
+Use TanStack Router for client-side routing
+Use Vite for build tooling
+Use Hono for API development
+Use Prisma for database operations
+Use Viem for Ethereum interactions
+Use Web3Auth for authentication
+Follow monorepo best practices with workspaces

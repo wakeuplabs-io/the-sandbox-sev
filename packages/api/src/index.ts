@@ -17,7 +17,6 @@ if (process.env.NODE_ENV !== "production") {
 
   console.log(`
   🚀 Server running!
-  📝 API Documentation: http://localhost:${port}/reference
   🔥 REST API: http://localhost:${port}/api
     `);
 }
