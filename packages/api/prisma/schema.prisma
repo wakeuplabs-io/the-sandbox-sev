@@ -1,0 +1,66 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+    provider      = "prisma-client-js"
+    output        = "../src/generated/prisma"
+    binaryTargets = ["native", "rhel-openssl-3.0.x", "darwin-arm64"]
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+enum Role {
+    ADMIN
+    CONSULTANT
+    MEMBER
+}
+
+enum TaskType {
+    LIQUIDATION
+    ACQUISITION
+    AUTHORIZATION
+    ARBITRAGE
+}
+
+enum TaskState {
+    STORED
+    EXECUTED
+}
+
+model User {
+    id        Int      @id @default(autoincrement())
+    email     String
+    nickname  String?
+    address   String?
+    role      Role     @default(MEMBER)
+    createdAt DateTime @default(now())
+
+    tasks Task[] @relation("UserTasks")
+}
+
+model Task {
+    id            Int       @id @default(autoincrement())
+    userId        Int
+    user          User      @relation("UserTasks", fields: [userId], references: [id])
+    hash          String
+    type          TaskType
+    state         TaskState @default(STORED)
+    transactionId String
+    data          Json      @db.Json
+    executionData String?
+    proofData     String?
+    createdAt     DateTime  @default(now())
+
+    @@unique([hash])
+    @@unique([transactionId])
+    @@index([type])
+    @@index([state])
+    @@index([userId])
+    @@index([type, state])
+}
