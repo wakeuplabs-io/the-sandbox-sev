@@ -78,57 +78,5 @@
     "react": {
       "version": "detect"
     }
-  },
-  "overrides": [
-    {
-      "files": ["packages/hardhat/**/*.ts", "packages/hardhat/**/*.js"],
-      "env": {
-        "node": true
-      },
-      "rules": {
-        "@typescript-eslint/no-var-requires": "off",
-        "no-console": "warn"
-      }
-    },
-    {
-      "files": ["packages/api/**/*.ts"],
-      "env": {
-        "node": true
-      },
-      "rules": {
-        "no-console": "off"
-      }
-    },
-    {
-      "files": ["packages/sdk/**/*.ts"],
-      "rules": {
-        "no-console": "warn",
-        "@typescript-eslint/naming-convention": "off"
-      }
-    },
-    {
-      "files": ["packages/ui/**/*.tsx", "packages/ui/**/*.ts"],
-      "rules": {
-        "no-console": "warn",
-        "no-alert": "warn",
-        "@typescript-eslint/naming-convention": "off",
-        "@typescript-eslint/no-empty-interface": "off",
-        "@typescript-eslint/no-empty-object-type": "off",
-        "react-refresh/only-export-components": "off"
-      }
-    },
-    {
-      "files": ["**/*.config.ts", "**/*.config.js"],
-      "rules": {
-        "no-console": "off",
-        "@typescript-eslint/no-explicit-any": "off"
-      }
-    },
-    {
-      "files": ["sst.config.ts"],
-      "rules": {
-        "@typescript-eslint/triple-slash-reference": "off"
-      }
-    }
-  ]
+  }
 }
