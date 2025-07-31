@@ -7,7 +7,11 @@
     "dev": "vite",
     "build": "npm install && npx tsc && vite build",
     "preview": "vite preview",
-    "routes": "@tanstack/router-vite-plugin generate"
+    "routes": "@tanstack/router-vite-plugin generate",
+    "lint": "eslint . --ext .ts,.tsx --max-warnings 0",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@tanstack/react-query": "^5.83.1",

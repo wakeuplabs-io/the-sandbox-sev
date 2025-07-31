@@ -10,7 +10,11 @@
         "deploy": "npx hardhat ignition deploy ./ignition/modules/all.ts",
         "deploy:testnet": "npm run deploy -- --network testnet --verify",
         "deploy:mainnet": "npm run deploy -- --network mainnet --verify",
-        "test": "npx hardhat test"
+        "test": "npx hardhat test",
+        "lint": "eslint . --ext .ts --max-warnings 0",
+        "lint:fix": "eslint . --ext .ts --fix",
+        "format": "prettier --write .",
+        "format:check": "prettier --check ."
     },
     "repository": {
         "type": "git",

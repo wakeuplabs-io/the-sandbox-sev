@@ -7,23 +7,17 @@ dist/
 build/
 .next/
 out/
+packages/sdk/build.cjs
 # Generated files
 *.min.js
 *.min.css
 *.d.ts
-packages/sdk/build.cjs
 packages/api/src/generated/
-# Documentation
-*.md
 # Database
 *.db
 *.sqlite
 # Environment files
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env*
 # Logs
 *.log
 npm-debug.log*
@@ -85,4 +79,6 @@ packages/api/prisma/migrations/
 # Package lock files
 package-lock.json
 yarn.lock
-pnpm-lock.yaml 
+pnpm-lock.yaml
+# Solidity files (handled by solhint)
+*.sol
