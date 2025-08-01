@@ -16,12 +16,8 @@ dist-ssr
 .env*
 !.env.sample
 
-# web3
-packages/web3/.dist
-packages/web3/node_modules
-packages/web3/.env
-packages/web3/cache
-packages/web3/artifacts
+# ignition
+packages/hardhat/ignition/deployments
 
 # UI
 packages/ui/.dist
@@ -29,6 +25,13 @@ packages/ui/node_modules
 packages/ui/.env
 packages/ui/cache
 
+# Hardhat files
+packages/contracts/node_modules
+packages/contracts/.dist
+packages/contracts/cache
+packages/contracts/artifacts
+cache
+artifacts
 
 # TypeChain files
 /typechain

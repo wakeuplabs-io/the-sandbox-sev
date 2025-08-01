@@ -1,7 +1,6 @@
 import { Address, GetContractReturnType, erc20Abi, getContract } from "viem";
 import { Clients } from "../types";
 
-
 export const createERC20Contract = (
   clients: Clients,
   address: Address
@@ -15,4 +14,3 @@ export const createERC20Contract = (
     },
   }) as GetContractReturnType<typeof erc20Abi, Clients, Address>;
 };
-
