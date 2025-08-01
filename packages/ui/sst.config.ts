@@ -198,7 +198,7 @@ export default $config({
         output: "dist",
       },
       environment: {
-        VITE_API_URL: api.url,
+        VITE_API_URL: "",
         VITE_COGNITO_USERPOOL_ID: userPool.id,
         VITE_COGNITO_USERPOOL_CLIENT_ID: userPoolClient.id,
         VITE_COGNITO_USERPOOL_DOMAIN: userPoolDomainURL,
@@ -226,7 +226,7 @@ export default $config({
     // UI <-
 
     return {
-      api: apiGateway.url,
+      api: "",
       ui: ui.url,
       userPool: userPool.id,
       userPoolClientId: userPoolClient.id,
