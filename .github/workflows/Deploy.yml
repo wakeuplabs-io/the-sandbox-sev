@@ -57,8 +57,11 @@ jobs:
           # Set detailed log level
           export SST_LOG_LEVEL=debug
           
+          # Sanitize branch name for AWS resource naming
+          STAGE_NAME=$(echo "${{ github.ref_name }}" | sed 's/[^a-zA-Z0-9-]/-/g')
+          
           # Run with --verbose for more details
-          if ! npx sst deploy --stage ${{ github.ref_name }} --verbose; then
+          if ! npx sst deploy --stage $STAGE_NAME --verbose; then
             echo "::group::Deployment Error"
             echo "Deployment failed. Error details:"
             cat .sst/log/sst.log || echo "No log file found"
@@ -77,8 +80,11 @@ jobs:
         working-directory: packages/ui
         run: |
           export SST_LOG_LEVEL=debug
+          
+          # Sanitize branch name for AWS resource naming
+          STAGE_NAME=$(echo "${{ github.ref_name }}" | sed 's/[^a-zA-Z0-9-]/-/g')
             
-          if ! npx sst deploy --stage ${{ github.ref_name }} --verbose; then
+          if ! npx sst deploy --stage $STAGE_NAME --verbose; then
             echo "::group::Deployment Error"
             echo "Deployment failed. Error details:"
             cat .sst/log/sst.log || echo "No log file found"
