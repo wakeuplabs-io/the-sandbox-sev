@@ -1,5 +1,4 @@
 /// <reference path="./.sst/platform/config.d.ts" />
-import { EC2Client, DescribeVpcsCommand } from "@aws-sdk/client-ec2";
 
 // Project configuration constants
 const PROJECT_NAME: string = "sev"; // Must be set by developer, must only contain alphanumeric characters and hyphens
@@ -62,7 +61,9 @@ const GOOGLE_CLIENT_SECRET = `${process.env.GOOGLE_CLIENT_SECRET}`
  *   - Services requiring private network access
  * - Serverless services (Lambda, S3, API Gateway) don't require VPC by default
  */
-async function getOrCreateVpc(ec2Client: EC2Client, vpcNameTag: string) {
+async function getOrCreateVpc(ec2Client: any, vpcNameTag: string) {
+  const { DescribeVpcsCommand } = await import("@aws-sdk/client-ec2");
+  
   // Create a command to get the VPC information using name tag filter
   const commandToGetSpecificVpc = new DescribeVpcsCommand({
     Filters: [
@@ -180,68 +181,7 @@ export default $config({
     const userPoolDomainURL = $interpolate`${userPoolDomain.domain}.auth.${AWS_REGION}.amazoncognito.com`;
     // Cognito Pool <-
 
-    // -> API Function
-    const api = new sst.aws.Function(`${$app.stage}-${PROJECT_NAME}-api`, {
-      handler: "packages/api/src/index.handler",
-      url: true,
-      environment: {
-        DB_URL: process.env.DB_URL ?? '',
-        COGNITO_USER_POOL_ID: userPool.id,
-        COGNITO_USER_POOL_CLIENT: userPoolClient.id,
-      },
-    });
-    // API Function <-
-
-    // -> Lambda API (delete the unused one)
-    const apiGateway = new sst.aws.ApiGatewayV2(`${$app.stage}-${PROJECT_NAME}-gateway`, {
-      cors: true
-    });
-
-    apiGateway.route('$default', api.arn);
-    // Lambda API <-
-
-    // -> EC2 API (delete the unused one)
-    const ec2Client = new EC2Client({ region: AWS_REGION });
-    const vpc = await getOrCreateVpc(ec2Client, VPC_NAME);
-
-    /**
-     * Example: Setting up Custom Domains with SST
-     *
-     * Below is an example of how to configure custom domains for different AWS services:
-     *
-     * 1. ECS Service with API Gateway:
-     * - Creates an ECS service with service discovery
-     * - Exposes it through API Gateway with a custom domain
-     * - Useful for containerized applications that need a custom domain
-     *
-     * You can use this as a reference and modify/remove as needed.
-     * @see https://sst.dev/docs/component/aws/service
-     */
-    // const service = new sst.aws.Service("MyService", {
-    //   cluster,
-    // Configure service discovery for ECS
-    //   serviceRegistry: {
-    //     port: 80
-    //   }
-    // });
-
-    // Set up API Gateway with custom domain
-    // const apiGateway = new sst.aws.ApiGatewayV2("MyApi", {
-    //   domain: {
-    //     // Example: Using stage in domain name for different environments
-    //     name: `${$app.stage}-${PROJECT_NAME}-api.wakeuplabs.link`,
-    //     // Optional: You can also specify hostedZone if domain is in Route53
-    //     // hostedZone: "your-domain.com"
-    //   },
-    // });
-    // Route all traffic to the ECS service
-    // apiGateway.routePrivate("$default", service.nodes.cloudmapService.arn);
-
-    // If we have production, it's URL usually is https://my-app.xyz/
-    // Staging's URL usually is https://my-app.wakeuplabs.link/
-    // production uses root domain and staging a subdomain
-    // this is considered in the StaticSite domain parameter 
-    // EC2 API <-
+   
 
     // -> UI
     const domainRoot = UI_URL.replace(/^https?:\/\/(www\.)?/, '');
