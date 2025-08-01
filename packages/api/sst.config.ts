@@ -1,5 +1,4 @@
 /// <reference path="./.sst/platform/config.d.ts" />
-import { EC2Client, DescribeVpcsCommand } from "@aws-sdk/client-ec2";
 
 // Project configuration constants
 const PROJECT_NAME: string = "sev"; // Must be set by developer, must only contain alphanumeric characters and hyphens
@@ -62,7 +61,9 @@ const GOOGLE_CLIENT_SECRET = `${process.env.GOOGLE_CLIENT_SECRET}`
  *   - Services requiring private network access
  * - Serverless services (Lambda, S3, API Gateway) don't require VPC by default
  */
-async function getOrCreateVpc(ec2Client: EC2Client, vpcNameTag: string) {
+async function getOrCreateVpc(ec2Client: any, vpcNameTag: string) {
+  const { DescribeVpcsCommand } = await import("@aws-sdk/client-ec2");
+  
   // Create a command to get the VPC information using name tag filter
   const commandToGetSpecificVpc = new DescribeVpcsCommand({
     Filters: [
@@ -201,6 +202,7 @@ export default $config({
     // Lambda API <-
 
     // -> EC2 API (delete the unused one)
+    const { EC2Client } = await import("@aws-sdk/client-ec2");
     const ec2Client = new EC2Client({ region: AWS_REGION });
     const vpc = await getOrCreateVpc(ec2Client, VPC_NAME);
 
