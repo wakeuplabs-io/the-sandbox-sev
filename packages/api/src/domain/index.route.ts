@@ -19,4 +19,16 @@ router.get("/", (c) => {
   });
 });
 
+/**
+ * Health check endpoint
+ * @description Returns API health status for monitoring and load balancer checks
+ */
+router.get("/health", (c) => {
+  return c.json({
+    status: "healthy",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+  });
+});
+
 export default router;
