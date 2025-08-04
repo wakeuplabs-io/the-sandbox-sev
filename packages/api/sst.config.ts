@@ -204,11 +204,6 @@ export default $config({
     apiGateway.route('$default', api.arn);
     // Lambda API <-
 
-    // -> EC2 API (delete the unused one)
-    const { EC2Client } = await import("@aws-sdk/client-ec2");
-    const ec2Client = new EC2Client({ region: AWS_REGION });
-    const vpc = await getOrCreateVpc(ec2Client, VPC_NAME);
-
     /**
      * Example: Setting up Custom Domains with SST
      *
