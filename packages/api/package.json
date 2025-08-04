@@ -10,7 +10,8 @@
     "lint": "eslint . --ext .ts --max-warnings 0",
     "lint:fix": "eslint . --ext .ts --fix",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "prisma:migrate": "prisma migrate deploy"
   },
   "keywords": [],
   "author": "",

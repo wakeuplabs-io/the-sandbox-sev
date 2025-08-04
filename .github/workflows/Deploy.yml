@@ -51,6 +51,12 @@ jobs:
         working-directory: packages/api
         run: npm install
 
+      - name: Migrate database
+        working-directory: ./packages/api
+        run: npm run prisma:migrate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
       - name: Deploy API
         working-directory: packages/api
         run: |
