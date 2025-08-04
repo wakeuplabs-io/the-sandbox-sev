@@ -9,11 +9,6 @@ const CUSTOMER: string = "sandbox"; // Must be set by developer, must only conta
 const AWS_REGION = `${process.env.SST_AWS_REGION}`;
 const AVAILABILITY_ZONES = [`${AWS_REGION}a`, `${AWS_REGION}b`];
 
-// VPC configuration
-// You can leave these default values unless you need specific VPC settings
-const VPC_NAME = "shared-vpc";
-const VPC_ID = "vpc-00b7f7fb871e913fb";
-
 const GOOGLE_CLIENT_ID = `${process.env.GOOGLE_CLIENT_ID}`
 const GOOGLE_CLIENT_SECRET = `${process.env.GOOGLE_CLIENT_SECRET}`
 
@@ -78,6 +73,16 @@ export default $config({
     validateConfig();
     const IS_PRODUCTION = $app.stage === 'production'
 
+    const allowedOrigins = [
+      API_URL,
+      ...($app.stage !== "production"
+        ? [
+            "http://localhost:3000", // for local development
+            "http://localhost:9999", // for API dev server
+          ]
+        : []),
+    ];
+
     // -> Cognito Pool
     // To add google auth to the app
     const userPool = new sst.aws.CognitoUserPool('user-pool');
@@ -128,10 +133,18 @@ export default $config({
     });
     // API Function <-
 
-    // -> Lambda API (delete the unused one)
+   
+
+    // deploy API Gateway with custom domain
     const apiGateway = new sst.aws.ApiGatewayV2(`${$app.stage}-${PROJECT_NAME}-gateway`, {
-      cors: true
+      domain: API_DOMAIN_URL,
+      cors: {
+        allowOrigins: allowedOrigins,
+        allowMethods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+        allowHeaders: ["*"],
+      },
     });
+
 
     apiGateway.route('$default', api.arn);
     // Lambda API <-
