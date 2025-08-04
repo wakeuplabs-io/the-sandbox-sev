@@ -96,8 +96,7 @@ function validateConfig() {
   if (!CUSTOMER || CUSTOMER.trim() === "") {
     errors.push("CUSTOMER must be set (e.g., 'testing')");
   }
-  if (!API_URL || CUSTOMER.trim() === "")
-    errors.push("API_URL must be set (e.g., 'https://project-name.wakeuplabs.link' or 'https://www.project-name.xyz')")
+
   if (!GOOGLE_CLIENT_ID || CUSTOMER.trim() === "")
     errors.push("GOOGLE_CLIENT_ID must be set (e.g., '123456789012-1a23b56c7defghi89012jklmnopqrs3t.apps.googleusercontent.com'");
   if (!GOOGLE_CLIENT_SECRET || CUSTOMER.trim() === "")
@@ -141,10 +140,7 @@ export default $config({
 
     const stageSuffix =
       $app.stage === "production" ? "" : $app.stage === "staging" ? "-staging" : "-dev";
-    const UI_DOMAIN_URL = `${PROJECT_NAME}${stageSuffix}.wakeuplabs.link`;
-    const UI_URL = `https://${UI_DOMAIN_URL}`;
-
-    const API_DOMAIN_URL = `api.${UI_DOMAIN_URL}`;
+    const API_DOMAIN_URL = `${PROJECT_NAME}${stageSuffix}.wakeuplabs.link`;
     const API_URL = `https://${API_DOMAIN_URL}`;
     // Validate configuration again in case run() is called directly
     validateConfig();
