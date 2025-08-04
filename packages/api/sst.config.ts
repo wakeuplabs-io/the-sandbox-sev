@@ -186,7 +186,7 @@ export default $config({
 
     // -> API Function
     const api = new sst.aws.Function(`${$app.stage}-${PROJECT_NAME}-api`, {
-      handler: "src/example.handler",
+      handler: "src/domain/example/example.handler",
       url: true,
       environment: {
         DB_URL: process.env.DB_URL ?? '',
