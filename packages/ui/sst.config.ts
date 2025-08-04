@@ -15,7 +15,7 @@ const VPC_NAME = "shared-vpc";
 const VPC_ID = "vpc-00b7f7fb871e913fb";
 
 const GOOGLE_CLIENT_ID = `${process.env.GOOGLE_CLIENT_ID}`
-const UI_URL = `${process.env.UI_URL ?? "https://my-test-app.wakeuplabs.link"}`
+
 const GOOGLE_CLIENT_SECRET = `${process.env.GOOGLE_CLIENT_SECRET}`
 
 /**
@@ -139,6 +139,11 @@ export default $config({
     };
   },
   async run() {
+
+    const stageSuffix =
+    $app.stage === "production" ? "" : $app.stage === "staging" ? "-staging" : "-dev";
+    const UI_DOMAIN_URL = `${PROJECT_NAME}${stageSuffix}.wakeuplabs.link`;
+    const UI_URL = `https://${UI_DOMAIN_URL}`;
     // Validate configuration again in case run() is called directly
     validateConfig();
     const IS_PRODUCTION = $app.stage === 'production'
@@ -226,7 +231,6 @@ export default $config({
     // UI <-
 
     return {
-      api: "",
       ui: ui.url,
       userPool: userPool.id,
       userPoolClientId: userPoolClient.id,

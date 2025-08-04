@@ -15,7 +15,6 @@ const VPC_NAME = "shared-vpc";
 const VPC_ID = "vpc-00b7f7fb871e913fb";
 
 const GOOGLE_CLIENT_ID = `${process.env.GOOGLE_CLIENT_ID}`
-const UI_URL = `${process.env.UI_URL ?? "https://my-test-app.wakeuplabs.link"}`
 const GOOGLE_CLIENT_SECRET = `${process.env.GOOGLE_CLIENT_SECRET}`
 
 /**
@@ -97,8 +96,8 @@ function validateConfig() {
   if (!CUSTOMER || CUSTOMER.trim() === "") {
     errors.push("CUSTOMER must be set (e.g., 'testing')");
   }
-  if (!UI_URL || CUSTOMER.trim() === "")
-    errors.push("UI_URL must be set (e.g., 'https://project-name.wakeuplabs.link' or 'https://www.project-name.xyz')")
+  if (!API_URL || CUSTOMER.trim() === "")
+    errors.push("API_URL must be set (e.g., 'https://project-name.wakeuplabs.link' or 'https://www.project-name.xyz')")
   if (!GOOGLE_CLIENT_ID || CUSTOMER.trim() === "")
     errors.push("GOOGLE_CLIENT_ID must be set (e.g., '123456789012-1a23b56c7defghi89012jklmnopqrs3t.apps.googleusercontent.com'");
   if (!GOOGLE_CLIENT_SECRET || CUSTOMER.trim() === "")
@@ -139,6 +138,14 @@ export default $config({
     };
   },
   async run() {
+
+    const stageSuffix =
+      $app.stage === "production" ? "" : $app.stage === "staging" ? "-staging" : "-dev";
+    const UI_DOMAIN_URL = `${PROJECT_NAME}${stageSuffix}.wakeuplabs.link`;
+    const UI_URL = `https://${UI_DOMAIN_URL}`;
+
+    const API_DOMAIN_URL = `api.${UI_DOMAIN_URL}`;
+    const API_URL = `https://${API_DOMAIN_URL}`;
     // Validate configuration again in case run() is called directly
     validateConfig();
     const IS_PRODUCTION = $app.stage === 'production'
@@ -168,7 +175,7 @@ export default $config({
       userPoolId: userPool.id,
     });
 
-    const fixedUrlForRootDomain = UI_URL?.replace(/(www\.)?/, '');
+    const fixedUrlForRootDomain = API_URL?.replace(/(www\.)?/, '');
     const userPoolClient = userPool.addClient(`${PROJECT_NAME}-web-client`, {
       providers: [provider.providerName],
       transform: {
@@ -183,7 +190,7 @@ export default $config({
 
     // -> API Function
     const api = new sst.aws.Function(`${$app.stage}-${PROJECT_NAME}-api`, {
-      handler: "packages/api/src/index.handler",
+      handler: "src/index.handler",
       url: true,
       environment: {
         DB_URL: process.env.DB_URL ?? '',
@@ -245,51 +252,9 @@ export default $config({
     // this is considered in the StaticSite domain parameter 
     // EC2 API <-
 
-    // -> UI
-    const domainRoot = UI_URL.replace(/^https?:\/\/(www\.)?/, '');
-    const domainAlias = UI_URL.replace(/^https?:\/\//, '');
-
-    const ui = new sst.aws.StaticSite(`${PROJECT_NAME}-ui`, {
-      path: "packages/ui",
-      domain: {
-        name: domainRoot,
-        aliases: domainAlias !== domainRoot ? [domainAlias] : [],
-      },
-      build: {
-        command: "npm run build",
-        output: "dist",
-      },
-      environment: {
-        VITE_API_URL: api.url,
-        VITE_COGNITO_USERPOOL_ID: userPool.id,
-        VITE_COGNITO_USERPOOL_CLIENT_ID: userPoolClient.id,
-        VITE_COGNITO_USERPOOL_DOMAIN: userPoolDomainURL,
-      },
-      assets: {
-        textEncoding: 'utf-8',
-        fileOptions: [
-          {
-            files: ['**/*.css', '**/*.js'],
-            cacheControl: 'max-age=31536000,public,immutable',
-          },
-          {
-            files: '**/*.html',
-            cacheControl: 'max-age=0,no-cache,no-store,must-revalidate',
-          },
-          {
-            files: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg'],
-            cacheControl: 'max-age=31536000,public,immutable',
-          },
-        ],
-      },
-      indexPage: "index.html",
-      errorPage: "index.html",
-    });
-    // UI <-
 
     return {
       api: apiGateway.url,
-      ui: ui.url,
       userPool: userPool.id,
       userPoolClientId: userPoolClient.id,
     };
