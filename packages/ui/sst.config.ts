@@ -97,8 +97,7 @@ function validateConfig() {
   if (!CUSTOMER || CUSTOMER.trim() === "") {
     errors.push("CUSTOMER must be set (e.g., 'testing')");
   }
-  if (!UI_URL || CUSTOMER.trim() === "")
-    errors.push("UI_URL must be set (e.g., 'https://project-name.wakeuplabs.link' or 'https://www.project-name.xyz')")
+
   if (!GOOGLE_CLIENT_ID || CUSTOMER.trim() === "")
     errors.push("GOOGLE_CLIENT_ID must be set (e.g., '123456789012-1a23b56c7defghi89012jklmnopqrs3t.apps.googleusercontent.com'");
   if (!GOOGLE_CLIENT_SECRET || CUSTOMER.trim() === "")
