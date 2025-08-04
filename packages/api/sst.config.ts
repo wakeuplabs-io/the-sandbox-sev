@@ -151,8 +151,6 @@ export default $config({
 
     return {
       api: apiGateway.url,
-      userPool: userPool.id,
-      userPoolClientId: userPoolClient.id,
     };
   },
 });

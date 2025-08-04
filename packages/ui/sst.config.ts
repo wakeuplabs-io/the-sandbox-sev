@@ -188,8 +188,6 @@ export default $config({
 
     return {
       ui: ui.url,
-      userPool: userPool.id,
-      userPoolClientId: userPoolClient.id,
     };
   },
 });
