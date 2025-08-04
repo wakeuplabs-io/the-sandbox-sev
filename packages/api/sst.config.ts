@@ -83,52 +83,12 @@ export default $config({
         : []),
     ];
 
-    // -> Cognito Pool
-    // To add google auth to the app
-    const userPool = new sst.aws.CognitoUserPool('user-pool');
-    const GoogleClientId = GOOGLE_CLIENT_ID;
-    const GoogleClientSecret = GOOGLE_CLIENT_SECRET;
-
-    const provider = userPool.addIdentityProvider('Google', {
-      type: 'google',
-      details: {
-        authorize_scopes: 'email profile',
-        client_id: GoogleClientId,
-        client_secret: GoogleClientSecret,
-      },
-      attributes: {
-        email: 'email',
-        name: 'name',
-        username: 'sub',
-      },
-    });
-
-    const userPoolDomain = new aws.cognito.UserPoolDomain(`${PROJECT_NAME}-userpool-domain`, {
-      domain: `${$app.stage}-${PROJECT_NAME}`,
-      userPoolId: userPool.id,
-    });
-
-    const fixedUrlForRootDomain = API_URL?.replace(/(www\.)?/, '');
-    const userPoolClient = userPool.addClient(`${PROJECT_NAME}-web-client`, {
-      providers: [provider.providerName],
-      transform: {
-        client: {
-          callbackUrls: IS_PRODUCTION ? [fixedUrlForRootDomain] : ['http://localhost:5173', fixedUrlForRootDomain],
-          logoutUrls: IS_PRODUCTION ? [fixedUrlForRootDomain] : ['http://localhost:5173', fixedUrlForRootDomain],
-        },
-      },
-    });
-    const userPoolDomainURL = $interpolate`${userPoolDomain.domain}.auth.${AWS_REGION}.amazoncognito.com`;
-    // Cognito Pool <-
-
     // -> API Function
     const api = new sst.aws.Function(`${$app.stage}-${PROJECT_NAME}-api`, {
       handler: "src/index.handler",
       url: true,
       environment: {
         DB_URL: process.env.DB_URL ?? '',
-        COGNITO_USER_POOL_ID: userPool.id,
-        COGNITO_USER_POOL_CLIENT: userPoolClient.id,
       },
     });
     // API Function <-
