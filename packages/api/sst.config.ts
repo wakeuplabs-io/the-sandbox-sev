@@ -140,7 +140,7 @@ export default $config({
 
     const stageSuffix =
       $app.stage === "production" ? "" : $app.stage === "staging" ? "-staging" : "-dev";
-    const API_DOMAIN_URL = `${PROJECT_NAME}${stageSuffix}.wakeuplabs.link`;
+    const API_DOMAIN_URL = `api.${PROJECT_NAME}${stageSuffix}.wakeuplabs.link`;
     const API_URL = `https://${API_DOMAIN_URL}`;
     // Validate configuration again in case run() is called directly
     validateConfig();
@@ -186,7 +186,7 @@ export default $config({
 
     // -> API Function
     const api = new sst.aws.Function(`${$app.stage}-${PROJECT_NAME}-api`, {
-      handler: "src/index.handler",
+      handler: "src/example.handler",
       url: true,
       environment: {
         DB_URL: process.env.DB_URL ?? '',
@@ -198,6 +198,7 @@ export default $config({
 
     // -> Lambda API (delete the unused one)
     const apiGateway = new sst.aws.ApiGatewayV2(`${$app.stage}-${PROJECT_NAME}-gateway`, {
+      domain: API_DOMAIN_URL,
       cors: true
     });
 
