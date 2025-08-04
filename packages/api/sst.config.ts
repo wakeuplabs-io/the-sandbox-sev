@@ -250,7 +250,7 @@ export default $config({
     const domainAlias = UI_URL.replace(/^https?:\/\//, '');
 
     const ui = new sst.aws.StaticSite(`${PROJECT_NAME}-ui`, {
-      path: "",
+      path: "packages/ui",
       domain: {
         name: domainRoot,
         aliases: domainAlias !== domainRoot ? [domainAlias] : [],
