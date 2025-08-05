@@ -4,14 +4,6 @@
 const PROJECT_NAME: string = "sev"; // Must be set by developer, must only contain alphanumeric characters and hyphens
 const CUSTOMER: string = "sandbox"; // Must be set by developer, must only contain alphanumeric characters and hyphens
 
-// We can alternate between regions to create the VPC in a different region, take in mind that we can only use one region per VPC
-// in case we want to use N.virginia we can use the secret SST_AWS_REGION_ALT
-const AWS_REGION = `${process.env.SST_AWS_REGION}`;
-const AVAILABILITY_ZONES = [`${AWS_REGION}a`, `${AWS_REGION}b`];
-
-const GOOGLE_CLIENT_ID = `${process.env.GOOGLE_CLIENT_ID}`
-const GOOGLE_CLIENT_SECRET = `${process.env.GOOGLE_CLIENT_SECRET}`
-
 // Validation function for project configuration
 function validateConfig() {
   const errors: string[] = [];
@@ -23,11 +15,6 @@ function validateConfig() {
   if (!CUSTOMER || CUSTOMER.trim() === "") {
     errors.push("CUSTOMER must be set (e.g., 'testing')");
   }
-
-  if (!GOOGLE_CLIENT_ID || CUSTOMER.trim() === "")
-    errors.push("GOOGLE_CLIENT_ID must be set (e.g., '123456789012-1a23b56c7defghi89012jklmnopqrs3t.apps.googleusercontent.com'");
-  if (!GOOGLE_CLIENT_SECRET || CUSTOMER.trim() === "")
-    errors.push("GOOGLE_CLIENT_SECRET must be set (e.g., 'ABCDEF-GHIJ1kHIjklMnopqrstuvwx2YzAB'");
 
   if (errors.length > 0) {
     // Print error directly to console
@@ -71,7 +58,6 @@ export default $config({
     const API_URL = `https://${API_DOMAIN_URL}`;
     // Validate configuration again in case run() is called directly
     validateConfig();
-    const IS_PRODUCTION = $app.stage === 'production'
 
     const allowedOrigins = [
       API_URL,

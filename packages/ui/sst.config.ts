@@ -4,88 +4,6 @@
 const PROJECT_NAME: string = "sev"; // Must be set by developer, must only contain alphanumeric characters and hyphens
 const CUSTOMER: string = "sandbox"; // Must be set by developer, must only contain alphanumeric characters and hyphens
 
-// We can alternate between regions to create the VPC in a different region, take in mind that we can only use one region per VPC
-// in case we want to use N.virginia we can use the secret SST_AWS_REGION_ALT
-const AWS_REGION = `${process.env.SST_AWS_REGION}`;
-const AVAILABILITY_ZONES = [`${AWS_REGION}a`, `${AWS_REGION}b`];
-
-// VPC configuration
-// You can leave these default values unless you need specific VPC settings
-const VPC_NAME = "shared-vpc";
-const VPC_ID = "vpc-00b7f7fb871e913fb";
-
-const GOOGLE_CLIENT_ID = `${process.env.GOOGLE_CLIENT_ID}`
-
-const GOOGLE_CLIENT_SECRET = `${process.env.GOOGLE_CLIENT_SECRET}`
-
-/**
- * VPC Configuration Notes:
- *
- * VPCs are not required for all AWS services:
- * - Not Required: Lambda functions, Static websites, S3 buckets
- * - Required: EC2 instances, RDS databases, ECS containers
- *
- * We need VPC configuration when:
- * 1. Running containerized applications (ECS/EKS)
- * 2. Hosting databases (RDS, ElastiCache)
- * 3. Running EC2 instances
- * 4. Requiring specific network isolation or security
- *
- * For serverless applications (Lambda + S3 + API Gateway),
- * you can skip VPC configuration unless you need private network access.
- */
-
-/**
- * Retrieves an existing VPC by its name tag or creates a new one if not found.
- *
- * This function performs the following steps:
- * 1. Searches for a VPC using the provided name tag
- * 2. If found and matches the expected VPC_ID:
- *    - Returns the existing VPC instance
- * 3. If not found or VPC_ID doesn't match:
- *    - Creates a new VPC with the specified availability zones
- *
- * @param {EC2Client} ec2Client - AWS EC2 client instance for making API calls
- * @param {string} vpcNameTag - The name tag to search for or use when creating a new VPC
- * @returns {Promise<sst.aws.Vpc>} Returns either the existing or newly created VPC
- *
- * @example
- * const vpc = await getOrCreateVpc(ec2Client, "shared-vpc");
- *
- * @remarks
- * - The function uses AWS SDK v3's EC2Client for VPC operations
- * - VPC creation is only needed for services requiring network isolation:
- *   - EC2 instances
- *   - RDS databases
- *   - ECS containers
- *   - Services requiring private network access
- * - Serverless services (Lambda, S3, API Gateway) don't require VPC by default
- */
-async function getOrCreateVpc(ec2Client: any, vpcNameTag: string) {
-  const { DescribeVpcsCommand } = await import("@aws-sdk/client-ec2");
-  
-  // Create a command to get the VPC information using name tag filter
-  const commandToGetSpecificVpc = new DescribeVpcsCommand({
-    Filters: [
-      {
-        Name: "tag:Name",
-        Values: [vpcNameTag],
-      },
-    ],
-  });
-
-  // Execute this command to get the VPC information
-  const { Vpcs: specificVpc } = await ec2Client.send(commandToGetSpecificVpc);
-
-  if (specificVpc.length > 0 && specificVpc[0].VpcId === VPC_ID) {
-    console.log("VPC found");
-    return sst.aws.Vpc.get(VPC_NAME, VPC_ID);
-  } else {
-    console.log("VPC not found & creating new VPC");
-    return new sst.aws.Vpc(VPC_NAME, { az: AVAILABILITY_ZONES });
-  }
-}
-
 // Validation function for project configuration
 function validateConfig() {
   const errors: string[] = [];
@@ -98,10 +16,6 @@ function validateConfig() {
     errors.push("CUSTOMER must be set (e.g., 'testing')");
   }
 
-  if (!GOOGLE_CLIENT_ID || CUSTOMER.trim() === "")
-    errors.push("GOOGLE_CLIENT_ID must be set (e.g., '123456789012-1a23b56c7defghi89012jklmnopqrs3t.apps.googleusercontent.com'");
-  if (!GOOGLE_CLIENT_SECRET || CUSTOMER.trim() === "")
-    errors.push("GOOGLE_CLIENT_SECRET must be set (e.g., 'ABCDEF-GHIJ1kHIjklMnopqrstuvwx2YzAB'");
 
   if (errors.length > 0) {
     // Print error directly to console
@@ -145,7 +59,6 @@ export default $config({
     const UI_URL = `https://${UI_DOMAIN_URL}`;
     // Validate configuration again in case run() is called directly
     validateConfig();
-    const IS_PRODUCTION = $app.stage === 'production'
 
     // -> UI
     const domainRoot = UI_URL.replace(/^https?:\/\/(www\.)?/, '');
