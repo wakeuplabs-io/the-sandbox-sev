@@ -77,9 +77,6 @@ export default $config({
         DB_URL: process.env.DB_URL ?? '',
       },
     });
-    // API Function <-
-
-   
 
     // deploy API Gateway with custom domain
     const apiGateway = new sst.aws.ApiGatewayV2(`${$app.stage}-${PROJECT_NAME}-gateway`, {
@@ -93,47 +90,6 @@ export default $config({
 
 
     apiGateway.route('$default', api.arn);
-    // Lambda API <-
-
-    /**
-     * Example: Setting up Custom Domains with SST
-     *
-     * Below is an example of how to configure custom domains for different AWS services:
-     *
-     * 1. ECS Service with API Gateway:
-     * - Creates an ECS service with service discovery
-     * - Exposes it through API Gateway with a custom domain
-     * - Useful for containerized applications that need a custom domain
-     *
-     * You can use this as a reference and modify/remove as needed.
-     * @see https://sst.dev/docs/component/aws/service
-     */
-    // const service = new sst.aws.Service("MyService", {
-    //   cluster,
-    // Configure service discovery for ECS
-    //   serviceRegistry: {
-    //     port: 80
-    //   }
-    // });
-
-    // Set up API Gateway with custom domain
-    // const apiGateway = new sst.aws.ApiGatewayV2("MyApi", {
-    //   domain: {
-    //     // Example: Using stage in domain name for different environments
-    //     name: `${$app.stage}-${PROJECT_NAME}-api.wakeuplabs.link`,
-    //     // Optional: You can also specify hostedZone if domain is in Route53
-    //     // hostedZone: "your-domain.com"
-    //   },
-    // });
-    // Route all traffic to the ECS service
-    // apiGateway.routePrivate("$default", service.nodes.cloudmapService.arn);
-
-    // If we have production, it's URL usually is https://my-app.xyz/
-    // Staging's URL usually is https://my-app.wakeuplabs.link/
-    // production uses root domain and staging a subdomain
-    // this is considered in the StaticSite domain parameter 
-    // EC2 API <-
-
 
     return {
       api: apiGateway.url,

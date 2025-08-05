@@ -97,7 +97,6 @@ export default $config({
       indexPage: "index.html",
       errorPage: "index.html",
     });
-    // UI <-
 
     return {
       ui: ui.url,
