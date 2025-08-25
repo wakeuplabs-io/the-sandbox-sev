@@ -95,6 +95,18 @@ export default $config({
       },
       indexPage: "index.html",
       errorPage: "index.html",
+      edge: {
+        viewerResponse: {
+          injection: `
+              event.response.headers["content-security-policy"] = {value: "default-src 'self' wss://*.crisp.chat wss://*.web3auth.io wss://*.tor.us https://*.web3auth.io https://*.tor.us https://*.crisp.chat https://*.sentry.io https://fonts.googleapis.com https://fonts.gstatic.com https://*.googletagmanager.com https://*.google-analytics.com https://accounts.google.com https://*.doubleclick.net https://hcaptcha.com https://*.hcaptcha.com; script-src 'self' 'unsafe-inline' https://cmp.osano.com https://www.googletagmanager.com https://browser.sentry-cdn.com https://js.sentry-cdn.com https://accounts.google.com https://*.doubleclick.net https://hcaptcha.com https://*.hcaptcha.com https://*.getmati.com blob:; style-src 'self' 'unsafe-inline' https://client.crisp.chat https://fonts.googleapis.com https://accounts.google.com https://hcaptcha.com https://*.hcaptcha.com; img-src 'self' * data: https://*.web3auth.io https://*.tor.us https://*.crisp.chat; frame-src 'self' https://*.getmati.com https://*.web3auth.io; object-src 'none'; connect-src 'self' * https://hcaptcha.com https://*.hcaptcha.com;"};
+              event.response.headers["referrer-policy"] = {value: "no-referrer"};
+              event.response.headers["access-control-allow-origin"] = {value: "*"};
+              event.response.headers["access-control-allow-methods"] = {value: "GET, HEAD, OPTIONS"};
+              event.response.headers["access-control-allow-headers"] = {value: "*"};
+              event.response.headers["access-control-expose-headers"] = {value: "ETag"};
+            `,
+        },
+      },
     });
 
     return {

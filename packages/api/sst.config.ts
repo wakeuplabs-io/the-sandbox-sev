@@ -56,6 +56,13 @@ export default $config({
       $app.stage === "production" ? "" : $app.stage === "staging" ? "-staging" : "-dev";
     const API_DOMAIN_URL = `api.${PROJECT_NAME}${stageSuffix}.wakeuplabs.link`;
     const API_URL = `https://${API_DOMAIN_URL}`;
+
+    const UI_DOMAIN_URL = `${PROJECT_NAME}${stageSuffix}.wakeuplabs.link`;
+    const UI_URL = `https://${UI_DOMAIN_URL}`;
+    
+    const ASSETS_DOMAIN_URL = `assets.${UI_DOMAIN_URL}`;
+    const ASSETS_URL = `https://${ASSETS_DOMAIN_URL}`;
+
     // Validate configuration again in case run() is called directly
     validateConfig();
 
@@ -68,6 +75,41 @@ export default $config({
           ]
         : []),
     ];
+
+
+    // --> Assets bucket and cloudfront distribution
+
+    const assetsBucket = new sst.aws.Bucket("assets", {
+      access: "public",
+      cors: {
+        allowOrigins: allowedOrigins,
+        allowMethods: ["GET", "PUT", "POST", "DELETE", "HEAD"],
+        allowHeaders: ["*"],
+      },
+    });
+
+    //SST Router wouldn't create cloudfront, so using this instead
+    new sst.aws.Cdn("assets-cdn", {
+      domain: ASSETS_DOMAIN_URL,
+      origins: [
+        {
+          domainName: $interpolate`${assetsBucket.domain}`,
+          originId: "assetsBucket",
+        },
+      ],
+      defaultCacheBehavior: {
+        targetOriginId: "assetsBucket",
+        viewerProtocolPolicy: "redirect-to-https",
+        compress: true,
+        allowedMethods: ["GET", "HEAD", "OPTIONS"],
+        cachedMethods: ["GET", "HEAD"],
+        maxTtl: 2592000,
+        forwardedValues: {
+          queryString: false,
+          cookies: { forward: "none" },
+        },
+      },
+    });
 
     // -> API Function
     const api = new sst.aws.Function(`${$app.stage}-${PROJECT_NAME}-api`, {
