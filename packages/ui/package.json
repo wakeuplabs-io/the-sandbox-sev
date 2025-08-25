@@ -14,16 +14,19 @@
     "format:check": "prettier --check ."
   },
   "dependencies": {
+    "@tailwindcss/postcss": "^4.1.11",
     "@tanstack/react-query": "^5.83.1",
     "@tanstack/react-router": "^1.130.9",
     "@tanstack/router-cli": "^1.130.9",
+    "dotenv": "17.2.1",
     "react": "19.1.1",
     "react-dom": "19.1.1",
-    "dotenv": "17.2.1"
+    "sst": "^3.17.10"
   },
   "devDependencies": {
     "@tanstack/router-devtools": "^1.130.9",
     "@tanstack/router-vite-plugin": "^1.130.9",
+    "@types/node": "^22.17.0",
     "@types/react": "19.1.9",
     "@types/react-dom": "19.1.7",
     "@vitejs/plugin-react-swc": "3.11.0",
