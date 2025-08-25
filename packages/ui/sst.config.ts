@@ -61,14 +61,13 @@ export default $config({
     validateConfig();
 
     // -> UI
-    const domainRoot = UI_URL.replace(/^https?:\/\/(www\.)?/, '');
-    const domainAlias = UI_URL.replace(/^https?:\/\//, '');
+    // Simplified domain configuration to avoid CNAME conflicts
+    const domainName = UI_DOMAIN_URL;
 
     const ui = new sst.aws.StaticSite(`${PROJECT_NAME}-ui`, {
       path: "",
       domain: {
-        name: domainRoot,
-        aliases: domainAlias !== domainRoot ? [domainAlias] : [],
+        name: domainName,
       },
       build: {
         command: "npm run build",
