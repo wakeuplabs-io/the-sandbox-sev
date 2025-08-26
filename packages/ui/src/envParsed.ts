@@ -11,7 +11,7 @@ const env = {
 
 const envSchema = z
   .object({
-    APP_URL: z.string().url().optional().default("http://localhost:5000"),
+    APP_URL: z.string().url().optional().default("http://localhost:9999/api"),
   })
   .required();
 

@@ -33,6 +33,12 @@ enum TaskState {
     EXECUTED
 }
 
+enum Priority {
+    HIGH
+    LOW
+    MEDIUM
+}
+
 model User {
     id        Int      @id @default(autoincrement())
     email     String
@@ -40,27 +46,67 @@ model User {
     address   String?
     role      Role     @default(MEMBER)
     createdAt DateTime @default(now())
-
-    tasks Task[] @relation("UserTasks")
+    tasks     Task[]   @relation("UserTasks")
 }
 
 model Task {
-    id            Int       @id @default(autoincrement())
+    id            String   @id @default(cuid())
     userId        Int
-    user          User      @relation("UserTasks", fields: [userId], references: [id])
-    hash          String
-    type          TaskType
-    state         TaskState @default(STORED)
-    transactionId String
-    data          Json      @db.Json
-    executionData String?
-    proofData     String?
-    createdAt     DateTime  @default(now())
+    user          User     @relation("UserTasks", fields: [userId], references: [id])
+    transactionId String   @unique // Transaction ID original
+    taskType      TaskType // LIQUIDATION, ACQUISITION, AUTHORIZATION, ARBITRAGE
+    priority      Priority // HIGH, LOW, etc.
+    state         TaskState @default(STORED) // STORED, EXECUTED
+    // Campos comunes a todos los tipos
+    tokenType String?
+    chain     String?
+    platform  String?
+    typeOfTx  String?
+    details   String?
 
-    @@unique([hash])
-    @@unique([transactionId])
-    @@index([type])
-    @@index([state])
-    @@index([userId])
-    @@index([type, state])
+    // Campos específicos de LIQUIDATION (A-M)
+    companyAndArtist      String?
+    collectionName        String?
+    tokenId               String?
+    targetPriceEth        String?
+    dateDeadline          String?
+    technicalVerification Boolean @default(false)
+
+    // Campos específicos de ACQUISITION (A-M)
+    nftName                  String?
+    targetPriceBudget        String?
+    transactionExecutionDate String?
+    priorityDeadline         String?
+
+    // Campos específicos de AUTHORIZATION (A-K)
+    // (ya incluidos arriba: collectionName, tokenId, targetPriceBudget, dateDeadline)
+
+    // Campos específicos de ARBITRAGE (A-L)
+    targetPricePerToken String?
+    amount              String?
+    currencyName        String?
+    proportion          String?
+    duration            String?
+    deadline            String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // txHash is the hash of the transaction and hash is the hash of the hashed data
+    txHash String
+    hash   String
+
+    executionProofs TaskExecutionProof[] @relation("TaskExecutionProofs")
+}
+
+model TaskExecutionProof {
+    id        String   @id @default(cuid())
+    taskId    String
+    task      Task     @relation("TaskExecutionProofs", fields: [taskId], references: [id])
+    txHash    String
+    proofHash     String?
+    proofImageUrl String?
+    proofDescription String?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
