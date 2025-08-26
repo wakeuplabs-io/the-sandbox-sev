@@ -61,6 +61,7 @@ jobs:
           # Debug environment variables
           echo "=== Environment Variables Debug ==="
           echo "VITE_WEB3AUTH_CLIENT_ID: ${{ secrets.VITE_WEB3AUTH_CLIENT_ID }}"
+          echo "DATABASE_URL: ${{ secrets.DATABASE_URL }}"
           echo "NODE_ENV: $NODE_ENV"
           echo "AWS_REGION: $AWS_REGION"
           
@@ -90,3 +91,4 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: sa-east-1
           VITE_WEB3AUTH_CLIENT_ID: ${{ secrets.VITE_WEB3AUTH_CLIENT_ID }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
