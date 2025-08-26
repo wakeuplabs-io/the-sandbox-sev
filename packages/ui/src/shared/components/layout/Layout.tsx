@@ -13,7 +13,7 @@ interface LayoutProps {
 export function Layout({ children, showSidebar = false }: LayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const { account, email } = useWeb3Auth();
-  const { user, isLoading, isError } = useGetUser(account || "", email || "");
+  const { user } = useGetUser(account || "", email || "");
   const handleSidebarToggle = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };

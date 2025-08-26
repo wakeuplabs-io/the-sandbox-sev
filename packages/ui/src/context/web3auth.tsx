@@ -140,6 +140,11 @@ export const Web3AuthProvider = ({ children }: { children: ReactNode }) => {
 
         const web3authInstance = new Web3Auth({
           ...baseConfig,
+          uiConfig: {
+            appName: "The Sandbox",
+            logoLight: "/logo-light.png",
+            logoDark: "/logo-dark.png",
+          },
         });
 
         console.debug("Web3Auth instance created, initializing...");
