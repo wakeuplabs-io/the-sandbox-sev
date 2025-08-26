@@ -30,7 +30,7 @@ jobs:
     needs: Validate
     runs-on: ubuntu-latest
     env:
-      VITE_WEB3AUTH_CLIENT_ID: ${{ vars.VITE_WEB3AUTH_CLIENT_ID }}
+      VITE_WEB3AUTH_CLIENT_ID: ${{ secrets.VITE_WEB3AUTH_CLIENT_ID }}
     steps:
       - name: Git clone the repository
         uses: actions/checkout@v3
@@ -60,7 +60,7 @@ jobs:
           
           # Debug environment variables
           echo "=== Environment Variables Debug ==="
-          echo "VITE_WEB3AUTH_CLIENT_ID: $VITE_WEB3AUTH_CLIENT_ID"
+          echo "VITE_WEB3AUTH_CLIENT_ID: ${{ secrets.VITE_WEB3AUTH_CLIENT_ID }}"
           echo "NODE_ENV: $NODE_ENV"
           echo "AWS_REGION: $AWS_REGION"
           
