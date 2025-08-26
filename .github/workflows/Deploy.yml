@@ -5,8 +5,6 @@ on:
     branches:
       - main
       - develop
-  pull_request:
-    branches: [main, develop]
 
 # Concurrency group name ensures concurrent workflow runs wait for any in-progress job to finish
 concurrency:
@@ -39,17 +37,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: 'npm'
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: sa-east-1
-
-      - name: Install dependencies
-        working-directory: packages/api
+      - name: Install dependencies (root)
         run: npm install
+
+      - name: Build shared packages
+        run: npm run build:api
 
       - name: Migrate database
         working-directory: ./packages/api
@@ -57,14 +51,23 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
-      - name: Deploy API
-        working-directory: packages/api
+      - name: Deploy (API + UI)
         run: |
           # Set detailed log level
           export SST_LOG_LEVEL=debug
           
-          # Sanitize branch name for AWS resource naming
-          STAGE_NAME=$(echo "${{ github.ref_name }}" | sed 's/[^a-zA-Z0-9-]/-/g')
+          # Create clean stage name to avoid DNS conflicts
+          if [[ "${{ github.ref_name }}" == "main" ]]; then
+            STAGE_NAME="production"
+          elif [[ "${{ github.ref_name }}" == "develop" ]]; then
+            STAGE_NAME="staging"
+          else
+            # For feature branches, use a shorter, cleaner name
+            STAGE_NAME=$(echo "${{ github.ref_name }}" | sed 's/[^a-zA-Z0-9]//g' | tr '[:upper:]' '[:lower:]' | cut -c1-10)
+            STAGE_NAME="dev-${STAGE_NAME}"
+          fi
+          
+          echo "Using stage: $STAGE_NAME"
           
           # Run with --verbose for more details
           if ! npx sst deploy --stage $STAGE_NAME --verbose; then
@@ -77,26 +80,5 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      - name: Install dependencies
-        working-directory: packages/ui
-        run: npm install      
-
-      - name: Deploy UI
-        working-directory: packages/ui
-        run: |
-          export SST_LOG_LEVEL=debug
-          
-          # Sanitize branch name for AWS resource naming
-          STAGE_NAME=$(echo "${{ github.ref_name }}" | sed 's/[^a-zA-Z0-9-]/-/g')
-            
-          if ! npx sst deploy --stage $STAGE_NAME --verbose; then
-            echo "::group::Deployment Error"
-            echo "Deployment failed. Error details:"
-            cat .sst/log/sst.log || echo "No log file found"
-            echo "::endgroup::"
-            exit 1
-          fi
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: sa-east-1
+          VITE_WEB3AUTH_CLIENT_ID: ${{ vars.VITE_WEB3AUTH_CLIENT_ID }}

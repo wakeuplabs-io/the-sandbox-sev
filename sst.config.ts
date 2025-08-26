@@ -1,4 +1,4 @@
-/// <reference path="./.sst/platform/config.d.ts" />
+/// <reference path="./packages/api/.sst/platform/config.d.ts" />
 
 // Project configuration constants
 const PROJECT_NAME: string = "sev"; // Must be set by developer, must only contain alphanumeric characters and hyphens
@@ -17,7 +17,6 @@ function validateConfig() {
   }
 
   if (errors.length > 0) {
-    // Print error directly to console
     console.error("\n\n==============================================");
     console.error("⛔️ Configuration Error");
     console.error("==============================================");
@@ -25,15 +24,12 @@ function validateConfig() {
     errors.forEach((err) => console.error(`  • ${err}`));
     console.error("\n❌ Deployment blocked until these values are set");
     console.error("==============================================\n\n");
-
-    // Also throw error for SST to catch
     throw new Error("Configuration validation failed");
   }
 }
 
 export default $config({
   app(input) {
-    // Validate configuration before proceeding
     validateConfig();
 
     return {
@@ -51,23 +47,21 @@ export default $config({
     };
   },
   async run() {
-
     const stageSuffix =
       $app.stage === "production" ? "" : $app.stage === "staging" ? "-staging" : "-dev";
+    
     const API_DOMAIN_URL = `api.${PROJECT_NAME}${stageSuffix}.wakeuplabs.link`;
     const API_URL = `https://${API_DOMAIN_URL}`;
-
     const UI_DOMAIN_URL = `${PROJECT_NAME}${stageSuffix}.wakeuplabs.link`;
     const UI_URL = `https://${UI_DOMAIN_URL}`;
-    
     const ASSETS_DOMAIN_URL = `assets.${UI_DOMAIN_URL}`;
     const ASSETS_URL = `https://${ASSETS_DOMAIN_URL}`;
 
-    // Validate configuration again in case run() is called directly
     validateConfig();
 
     const allowedOrigins = [
       API_URL,
+      UI_URL,
       ...($app.stage !== "production"
         ? [
             "http://localhost:3000", // for local development
@@ -76,9 +70,7 @@ export default $config({
         : []),
     ];
 
-
-    // --> Assets bucket and cloudfront distribution
-
+    // Assets bucket and cloudfront distribution
     const assetsBucket = new sst.aws.Bucket("assets", {
       access: "public",
       cors: {
@@ -88,7 +80,6 @@ export default $config({
       },
     });
 
-    //SST Router wouldn't create cloudfront, so using this instead
     new sst.aws.Cdn("assets-cdn", {
       domain: ASSETS_DOMAIN_URL,
       origins: [
@@ -111,16 +102,16 @@ export default $config({
       },
     });
 
-    // -> API Function
+    // API Function
     const api = new sst.aws.Function(`${$app.stage}-${PROJECT_NAME}-api`, {
-      handler: "src/index.handler",
+      handler: "packages/api/src/index.handler",
       url: true,
       environment: {
         DB_URL: process.env.DB_URL ?? '',
       },
     });
 
-    // deploy API Gateway with custom domain
+    // API Gateway with custom domain
     const apiGateway = new sst.aws.ApiGatewayV2(`${$app.stage}-${PROJECT_NAME}-gateway`, {
       domain: API_DOMAIN_URL,
       cors: {
@@ -130,11 +121,60 @@ export default $config({
       },
     });
 
-
     apiGateway.route('$default', api.arn);
+
+    // UI Static Site
+    const ui = new sst.aws.StaticSite(`${PROJECT_NAME}-ui`, {
+      path: "packages/ui",
+      domain: {
+        name: UI_DOMAIN_URL,
+      },
+      build: {
+        command: "npm run build",
+        output: "dist",
+      },
+      environment: {
+        VITE_API_URL: API_URL,
+        VITE_WEB3AUTH_CLIENT_ID: process.env.VITE_WEB3AUTH_CLIENT_ID ?? '',
+        NODE_ENV: $app.stage === "production" ? "production" : $app.stage === "staging" ? "staging" : "development",
+      },
+      assets: {
+        textEncoding: 'utf-8',
+        fileOptions: [
+          {
+            files: ['**/*.css', '**/*.js'],
+            cacheControl: 'max-age=31536000,public,immutable',
+          },
+          {
+            files: '**/*.html',
+            cacheControl: 'max-age=0,no-cache,no-store,must-revalidate',
+          },
+          {
+            files: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg'],
+            cacheControl: 'max-age=31536000,public,immutable',
+          },
+        ],
+      },
+      indexPage: "index.html",
+      errorPage: "index.html",
+      edge: {
+        viewerResponse: {
+          injection: `
+              event.response.headers["content-security-policy"] = {value: "default-src 'self' wss://*.crisp.chat wss://*.web3auth.io wss://*.tor.us https://*.web3auth.io https://*.tor.us https://*.crisp.chat https://*.sentry.io https://fonts.googleapis.com https://fonts.gstatic.com https://*.googletagmanager.com https://*.google-analytics.com https://accounts.google.com https://*.doubleclick.net https://hcaptcha.com https://*.hcaptcha.com; script-src 'self' 'unsafe-inline' https://cmp.osano.com https://www.googletagmanager.com https://browser.sentry-cdn.com https://js.sentry-cdn.com https://accounts.google.com https://*.doubleclick.net https://hcaptcha.com https://*.hcaptcha.com https://*.getmati.com blob:; style-src 'self' 'unsafe-inline' https://client.crisp.chat https://fonts.googleapis.com https://accounts.google.com https://hcaptcha.com https://*.hcaptcha.com; img-src 'self' * data: https://*.web3auth.io https://*.tor.us https://*.crisp.chat; frame-src 'self' https://*.getmati.com https://*.web3auth.io; object-src 'none'; connect-src 'self' * https://hcaptcha.com https://*.hcaptcha.com;"};
+              event.response.headers["referrer-policy"] = {value: "no-referrer"};
+              event.response.headers["access-control-allow-origin"] = {value: "*"};
+              event.response.headers["access-control-allow-methods"] = {value: "GET, HEAD, OPTIONS"};
+              event.response.headers["access-control-allow-headers"] = {value: "*"};
+              event.response.headers["access-control-expose-headers"] = {value: "ETag"};
+            `,
+        },
+      },
+    });
 
     return {
       api: apiGateway.url,
+      ui: ui.url,
+      assets: ASSETS_URL,
     };
   },
 });

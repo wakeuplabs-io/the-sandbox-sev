@@ -3,6 +3,12 @@ import { serve } from "@hono/node-server";
 import env from "./env";
 import app from "./app";
 
+export { default } from "./app";
+export type { AppType } from "./app";
+
+// Re-export types that might be useful for the UI
+export type { User } from "./domain/users/users.schema";
+
 const port = env.PORT;
 
 // For AWS Lambda
