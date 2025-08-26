@@ -44,10 +44,8 @@ export function Header({ links, onSidebarToggle, showSidebarToggle }: HeaderProp
 				
 				{/* Logo */}
 				<Link to="/" className="btn btn-ghost text-xl">
-					<div className="avatar placeholder">
-						<div className="bg-primary text-primary-content rounded-full w-10">
-							<span className="text-xl font-bold">S</span>
-						</div>
+					<div className="avatar placeholder bg-primary text-primary-content rounded-full w-10 h-10 flex items-center justify-center">
+						<span className="text-xl font-bold">S</span>
 					</div>
 					<span className="hidden sm:block ml-2 font-bold">Sandbox</span>
 				</Link>
