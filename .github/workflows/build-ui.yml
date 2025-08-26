@@ -16,15 +16,17 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: 'npm'
 
-      - name: Install UI dependencies
-        working-directory: packages/ui
+      - name: Install dependencies (root)
         run: npm install
+
+      - name: Build API types
+        run: npm run build --workspace=packages/api
 
       - name: Generate TanStack router tree
         working-directory: packages/ui
         run: npx @tanstack/router-cli generate-routefiles --routesDirectory src/routes
 
-      - name: Build UI only
-        working-directory: packages/ui
-        run: npm run build
+      - name: Build UI
+        run: npm run build --workspace=packages/ui

@@ -1,5 +1,6 @@
 import { useWeb3Auth } from "@/context/web3auth";
 import envParsed from "@/env-parsed";
+import { AppType } from "@the-sandbox-sev/api";
 import { hc } from "hono/client";
 import { useMemo } from "react";
 
@@ -14,7 +15,7 @@ export const useApiClient = () => {
         "ngrok-skip-browser-warning": "true",
       },
     };
-    return hc(envParsed.API_URL, options);
+    return hc<AppType>(envParsed.API_URL, options);
   }, [idToken]);
 
   return client;

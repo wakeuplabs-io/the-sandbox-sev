@@ -20,8 +20,8 @@ jobs:
       
       - name: Validate Configuration
         run: |
-          if grep -q 'const PROJECT_NAME: string = "";' sst.config.ts || grep -q 'const CUSTOMER: string = "";' sst.config.ts; then
-            echo "::error::Project configuration is not set. Please set PROJECT_NAME and CUSTOMER in sst.config.ts"
+          if grep -q 'const PROJECT_NAME: string = "";' packages/api/sst.config.ts || grep -q 'const CUSTOMER: string = "";' packages/api/sst.config.ts; then
+            echo "::error::Project configuration is not set. Please set PROJECT_NAME and CUSTOMER in packages/api/sst.config.ts"
             echo "Example configuration:"
             echo "const PROJECT_NAME = \"testing-monorepo-1\";"
             echo "const CUSTOMER = \"testing\";"
@@ -39,17 +39,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: 'npm'
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: sa-east-1
-
-      - name: Install dependencies
-        working-directory: packages/api
+      - name: Install dependencies (root)
         run: npm install
+
+      - name: Build shared packages
+        run: npm run build --workspace=packages/api
 
       - name: Migrate database
         working-directory: ./packages/api
@@ -77,10 +73,6 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      - name: Install dependencies
-        working-directory: packages/ui
-        run: npm install      
 
       - name: Deploy UI
         working-directory: packages/ui

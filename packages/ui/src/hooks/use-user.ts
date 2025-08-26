@@ -5,7 +5,7 @@ export const useUser = () => {
 
   const getByAddress = async (address: string, email?: string) => {
     try {
-      const res = await (client.users[":address"] as any).$get({
+      const res = await client.api.users[":address"].$get({
         param: { address },
         ...(email && { query: { email } }),
       });
