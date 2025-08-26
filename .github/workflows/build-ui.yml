@@ -21,8 +21,24 @@ jobs:
       - name: Install dependencies (root)
         run: npm install
 
+      - name: Verify workspace structure
+        run: |
+          echo "=== Workspace Structure ==="
+          npm list --depth=0
+          echo "=== API Package Dependencies ==="
+          npm list --workspace=packages/api --depth=0
+          echo "=== UI Package Dependencies ==="
+          npm list --workspace=packages/ui --depth=0
+
       - name: Build API types first
         run: npm run build:api
+
+      - name: Verify API build output
+        run: |
+          echo "=== API Build Output ==="
+          ls -la packages/api/dist/
+          echo "=== API Types ==="
+          cat packages/api/dist/index.d.ts || echo "No index.d.ts found"
 
       - name: Generate TanStack router tree
         working-directory: packages/ui
