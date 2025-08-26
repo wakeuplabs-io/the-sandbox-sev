@@ -41,9 +41,9 @@ enum Priority {
 
 model User {
     id        Int      @id @default(autoincrement())
-    email     String
+    email     String?
     nickname  String?
-    address   String?
+    address   String
     role      Role     @default(MEMBER)
     createdAt DateTime @default(now())
     tasks     Task[]   @relation("UserTasks")

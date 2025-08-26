@@ -2,7 +2,9 @@ import React from 'react'
 import { Link } from '@tanstack/react-router'
 import { MobileMenu } from './MobileMenu'
 import { DesktopNav } from './DesktopNav'
-
+import { FaHamburger } from 'react-icons/fa'
+import { LoginButton } from '../login-button'
+import { useLayout } from '@/context/layout-context'
 interface HeaderProps {
 	links: Array<{ to: string; label: string; icon?: React.ReactNode }>
 	onSidebarToggle?: () => void
@@ -10,8 +12,7 @@ interface HeaderProps {
 }
 
 export function Header({ links, onSidebarToggle, showSidebarToggle }: HeaderProps) {
-	const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false)
-
+	const { isLoading, isMobileMenuOpen, setIsMobileMenuOpen } = useLayout();
 	const handleMobileMenuToggle = () => {
 		setIsMobileMenuOpen(!isMobileMenuOpen)
 	}
@@ -26,19 +27,7 @@ export function Header({ links, onSidebarToggle, showSidebarToggle }: HeaderProp
 						onClick={onSidebarToggle}
 						aria-label="Toggle sidebar"
 					>
-						<svg
-							className="w-5 h-5"
-							fill="none"
-							stroke="currentColor"
-							viewBox="0 0 24 24"
-						>
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth={2}
-								d="M4 6h16M4 12h16M4 18h16"
-							/>
-						</svg>
+						<FaHamburger />
 					</button>
 				)}
 				
@@ -56,8 +45,12 @@ export function Header({ links, onSidebarToggle, showSidebarToggle }: HeaderProp
 				<DesktopNav links={links} />
 			</div>
 
-			{/* Right side - Mobile Menu */}
 			<div className="navbar-end">
+				<LoginButton isLoading={isLoading} />
+			</div>
+
+			{/* Right side - Mobile Menu */}
+			<div className="navbar-end lg:hidden">
 				<MobileMenu
 					isOpen={isMobileMenuOpen}
 					onToggle={handleMobileMenuToggle}
