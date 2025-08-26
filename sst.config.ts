@@ -135,6 +135,8 @@ export default $config({
       },
       environment: {
         VITE_API_URL: API_URL,
+        VITE_WEB3AUTH_CLIENT_ID: process.env.VITE_WEB3AUTH_CLIENT_ID ?? '',
+        NODE_ENV: $app.stage === "production" ? "production" : $app.stage === "staging" ? "staging" : "development",
       },
       assets: {
         textEncoding: 'utf-8',

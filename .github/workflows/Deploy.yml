@@ -20,8 +20,8 @@ jobs:
       
       - name: Validate Configuration
         run: |
-          if grep -q 'const PROJECT_NAME: string = "";' packages/api/sst.config.ts || grep -q 'const CUSTOMER: string = "";' packages/api/sst.config.ts; then
-            echo "::error::Project configuration is not set. Please set PROJECT_NAME and CUSTOMER in packages/api/sst.config.ts"
+          if grep -q 'const PROJECT_NAME: string = "";' sst.config.ts || grep -q 'const CUSTOMER: string = "";' sst.config.ts; then
+            echo "::error::Project configuration is not set. Please set PROJECT_NAME and CUSTOMER in sst.config.ts"
             echo "Example configuration:"
             echo "const PROJECT_NAME = \"testing-monorepo-1\";"
             echo "const CUSTOMER = \"testing\";"
@@ -45,7 +45,7 @@ jobs:
         run: npm install
 
       - name: Build shared packages
-        run: npm run build --workspace=packages/api
+        run: npm run build:api
 
       - name: Migrate database
         working-directory: ./packages/api
@@ -53,8 +53,7 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
-      - name: Deploy API
-        working-directory: packages/api
+      - name: Deploy (API + UI)
         run: |
           # Set detailed log level
           export SST_LOG_LEVEL=debug
@@ -73,22 +72,5 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      - name: Deploy UI
-        working-directory: packages/ui
-        run: |
-          export SST_LOG_LEVEL=debug
-          
-          # Sanitize branch name for AWS resource naming
-          STAGE_NAME=$(echo "${{ github.ref_name }}" | sed 's/[^a-zA-Z0-9-]/-/g')
-            
-          if ! npx sst deploy --stage $STAGE_NAME --verbose; then
-            echo "::group::Deployment Error"
-            echo "Deployment failed. Error details:"
-            cat .sst/log/sst.log || echo "No log file found"
-            echo "::endgroup::"
-            exit 1
-          fi
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: sa-east-1
+          VITE_WEB3AUTH_CLIENT_ID: ${{ secrets.VITE_WEB3AUTH_CLIENT_ID }}
