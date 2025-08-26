@@ -21,12 +21,12 @@ jobs:
       - name: Install dependencies (root)
         run: npm install
 
-      - name: Build API types
-        run: npm run build --workspace=packages/api
+      - name: Build API types first
+        run: npm run build:api
 
       - name: Generate TanStack router tree
         working-directory: packages/ui
         run: npx @tanstack/router-cli generate-routefiles --routesDirectory src/routes
 
       - name: Build UI
-        run: npm run build --workspace=packages/ui
+        run: npm run build:ui

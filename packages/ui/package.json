@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm install && npx tsc && vite build",
+    "build": "npx tsc && vite build",
     "preview": "vite preview",
     "routes": "@tanstack/router-vite-plugin generate",
     "lint": "eslint . --ext .ts,.tsx --max-warnings 0",
