@@ -58,8 +58,18 @@ jobs:
           # Set detailed log level
           export SST_LOG_LEVEL=debug
           
-          # Sanitize branch name for AWS resource naming
-          STAGE_NAME=$(echo "${{ github.ref_name }}" | sed 's/[^a-zA-Z0-9-]/-/g')
+          # Create clean stage name to avoid DNS conflicts
+          if [[ "${{ github.ref_name }}" == "main" ]]; then
+            STAGE_NAME="production"
+          elif [[ "${{ github.ref_name }}" == "develop" ]]; then
+            STAGE_NAME="staging"
+          else
+            # For feature branches, use a shorter, cleaner name
+            STAGE_NAME=$(echo "${{ github.ref_name }}" | sed 's/[^a-zA-Z0-9]//g' | tr '[:upper:]' '[:lower:]' | cut -c1-10)
+            STAGE_NAME="dev-${STAGE_NAME}"
+          fi
+          
+          echo "Using stage: $STAGE_NAME"
           
           # Run with --verbose for more details
           if ! npx sst deploy --stage $STAGE_NAME --verbose; then
