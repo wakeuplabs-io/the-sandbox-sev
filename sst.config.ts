@@ -144,8 +144,8 @@ export default $config({
     });
 
     // Add routes to connect API Gateway to the function
-    api.route("ANY /{proxy+}", api.arn);
-    api.route("ANY /", api.arn);
+    apiGateway.route("ANY /{proxy+}", api.arn);
+    apiGateway.route("ANY /", api.arn);
 
     // UI Static Site
      // --> UI deployment
