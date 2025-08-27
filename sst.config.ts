@@ -107,7 +107,7 @@ export default $config({
       handler: "packages/api/src/index.handler",
       url: true,
       environment: {
-        DB_URL: process.env.DB_URL ?? '',
+        DATABASE_URL: process.env.DATABASE_URL ?? '',
       },
     });
 
