@@ -105,10 +105,32 @@ export default $config({
     // API Function
     const api = new sst.aws.Function(`${$app.stage}-${PROJECT_NAME}-api`, {
       handler: "packages/api/src/index.handler",
-      url: true,
+     // url: true,
       environment: {
         DATABASE_URL: process.env.DATABASE_URL ?? '',
+        NODE_ENV: $app.stage,
+        CORS_ORIGINS: allowedOrigins.join(","),
       },
+      permissions: [
+        {
+          actions: ["s3:PutObject", "s3:PutObjectAcl", "s3:GetObject", "s3:ListBucket"],
+          resources: [$interpolate`${assetsBucket.arn}/*`],
+        },
+      ],
+      copyFiles: [
+        {
+          from: "node_modules/.prisma/client/",
+          to: ".prisma/client/",
+        },
+        {
+          from: "node_modules/@prisma/client/",
+          to: "@prisma/client/",
+        },
+        {
+          from: "packages/api/src/generated/prisma/",
+          to: "src/generated/prisma/",
+        },
+      ],
     });
 
     // API Gateway with custom domain
@@ -121,13 +143,20 @@ export default $config({
       },
     });
 
-    apiGateway.route('$default', api.arn);
+    // Add routes to connect API Gateway to the function
+    api.route("ANY /{proxy+}", api.arn);
+    api.route("ANY /", api.arn);
 
     // UI Static Site
+     // --> UI deployment
+     const domainRoot = UI_DOMAIN_URL.replace(/^https?:\/\/(www\.)?/, "");
+     const domainAlias = UI_DOMAIN_URL.replace(/^https?:\/\//, "");
+
     const ui = new sst.aws.StaticSite(`${PROJECT_NAME}-ui`, {
       path: "packages/ui",
       domain: {
-        name: UI_DOMAIN_URL,
+        name: domainRoot,
+        aliases: domainAlias !== domainRoot ? [domainAlias] : [],
       },
       build: {
         command: "npm run build",
@@ -175,6 +204,7 @@ export default $config({
       api: apiGateway.url,
       ui: ui.url,
       assets: ASSETS_URL,
+      assetsBucket: assetsBucket.name,
     };
   },
 });
