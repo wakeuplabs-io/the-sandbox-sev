@@ -14,6 +14,10 @@ const EnvSchema = z.object({
   PORT: z.coerce.number().default(9999),
   LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]).optional(),
   CORS_ORIGINS: z.string().default("http://localhost:3000"),
+  PRIVATE_KEY: z.string(),
+  RPC_URL: z.string(),
+  DATABASE_URL: z.string(),
+  TASKS_CONTRACT_ADDRESS: z.string(),
 });
 
 export type env = z.infer<typeof EnvSchema>;
