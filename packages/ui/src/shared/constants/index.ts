@@ -1,14 +1,9 @@
-import { arbitrum, arbitrumSepolia, Chain } from "viem/chains";
-
-export enum PlayerStatusEnum {
-  INACTIVE,
-  ACTIVE,
-  REDEEM,
-}
+import { Chain, polygon, polygonAmoy } from "viem/chains";
 
 export enum UserRoleEnum {
   ADMIN = "ADMIN",
-  USER = "USER",
+  CONSULTANT = "CONSULTANT",
+  MEMBER = "MEMBER",
 }
 
 export const ETHERSCAN_BY_CHAIN_ID: Record<number, string> = {
@@ -16,10 +11,14 @@ export const ETHERSCAN_BY_CHAIN_ID: Record<number, string> = {
   42161: "https://arbiscan.io",
   //arbitrum sepolia
   421614: "https://sepolia.arbiscan.io",
+  //polygon amoy
+  80001: "https://polygon-amoy.etherscan.io",
+  //polygon mainnet
+  137: "https://polygonscan.com",
 };
 
 export const CHAIN_BY_ENV: Record<string, Chain> = {
-  development: arbitrumSepolia,
-  production: arbitrum,
-  staging: arbitrumSepolia,
+  development: polygonAmoy,
+  production: polygon,
+  staging: polygonAmoy,
 };

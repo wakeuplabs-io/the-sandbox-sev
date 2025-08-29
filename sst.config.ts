@@ -110,6 +110,9 @@ export default $config({
         DATABASE_URL: process.env.DATABASE_URL ?? '',
         NODE_ENV: $app.stage,
         CORS_ORIGINS: allowedOrigins.join(","),
+        PRIVATE_KEY: process.env.PRIVATE_KEY ?? '',
+        RPC_URL: process.env.RPC_URL ?? '',
+        EXECUTION_VERIFIER_ADDRESS: process.env.EXECUTION_VERIFIER_ADDRESS ?? '',
       },
       permissions: [
         {

@@ -9,10 +9,23 @@ import {
   getUsersController,
 } from "./users.controller";
 import { CreateUserSchema } from "./users.schema";
+import {
+  assignRolesController,
+} from "./roles.controller";
+import { requireRole } from "../../middlewares/require-role";
+import { Role } from "@/generated/prisma";
+
+const { ADMIN, CONSULTANT } = Role
+
+const GetUsersQuerySchema = z.object({
+  page: z.coerce.number().min(1).default(1),
+  limit: z.coerce.number().min(1).max(100).default(10),
+});
 
 const users = new Hono()
   .use("/*", authMiddleware)
-  .get("/", getUsersController)
+  .get("/", zValidator("query", GetUsersQuerySchema), getUsersController)
+  .post("/roles/assign", requireRole([ADMIN]), assignRolesController)  
   .get(
     "/:address",
     zValidator(
