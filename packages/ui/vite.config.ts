@@ -7,7 +7,17 @@ import tsconfigPaths from "vite-tsconfig-paths";
 // https://vitejs.dev/config/
 export default defineConfig({
   base: "/",
-  plugins: [react(), tsconfigPaths(), TanStackRouterVite()],
+  plugins: [react(), tsconfigPaths(), TanStackRouterVite(),
+    {
+      name: "configure-response-headers",
+      configureServer: server => {
+        server.middlewares.use((_req, res, next) => {
+          res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+          next();
+        });
+      },
+    },
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
