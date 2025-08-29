@@ -146,6 +146,7 @@ export default $config({
       },
     });
 
+    console.log("allowedOrigins", allowedOrigins);
     // Add routes to connect API Gateway to the function
     apiGateway.route("ANY /{proxy+}", api.arn);
     apiGateway.route("ANY /", api.arn);
