@@ -200,6 +200,7 @@ export default $config({
           from: "/*",
           to: "/index.html",
           status: "200",
+          exclude: ["/api/**"],
         },
       ],
       edge: {
