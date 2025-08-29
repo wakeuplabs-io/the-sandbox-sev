@@ -19,6 +19,6 @@ export const ETHERSCAN_BY_CHAIN_ID: Record<number, string> = {
 
 export const CHAIN_BY_ENV: Record<string, Chain> = {
   development: polygonAmoy,
-  production: polygonAmoy,
+  production: polygon,
   staging: polygonAmoy,
 };

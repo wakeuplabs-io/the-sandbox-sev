@@ -4,6 +4,6 @@ export * from './execution-verifier'
 
 export const CHAIN_BY_ENV: Record<string, Chain> = {
  development: polygonAmoy,
- production: polygonAmoy,
+ production: polygon,
  staging: polygonAmoy,
 };

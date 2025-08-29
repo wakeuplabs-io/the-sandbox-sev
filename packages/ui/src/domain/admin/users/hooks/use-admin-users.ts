@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { useGetUsers } from "@/hooks/use-get-users";
 import { useApiClient } from "@/hooks/use-api-client";
 import { useWeb3Auth } from "@/context/web3auth";
-import { User, UserWithChanges, PaginationInfo } from "../types";
+import { User, UserWithChanges } from "../types";
 import { UserRoleEnum } from "@/shared/constants";
 
 export function useAdminUsers() {
@@ -21,7 +21,6 @@ export function useAdminUsers() {
     users: apiUsers, 
     pagination: apiPagination, 
     isLoading: isLoadingUsers, 
-    isError, 
     error: apiError,
     refetch 
   } = useGetUsers(currentPage, currentLimit);
