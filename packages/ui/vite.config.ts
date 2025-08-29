@@ -6,7 +6,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: "./",
+  base: "/",
   plugins: [react(), tsconfigPaths(), TanStackRouterVite()],
   resolve: {
     alias: {
@@ -15,6 +15,18 @@ export default defineConfig({
   },
   server: {
     port: 3000,
+  },
+  build: {
+    outDir: "dist",
+    assetsDir: "assets",
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ["react", "react-dom"],
+          router: ["@tanstack/react-router"],
+        },
+      },
+    },
   },
   define: {
     global: "globalThis",
