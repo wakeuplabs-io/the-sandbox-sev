@@ -144,7 +144,6 @@ export default $config({
         allowMethods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
         allowHeaders: ["*"],
         allowCredentials: true,
-        maxAge: 86400,
       },
     });
 
