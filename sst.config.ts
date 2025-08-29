@@ -35,12 +35,12 @@ export default $config({
     return {
       name: PROJECT_NAME,
       removal: input?.stage === "production" ? "retain" : "remove",
-      protect: ["production"].includes(input?.stage),
+      //protect: ["production"].includes(input?.stage),
       home: "aws",
       providers: {
         aws: {
           defaultTags: {
-            tags: { customer: CUSTOMER, stage: input.stage },
+            tags: { customer: CUSTOMER, stage: input.stage, environment: input?.stage, },
           },
         },
       },
@@ -140,7 +140,7 @@ export default $config({
     const apiGateway = new sst.aws.ApiGatewayV2(`${$app.stage}-${PROJECT_NAME}-gateway`, {
       domain: API_DOMAIN_URL,
       cors: {
-        allowOrigins: allowedOrigins,
+        allowOrigins: ["*"],
         allowMethods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
         allowHeaders: ["*"],
       },
