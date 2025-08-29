@@ -10,8 +10,8 @@ interface RoleSelectorProps {
 }
 
 const roleOptions = [
-  { value: UserRoleEnum.ADMIN, label: "Admin", color: "badge-error" },
-  { value: UserRoleEnum.CONSULTANT, label: "Consultant", color: "badge-warning" },
+  { value: UserRoleEnum.ADMIN, label: "Admin", color: "error" },
+  { value: UserRoleEnum.CONSULTANT, label: "Consultant", color: "warning" },
 ];
 
 export function RoleSelector({ currentRole, onChange, onRemoveRole }: RoleSelectorProps) {
@@ -20,7 +20,7 @@ export function RoleSelector({ currentRole, onChange, onRemoveRole }: RoleSelect
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   const getRoleColor = (role: string) => {
-    return roleOptions.find(option => option.value === role)?.color || "badge-neutral";
+    return roleOptions.find(option => option.value === role)?.color || "neutral";
   };
 
   const getRoleLabel = (role: string) => {
@@ -58,15 +58,15 @@ export function RoleSelector({ currentRole, onChange, onRemoveRole }: RoleSelect
   }, [isOpen]);
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 w-[200px]">
       {/* Role Selector */}
-      <div className="relative">
+      <div className="relative w-full">
         <button
           ref={buttonRef}
           onClick={() => setIsOpen(!isOpen)}
-          className="btn btn-sm btn-outline min-h-8 h-8"
+          className="btn btn-sm btn-outline w-[150px] h-8"
         >
-          <span className={`badge ${getRoleColor(currentRole)}`}>
+          <span className={` ${getRoleColor(currentRole)}`}>
             {getRoleLabel(currentRole)}
           </span>
           <FaChevronDown className={`w-3 h-3 ml-1 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
