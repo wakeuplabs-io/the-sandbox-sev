@@ -143,7 +143,6 @@ export default $config({
         allowOrigins: allowedOrigins,
         allowMethods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
         allowHeaders: ["*"],
-        allowCredentials: true,
       },
     });
 
@@ -151,10 +150,6 @@ export default $config({
     // Add routes to connect API Gateway to the function
     apiGateway.route("ANY /{proxy+}", api.arn);
     apiGateway.route("ANY /", api.arn);
-    
-    // Ensure OPTIONS requests are handled for CORS preflight
-    apiGateway.route("OPTIONS /{proxy+}", api.arn);
-    apiGateway.route("OPTIONS /", api.arn);
 
     // UI Static Site
      // --> UI deployment
@@ -199,14 +194,7 @@ export default $config({
       },
       indexPage: "index.html",
       errorPage: "index.html",
-      // Configure SPA routing - redirect all routes to index.html
-      redirects: [
-        {
-          from: "/*",
-          to: "/index.html",
-          status: "200",
-        },
-      ],
+      // SPA routing handled by errorPage: "index.html" - no redirects needed
       edge: {
         viewerResponse: {
           injection: `
