@@ -32,9 +32,9 @@ export function UserRoleRow({ user, onRoleChange, isCurrentUser }: UserRoleRowPr
     <tr>
       <td>
         <div className="flex items-center gap-3">
-          <div className="avatar placeholder">
-            <div className="bg-neutral text-neutral-content rounded-full w-8">
-              <span className="text-xs">{getDisplayName(user).charAt(0).toUpperCase()}</span>
+          <div className="avatar avatar-placeholder">
+            <div className="bg-neutral text-neutral-content w-10 rounded-full">
+              <span className="text-lg">{getDisplayName(user).charAt(0).toUpperCase()}</span>
             </div>
           </div>
           <div>
