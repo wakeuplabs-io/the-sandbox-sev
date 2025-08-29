@@ -189,6 +189,25 @@ export default $config({
       },
       indexPage: "index.html",
       errorPage: "index.html",
+      // Configure SPA routing - redirect all routes to index.html
+      redirects: [
+        {
+          from: "/*",
+          to: "/index.html",
+          status: "200",
+        },
+      ],
+      // Ensure proper MIME types for JavaScript files
+      fileOptions: [
+        {
+          files: ["**/*.js"],
+          contentType: "application/javascript",
+        },
+        {
+          files: ["**/*.mjs"],
+          contentType: "application/javascript",
+        },
+      ],
       edge: {
         viewerResponse: {
           injection: `
