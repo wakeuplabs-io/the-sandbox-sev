@@ -143,6 +143,8 @@ export default $config({
         allowOrigins: allowedOrigins,
         allowMethods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
         allowHeaders: ["*"],
+        allowCredentials: true,
+        maxAge: 86400,
       },
     });
 
@@ -150,6 +152,10 @@ export default $config({
     // Add routes to connect API Gateway to the function
     apiGateway.route("ANY /{proxy+}", api.arn);
     apiGateway.route("ANY /", api.arn);
+    
+    // Ensure OPTIONS requests are handled for CORS preflight
+    apiGateway.route("OPTIONS /{proxy+}", api.arn);
+    apiGateway.route("OPTIONS /", api.arn);
 
     // UI Static Site
      // --> UI deployment
@@ -200,7 +206,6 @@ export default $config({
           from: "/*",
           to: "/index.html",
           status: "200",
-          exclude: ["/api/**"],
         },
       ],
       edge: {
