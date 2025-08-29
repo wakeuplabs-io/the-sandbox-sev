@@ -95,3 +95,4 @@ jobs:
           EXECUTION_VERIFIER_ADDRESS: ${{ secrets.EXECUTION_VERIFIER_ADDRESS }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           RPC_URL: ${{ secrets.RPC_URL }}
+          CORS_ORIGINS: ${{ secrets.CORS_ORIGINS }}

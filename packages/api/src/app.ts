@@ -22,17 +22,13 @@ import users from "./domain/users/users.routes";
  * This ensures all endpoints are under the /api namespace
  */
 const routes = createApp()
-  .use("*", cors({
-    origin: env.CORS_ORIGINS.split(",").map(origin => origin.trim()),
-    credentials: true,
-    allowMethods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowHeaders: ["*"],
-    exposeHeaders: ["*"],
-    maxAge: 86400,
-  }))
-  .options("*", (c) => {
-    return c.text("", 200);
-  })
+  .use(
+    "/*",
+    cors({
+      origin: env.CORS_ORIGINS.split(",").map(origin => origin.trim()),
+      credentials: true,
+    })
+  )
   .basePath("/api")
   .route("/users", users)
 

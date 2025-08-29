@@ -93,10 +93,10 @@ export function RoleSelector({ currentRole, onChange, onRemoveRole }: RoleSelect
                   key={option.value}
                   onClick={() => handleRoleChange(option.value)}
                   className={`w-full text-left px-3 py-2 hover:bg-base-200 transition-colors ${
-                    currentRole === option.value ? 'bg-base-200' : ''
+                    currentRole === option.value ? 'bg-base-200' : ``
                   }`}
                 >
-                  <span className={`badge ${option.color}`}>
+                  <span className={``}>
                     {option.label}
                   </span>
                 </button>

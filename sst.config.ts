@@ -185,6 +185,10 @@ export default $config({
             files: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg'],
             cacheControl: 'max-age=31536000,public,immutable',
           },
+          {
+            files: ["**/*.ttf", "**/*.woff", "**/*.woff2"],
+            cacheControl: "max-age=31536000,public,immutable",
+          },
         ],
       },
       indexPage: "index.html",
