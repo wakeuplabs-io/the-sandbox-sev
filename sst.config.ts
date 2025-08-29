@@ -197,17 +197,6 @@ export default $config({
           status: "200",
         },
       ],
-      // Ensure proper MIME types for JavaScript files
-      fileOptions: [
-        {
-          files: ["**/*.js"],
-          contentType: "application/javascript",
-        },
-        {
-          files: ["**/*.mjs"],
-          contentType: "application/javascript",
-        },
-      ],
       edge: {
         viewerResponse: {
           injection: `
