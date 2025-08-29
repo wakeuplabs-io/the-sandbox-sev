@@ -178,7 +178,7 @@ export const Web3AuthProvider = ({ children }: { children: ReactNode }) => {
           } else if (error.message.includes("No contracts found")) {
             console.error(
               "Account Abstraction error: The current chain does not support Account Abstraction v1.3.0. " +
-                "This is expected for Arbitrum Sepolia. Account Abstraction is only supported on Arbitrum mainnet."
+                "This is expected for Polygon Network"
             );
           }
         }

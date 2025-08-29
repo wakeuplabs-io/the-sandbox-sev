@@ -1,9 +1,9 @@
-import { Chain, createPublicClient, createWalletClient, http } from "viem";
+import env from "@/env";
+import { Chain, createPublicClient, createWalletClient, http, type PublicClient, type WalletClient } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { arbitrumSepolia } from "viem/chains";
-import env from "../lib/env";
+import { polygonAmoy } from "viem/chains";
 
-export const getPublicHttpsClient = (chain: Chain = arbitrumSepolia) => {
+export const getPublicHttpsClient = (chain: Chain = polygonAmoy): PublicClient => {
   const publicClient = createPublicClient({
     chain,
     transport: http(chain.rpcUrls.default.http[0]),
@@ -12,7 +12,7 @@ export const getPublicHttpsClient = (chain: Chain = arbitrumSepolia) => {
   return publicClient;
 };
 
-export const getWalletHttpsClient = (chain: Chain = arbitrumSepolia) => {
+export const getWalletHttpsClient = (chain: Chain = polygonAmoy): WalletClient => {
   const account = privateKeyToAccount(env.PRIVATE_KEY as `0x${string}`);
   const walletClient = createWalletClient({
     account,

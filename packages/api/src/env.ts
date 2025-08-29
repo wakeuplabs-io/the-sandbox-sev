@@ -17,7 +17,7 @@ const EnvSchema = z.object({
   PRIVATE_KEY: z.string(),
   RPC_URL: z.string(),
   DATABASE_URL: z.string(),
-  TASKS_CONTRACT_ADDRESS: z.string(),
+  EXECUTION_VERIFIER_ADDRESS: z.string(),
 });
 
 export type env = z.infer<typeof EnvSchema>;

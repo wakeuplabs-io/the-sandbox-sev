@@ -1,7 +1,30 @@
 import prisma from "@/lib/prisma";
 
-export const getUsers = async () => {
-  return prisma.user.findMany();
+export const getUsers = async (page: number = 1, limit: number = 10) => {
+  const skip = (page - 1) * limit;
+  
+  const [users, total] = await Promise.all([
+    prisma.user.findMany({
+      skip,
+      take: limit,
+      orderBy: {
+        createdAt: 'desc'
+      }
+    }),
+    prisma.user.count()
+  ]);
+
+  return {
+    users,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+      hasNext: page < Math.ceil(total / limit),
+      hasPrev: page > 1
+    }
+  };
 };
 
 export const getOrCreateUser = async (address: string, email?: string) => {

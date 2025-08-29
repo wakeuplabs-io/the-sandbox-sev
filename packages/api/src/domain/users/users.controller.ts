@@ -3,8 +3,12 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import { createUser, getOrCreateUser, getUsers } from "./users.service";
 
 export const getUsersController = async (c: Context) => {
-  const users = await getUsers();
-  return c.json(users, HttpStatusCodes.OK);
+  const page = Number(c.req.query("page")) || 1;
+  const limit = Number(c.req.query("limit")) || 10;
+  
+  const response = await getUsers(page, limit);
+  
+  return c.json(response, HttpStatusCodes.OK);
 };
 
 export const getUserController = async (c: Context) => {
