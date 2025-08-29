@@ -166,6 +166,10 @@ export default $config({
         command: "npm run build",
         output: "dist",
       },
+      // Invalidate CloudFront cache after each deploy
+      invalidation: {
+        paths: ["/*"],
+      },
       environment: {
         VITE_API_URL: API_URL,
         VITE_WEB3AUTH_CLIENT_ID: process.env.VITE_WEB3AUTH_CLIENT_ID ?? '',
