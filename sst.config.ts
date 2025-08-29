@@ -140,7 +140,7 @@ export default $config({
     const apiGateway = new sst.aws.ApiGatewayV2(`${$app.stage}-${PROJECT_NAME}-gateway`, {
       domain: API_DOMAIN_URL,
       cors: {
-        allowOrigins: ["*"],
+        allowOrigins: allowedOrigins,
         allowMethods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
         allowHeaders: ["*"],
       },
