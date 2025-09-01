@@ -10,6 +10,7 @@ import { DataPreviewTable } from './components/data-preview-table'
 import { SubmitActions } from './components/submit-actions'
 import { useTasks } from '@/hooks/use-tasks'
 import { toast } from 'react-toastify'
+import { useRouter } from '@tanstack/react-router'
 
 export function TasksNewPage() {
   const { setIsLoading } = useLayout()
@@ -19,7 +20,7 @@ export function TasksNewPage() {
   const [parsedData, setParsedData] = useState<ParsedRow[]>([])
   const [validationStatus, setValidationStatus] = useState<'idle' | 'validating' | 'valid' | 'invalid'>('idle')
   const [errors, setErrors] = useState<ValidationError[]>([])
-
+ const router = useRouter()
   // Handle task type selection
   const handleTaskTypeChange = (taskType: TaskType) => {
     setSelectedTaskType(taskType)
@@ -103,6 +104,7 @@ export function TasksNewPage() {
       setParsedData([])
       setValidationStatus('idle')
       setErrors([])
+      router.navigate({ to: '/admin/tasks' })
     } catch (error) {
       console.error('Error creating tasks:', error)
       toast.error('Error creating tasks. Please try again.')

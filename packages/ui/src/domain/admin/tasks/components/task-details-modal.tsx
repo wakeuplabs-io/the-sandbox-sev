@@ -12,20 +12,6 @@ interface TaskDetailsModalProps {
 export function TaskDetailsModal({ task, isOpen, onClose }: TaskDetailsModalProps) {
   if (!isOpen || !task) return null
 
-  const formatValue = (value: any) => {
-    if (value === null || value === undefined || value === '') {
-      return <span className="text-base-content/50 italic">Not provided</span>
-    }
-    if (typeof value === 'string' && value.length > 50) {
-      return (
-        <span className="font-mono text-xs break-all">
-          {value.slice(0, 50)}...
-        </span>
-      )
-    }
-    return <span className="font-mono text-sm">{String(value)}</span>
-  }
-
   const getTaskTypeColor = (taskType: string) => {
     switch (taskType) {
       case 'LIQUIDATION': return 'badge-error'
@@ -47,6 +33,12 @@ export function TaskDetailsModal({ task, isOpen, onClose }: TaskDetailsModalProp
           </button>
         </div>
 
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold">Created by:</span>
+            <span className="font-mono">{task.user.email}</span>
+          </div>
+        </div>
         {/* Task Info */}
         <div className="space-y-6">
           {/* Basic Info */}

@@ -6,7 +6,11 @@ import { z } from 'zod'
 
 export const getTasksController = async (c: Context) => {
   try {
-    
+    const user = c.get("user");
+    console.log("getTasksController user", user);
+    if (!user) {
+      return c.json({ error: "User not authenticated" }, 401);
+    }
     const page = Number(c.req.query("page")) || 1;
     const limit = Number(c.req.query("limit")) || 10;
     const taskType = c.req.query("taskType") as z.infer<typeof GetTasksQuerySchema>["taskType"]
@@ -41,13 +45,14 @@ export const getTaskByTransactionIdController = async (c: Context) => {
 export const createTaskController = async (c: Context) => {
   try {
     const taskData = await c.req.json() as z.infer<typeof CreateTaskSchema>
-    const userAddress = c.get('userAddress')
-    
-    if (!userAddress) {
-      return c.json({ error: 'User not authenticated' }, 401)
+    const user = c.get("user");
+    console.log("getUserProfileController user", user);
+    if (!user) {
+      return c.json({ error: "User not authenticated" }, 401);
     }
+
   
-    const task = await createTask(taskData, userAddress)
+    const task = await createTask(taskData, user)
     
     return c.json(task, 201)
   } catch (error: any) {

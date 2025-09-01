@@ -16,6 +16,7 @@ export function parseExcelData(rawData: string, taskType: TaskType): ParsedRow[]
   console.log(`Config found:`, config)
   console.log(`Raw data length: ${cleanedData.length}`)
   console.log(`First 200 chars: "${cleanedData.substring(0, 200)}"`)
+  console.log(`Full raw data:`, cleanedData)
 
   // Use different parsing strategies for different task types
   switch (taskType) {
@@ -55,7 +56,7 @@ function parseArbitrageData(cleanedData: string, config: any, parsedRows: Parsed
     console.log(`  tabCount: ${tabCount}, expectedTabs: ${expectedTabs}`)
     
     // Check if this line starts with a new transaction ID pattern
-    const isNewTransaction = line.trim().includes('_Arbitrage_')
+    const isNewTransaction = line.trim().match(/^\d{4}_Arbitrage_/)
     const isCompleteRow = tabCount >= expectedTabs
     
     console.log(`  isNewTransaction: ${isNewTransaction}, isCompleteRow: ${isCompleteRow}`)
@@ -96,7 +97,63 @@ function parseArbitrageData(cleanedData: string, config: any, parsedRows: Parsed
 
 function parseAcquisitionData(cleanedData: string, config: any, parsedRows: ParsedRow[]): ParsedRow[] {
   console.log('Using ACQUISITION-specific parsing logic')
-  return parseGenericData(cleanedData, config, parsedRows, 'ACQUISITION')
+  
+  // Split by lines and group them into rows
+  const lines = cleanedData
+    .split('\n')
+    .map(line => line.trim())
+    .filter(line => line.length > 0)
+
+  console.log(`Total lines after split: ${lines.length}`)
+
+  let currentRowLines: string[] = []
+  let rowIndex = 0
+  const expectedTabs = config.columns.length - 1 // Number of tabs needed for a complete row
+
+  lines.forEach((line, index) => {
+    console.log(`Line ${index}: "${line}"`)
+    
+    const tabCount = (line.match(/\t/g) || []).length
+    console.log(`  tabCount: ${tabCount}, expectedTabs: ${expectedTabs}`)
+    
+    // Check if this line starts with a new transaction ID pattern
+    const isNewTransaction = line.trim().match(/^\d{4}_Acquisition_/)
+    const isCompleteRow = tabCount >= expectedTabs
+    
+    console.log(`  isNewTransaction: ${isNewTransaction}, isCompleteRow: ${isCompleteRow}`)
+    
+    // If this is a new transaction and we have accumulated lines, process the previous row
+    if (isNewTransaction && currentRowLines.length > 0) {
+      console.log(`Processing previous row ${rowIndex}:`, currentRowLines)
+      processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, 'ACQUISITION')
+      currentRowLines = []
+      rowIndex++
+    }
+    
+    // Add this line to current row (skip empty or meaningless lines)
+    if (line.trim() !== '"' && line.trim().length > 1) {
+      currentRowLines.push(line)
+    } else {
+      console.log(`  Skipping line with insufficient content: "${line}"`)
+    }
+    
+    // If this line is complete and we have accumulated content, process it immediately
+    if (isCompleteRow && currentRowLines.length > 0) {
+      console.log(`Processing complete row ${rowIndex}:`, currentRowLines)
+      processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, 'ACQUISITION')
+      currentRowLines = []
+      rowIndex++
+    }
+  })
+
+  // Process any remaining incomplete row
+  if (currentRowLines.length > 0) {
+    console.log(`Processing final incomplete row ${rowIndex}:`, currentRowLines)
+    processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, 'ACQUISITION')
+  }
+
+  console.log(`Total rows parsed: ${parsedRows.length}`)
+  return parsedRows
 }
 
 function parseLiquidationData(cleanedData: string, config: any, parsedRows: ParsedRow[]): ParsedRow[] {
@@ -121,7 +178,7 @@ function parseLiquidationData(cleanedData: string, config: any, parsedRows: Pars
     console.log(`  tabCount: ${tabCount}, expectedTabs: ${expectedTabs}`)
     
     // Check if this line starts with a new transaction ID pattern
-    const isNewTransaction = line.trim().includes('_Liquidation_')
+    const isNewTransaction = line.trim().match(/^\d{4}_Liquidation_/)
     const isCompleteRow = tabCount >= expectedTabs
     
     console.log(`  isNewTransaction: ${isNewTransaction}, isCompleteRow: ${isCompleteRow}`)
@@ -162,41 +219,66 @@ function parseLiquidationData(cleanedData: string, config: any, parsedRows: Pars
 
 function parseAuthorizationData(cleanedData: string, config: any, parsedRows: ParsedRow[]): ParsedRow[] {
   console.log('Using AUTHORIZATION-specific parsing logic')
-  return parseGenericData(cleanedData, config, parsedRows, 'AUTHORIZATION')
-}
-
-function parseGenericData(cleanedData: string, config: any, parsedRows: ParsedRow[], taskType: TaskType): ParsedRow[] {
-  // Generic parsing logic for other task types
+  
+  // Split by lines and group them into rows
   const lines = cleanedData
     .split('\n')
     .map(line => line.trim())
     .filter(line => line.length > 0)
 
+  console.log(`Total lines after split: ${lines.length}`)
+
   let currentRowLines: string[] = []
   let rowIndex = 0
+  const expectedTabs = config.columns.length - 1 // Number of tabs needed for a complete row
 
   lines.forEach((line, index) => {
+    console.log(`Line ${index}: "${line}"`)
+    
+    const tabCount = (line.match(/\t/g) || []).length
+    console.log(`  tabCount: ${tabCount}, expectedTabs: ${expectedTabs}`)
+    
     // Check if this line starts with a new transaction ID pattern
-    const isNewTransaction = line.trim().includes(`_${taskType}_`)
+    const isNewTransaction = line.trim().match(/^\d{4}_Authorization_/)
+    const isCompleteRow = tabCount >= expectedTabs
+    
+    console.log(`  isNewTransaction: ${isNewTransaction}, isCompleteRow: ${isCompleteRow}`)
     
     // If we have accumulated lines and this is a new transaction, process the previous row
     if (isNewTransaction && currentRowLines.length > 0) {
-      processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, taskType)
+      console.log(`Processing previous row ${rowIndex}:`, currentRowLines)
+      processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, 'AUTHORIZATION')
       currentRowLines = []
       rowIndex++
     }
     
-    // Add this line to the current row
-    currentRowLines.push(line)
+    // Only add lines that have meaningful content (not just quotes or empty content)
+    if (line.trim() !== '"' && line.trim().length > 1) {
+      currentRowLines.push(line)
+    } else {
+      console.log(`  Skipping line with insufficient content: "${line}"`)
+    }
+    
+    // If this line is complete and we have a row, process it immediately
+    if (isCompleteRow && currentRowLines.length > 0) {
+      console.log(`Processing complete row ${rowIndex}:`, currentRowLines)
+      processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, 'AUTHORIZATION')
+      currentRowLines = []
+      rowIndex++
+    }
   })
 
-  // Process the last row
+  // Process any remaining incomplete row
   if (currentRowLines.length > 0) {
-    processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, taskType)
+    console.log(`Processing final incomplete row ${rowIndex}:`, currentRowLines)
+    processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, 'AUTHORIZATION')
   }
 
+  console.log(`Total rows parsed: ${parsedRows.length}`)
   return parsedRows
 }
+
+// Removed parseGenericData function as all task types now use specific parsing logic
 
 function processRow(rowData: string, rowIndex: number, config: any, parsedRows: ParsedRow[], taskType: TaskType) {
   console.log(`processRow called with taskType: "${taskType}" (typeof: ${typeof taskType})`)

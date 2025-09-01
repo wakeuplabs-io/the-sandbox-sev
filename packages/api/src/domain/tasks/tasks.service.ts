@@ -14,6 +14,7 @@ import { getPublicHttpsClient } from '@/services/wallet-clients'
 import { getWalletHttpsClient } from '@/services/wallet-clients'
 import { CHAIN_BY_ENV } from '@/constants'
 import env from '@/env'
+import { TaskType, User } from '@/generated/prisma'
 
 const chain = CHAIN_BY_ENV[env.NODE_ENV];
 const contractAddress = env.EXECUTION_VERIFIER_ADDRESS as `0x${string}`;
@@ -32,22 +33,22 @@ const verifierService = new VerifierService({
  */
 export const createLiquidationTask = async (
   data: LiquidationTaskInput, 
-  userAddress: string,
+  user: User,
 ): Promise<any> => {
-  const taskData = { taskType: 'LIQUIDATION', ...data }
+  const taskData = { taskType: TaskType.LIQUIDATION, ...data }
   const taskHash = hashTaskData(taskData)
   
   // Store hash on chain
   const transactionHash = await verifierService.storeHash({
     hash: taskHash as any,
-    userAddress: userAddress as any
+    userAddress: user.address as any
   })
   
   // Save to database
   const task = await prisma.task.create({
     data: {
       transactionId: data.transactionId,
-      taskType: 'LIQUIDATION',
+      taskType: TaskType.LIQUIDATION,
       taskData: taskData,
       taskHash: taskHash,
       transactionHash: transactionHash,
@@ -63,7 +64,7 @@ export const createLiquidationTask = async (
       dateDeadline: data.dateDeadline,
       technicalVerification: data.technicalVerification,
       priority: data.priority,
-      userId: null, // TODO: Add user relation when needed
+      userId: user.id,
     },
   })
   
@@ -75,22 +76,22 @@ export const createLiquidationTask = async (
  */
 export const createAcquisitionTask = async (
   data: AcquisitionTaskInput, 
-  userAddress: string,
+  user: User,
 ): Promise<any> => {
-  const taskData = { taskType: 'ACQUISITION', ...data }
+  const taskData = { taskType: TaskType.ACQUISITION, ...data }
   const taskHash = hashTaskData(taskData)
   
   // Store hash on chain
   const transactionHash = await verifierService.storeHash({
     hash: taskHash as any,
-    userAddress: userAddress as any
+    userAddress: user.address as any
   })
   
   // Save to database
   const task = await prisma.task.create({
     data: {
       transactionId: data.transactionId,
-      taskType: 'ACQUISITION',
+      taskType: TaskType.ACQUISITION,
       taskData: taskData,
       taskHash: taskHash,
       transactionHash: transactionHash,
@@ -106,7 +107,7 @@ export const createAcquisitionTask = async (
       transactionExecutionDate: data.transactionExecutionDate,
       priorityDeadline: data.priorityDeadline,
       priority: data.priority,
-      userId: null, // TODO: Add user relation when needed
+      userId: user.id,
     },
   })
   
@@ -118,22 +119,22 @@ export const createAcquisitionTask = async (
  */
 export const createAuthorizationTask = async (
   data: AuthorizationTaskInput, 
-  userAddress: string,
+  user: User,
 ): Promise<any> => {
-  const taskData = { taskType: 'AUTHORIZATION', ...data }
+  const taskData = { taskType: TaskType.AUTHORIZATION, ...data }
   const taskHash = hashTaskData(taskData)
   
   // Store hash on chain
   const transactionHash = await verifierService.storeHash({
     hash: taskHash as any,
-    userAddress: userAddress as any
+    userAddress: user.address as any
   })
   
   // Save to database
   const task = await prisma.task.create({
     data: {
       transactionId: data.transactionId,
-      taskType: 'AUTHORIZATION',
+      taskType: TaskType.AUTHORIZATION,
       taskData: taskData,
       taskHash: taskHash,
       transactionHash: transactionHash,
@@ -147,7 +148,7 @@ export const createAuthorizationTask = async (
       targetPriceBudget: data.targetPriceBudget,
       dateDeadline: data.dateDeadline,
       priority: data.priority,
-      userId: null, // TODO: Add user relation when needed
+      userId: user.id,
     },
   })
   
@@ -159,22 +160,22 @@ export const createAuthorizationTask = async (
  */
 export const createArbitrageTask = async (
   data: ArbitrageTaskInput, 
-  userAddress: string,
+  user: User,
 ): Promise<any> => {
-  const taskData = { taskType: 'ARBITRAGE', ...data }
+  const taskData = { taskType: TaskType.ARBITRAGE, ...data }
   const taskHash = hashTaskData(taskData)
   
   // Store hash on chain
   const transactionHash = await verifierService.storeHash({
     hash: taskHash as any,
-    userAddress: userAddress as any
+    userAddress: user.address as any
   })
   
   // Save to database
   const task = await prisma.task.create({
     data: {
       transactionId: data.transactionId,
-      taskType: 'ARBITRAGE',
+      taskType: TaskType.ARBITRAGE,
       taskData: taskData,
       taskHash: taskHash,
       transactionHash: transactionHash,
@@ -189,7 +190,7 @@ export const createArbitrageTask = async (
       duration: data.duration,
       deadline: data.deadline,
       priority: data.priority,
-      userId: null, // TODO: Add user relation when needed
+      userId: user.id,
     },
   })
   
@@ -201,7 +202,7 @@ export const createArbitrageTask = async (
  */
 export const createTask = async (
   data: CreateTaskInput, 
-  userAddress: string,
+  user: User,
 ): Promise<any> => {
   // Check if task already exists
   const existingTask = await checkTaskExists(data.transactionId)
@@ -210,14 +211,14 @@ export const createTask = async (
   }
 
   switch (data.taskType) {
-    case 'LIQUIDATION':
-      return createLiquidationTask(data, userAddress)
-    case 'ACQUISITION':
-      return createAcquisitionTask(data, userAddress)
-    case 'AUTHORIZATION':
-      return createAuthorizationTask(data, userAddress)
-    case 'ARBITRAGE':
-      return createArbitrageTask(data, userAddress)
+    case TaskType.LIQUIDATION:
+      return createLiquidationTask(data, user)
+    case TaskType.ACQUISITION:
+      return createAcquisitionTask(data, user)
+    case TaskType.AUTHORIZATION:
+      return createAuthorizationTask(data, user)
+    case TaskType.ARBITRAGE:
+      return createArbitrageTask(data, user)
     default:
       throw new Error(`Invalid task type: ${(data as any).taskType}`)
   }
@@ -313,6 +314,8 @@ export const getTasks = async (query: z.infer<typeof GetTasksQuerySchema>) => {
         select: {
           id: true,
           address: true,
+          nickname: true,
+          email: true,
         },
       },
     },
