@@ -1,6 +1,6 @@
-import { ValidationError } from '../types/tasks-new.types'
+import { TaskTypeEnum } from '@/shared/constants'
+import { TaskType, ValidationError } from '../types/tasks-new.types'
 
-// Shared validation functions for common fields
 function validateTransactionId(data: Record<string, any>, rowIndex: number): ValidationError[] {
   const errors: ValidationError[] = []
   const transactionId = data.transactionId
@@ -16,12 +16,13 @@ function validateTransactionId(data: Record<string, any>, rowIndex: number): Val
 }
 
 function validatePriority(data: Record<string, any>, rowIndex: number): ValidationError[] {
-  // Priority is completely optional - no validation needed
+  const errors: ValidationError[] = []
+  console.log('validatePriority', data, rowIndex)
   return []
 }
 
 function validateTokenType(data: Record<string, any>, rowIndex: number): ValidationError[] {
-  // Token type is completely optional - no validation needed
+  console.log('validateTokenType', data, rowIndex)
   return []
 }
 
@@ -81,11 +82,9 @@ function validateDetails(data: Record<string, any>, rowIndex: number): Validatio
   return errors
 }
 
-// Specific validation functions for each task type
 function validateLiquidationData(data: Record<string, any>, rowIndex: number): ValidationError[] {
   const errors: ValidationError[] = []
   
-  // Common validations
   errors.push(...validateTransactionId(data, rowIndex))
   errors.push(...validateChain(data, rowIndex))
   errors.push(...validatePlatform(data, rowIndex))
@@ -93,7 +92,6 @@ function validateLiquidationData(data: Record<string, any>, rowIndex: number): V
   errors.push(...validateDetails(data, rowIndex))
   errors.push(...validatePriority(data, rowIndex))
   
-  // Liquidation-specific validations
   const companyAndArtist = data.companyAndArtist
   if (!companyAndArtist || companyAndArtist.toString().trim() === '') {
     errors.push({
@@ -170,7 +168,6 @@ function validateLiquidationData(data: Record<string, any>, rowIndex: number): V
 function validateAcquisitionData(data: Record<string, any>, rowIndex: number): ValidationError[] {
   const errors: ValidationError[] = []
   
-  // Common validations
   errors.push(...validateTransactionId(data, rowIndex))
   errors.push(...validateChain(data, rowIndex))
   errors.push(...validatePlatform(data, rowIndex))
@@ -178,7 +175,6 @@ function validateAcquisitionData(data: Record<string, any>, rowIndex: number): V
   errors.push(...validateDetails(data, rowIndex))
   errors.push(...validatePriority(data, rowIndex))
   
-  // Acquisition-specific validations
   const nftName = data.nftName
   if (!nftName || nftName.toString().trim() === '') {
     errors.push({
@@ -220,7 +216,6 @@ function validateAcquisitionData(data: Record<string, any>, rowIndex: number): V
 function validateAuthorizationData(data: Record<string, any>, rowIndex: number): ValidationError[] {
   const errors: ValidationError[] = []
   
-  // Common validations
   errors.push(...validateTransactionId(data, rowIndex))
   errors.push(...validateChain(data, rowIndex))
   errors.push(...validatePlatform(data, rowIndex))
@@ -228,7 +223,6 @@ function validateAuthorizationData(data: Record<string, any>, rowIndex: number):
   errors.push(...validateDetails(data, rowIndex))
   errors.push(...validatePriority(data, rowIndex))
   
-  // Authorization-specific validations
   const collectionName = data.collectionName
   if (!collectionName || collectionName.toString().trim() === '') {
     errors.push({
@@ -239,7 +233,6 @@ function validateAuthorizationData(data: Record<string, any>, rowIndex: number):
     })
   }
 
-  // Optional fields validation (if provided, validate format)
   const tokenType = data.tokenType
   if (tokenType && tokenType.toString().trim() !== '') {
     errors.push(...validateTokenType(data, rowIndex))
@@ -247,12 +240,10 @@ function validateAuthorizationData(data: Record<string, any>, rowIndex: number):
 
   const targetPriceBudget = data.targetPriceBudget
   if (targetPriceBudget && targetPriceBudget.toString().trim() !== '') {
-    // Could add price format validation here if needed
   }
 
   const dateDeadline = data.dateDeadline
   if (dateDeadline && dateDeadline.toString().trim() !== '') {
-    // Could add date format validation here if needed
   }
 
   return errors
@@ -261,14 +252,12 @@ function validateAuthorizationData(data: Record<string, any>, rowIndex: number):
 function validateArbitrageData(data: Record<string, any>, rowIndex: number): ValidationError[] {
   const errors: ValidationError[] = []
   
-  // Common validations
   errors.push(...validateTransactionId(data, rowIndex))
   errors.push(...validateChain(data, rowIndex))
   errors.push(...validateTypeOfTx(data, rowIndex))
   errors.push(...validateDetails(data, rowIndex))
   errors.push(...validatePriority(data, rowIndex))
   
-  // Arbitrage-specific validations
   const targetPricePerToken = data.targetPricePerToken
   if (!targetPricePerToken || targetPricePerToken.toString().trim() === '') {
     errors.push({
@@ -334,17 +323,15 @@ function validateArbitrageData(data: Record<string, any>, rowIndex: number): Val
   return errors
 }
 
-export function validateTaskData(data: Record<string, any>, rowIndex: number, taskType: string): ValidationError[] {
-  console.log(`Validating task data for type: "${taskType}" (typeof: ${typeof taskType})`)
-  
+export function validateTaskData(data: Record<string, any>, rowIndex: number, taskType: TaskType): ValidationError[] {
   switch (taskType) {
-    case 'LIQUIDATION':
+    case TaskTypeEnum.LIQUIDATION:
       return validateLiquidationData(data, rowIndex)
-    case 'ACQUISITION':
+    case TaskTypeEnum.ACQUISITION:
       return validateAcquisitionData(data, rowIndex)
-    case 'AUTHORIZATION':
+    case TaskTypeEnum.AUTHORIZATION:
       return validateAuthorizationData(data, rowIndex)
-    case 'ARBITRAGE':
+    case TaskTypeEnum.ARBITRAGE:
       return validateArbitrageData(data, rowIndex)
     default:
       console.error(`Unknown task type: "${taskType}" (typeof: ${typeof taskType})`)

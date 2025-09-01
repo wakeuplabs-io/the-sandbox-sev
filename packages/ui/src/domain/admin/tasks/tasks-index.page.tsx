@@ -26,7 +26,6 @@ export function TasksIndexPage() {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  // Detect if we're currently searching (when search filter is set but different from current value)
   const isSearching = !!filters.search && isLoading
 
   const handleViewTask = (task: Task) => {
@@ -55,7 +54,6 @@ export function TasksIndexPage() {
 
   return (
     <div className="container mx-auto p-6 space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Tasks</h1>
         <Link
@@ -67,13 +65,11 @@ export function TasksIndexPage() {
         </Link>
       </div>
 
-      {/* Filters */}
       <TasksFilters
         filters={filters}
         onFiltersChange={updateFilters}
       />
 
-      {/* Results Summary */}
       <div className="text-sm text-base-content/70">
         {isLoading ? (
           <span>
@@ -83,15 +79,11 @@ export function TasksIndexPage() {
           <span>Found {totalTasks} task{totalTasks !== 1 ? 's' : ''}</span>
         )}
       </div>
-
-      {/* Table */}
       <TasksTable
         tasks={tasks}
         isLoading={isLoading}
         onViewTask={handleViewTask}
       />
-
-      {/* Pagination */}
       <TasksPagination
         currentPage={currentPage}
         totalPages={totalPages}
@@ -102,8 +94,6 @@ export function TasksIndexPage() {
         onNextPage={nextPage}
         onPrevPage={prevPage}
       />
-
-      {/* Task Details Modal */}
       <TaskDetailsModal
         task={selectedTask}
         isOpen={isModalOpen}

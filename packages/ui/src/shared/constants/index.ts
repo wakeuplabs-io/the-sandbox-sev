@@ -6,6 +6,14 @@ export enum UserRoleEnum {
   MEMBER = "MEMBER",
 }
 
+export enum TaskTypeEnum {
+  LIQUIDATION = "LIQUIDATION",
+  ACQUISITION = "ACQUISITION",
+  AUTHORIZATION = "AUTHORIZATION",
+  ARBITRAGE = "ARBITRAGE",
+}
+
+
 export const ETHERSCAN_BY_CHAIN_ID: Record<number, string> = {
   //arbitrum mainnet
   42161: "https://arbiscan.io",

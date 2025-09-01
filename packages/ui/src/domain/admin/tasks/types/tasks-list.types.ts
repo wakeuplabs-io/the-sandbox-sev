@@ -1,9 +1,10 @@
 import { PaginationInfo } from "@/shared/types"
+import { TaskType } from "./tasks-new.types"
 
 export interface Task {
   id: string
   transactionId: string
-  taskType: 'LIQUIDATION' | 'ACQUISITION' | 'AUTHORIZATION' | 'ARBITRAGE'
+  taskType: TaskType
   taskHash: string
   transactionHash: string
   createdAt: string
@@ -19,7 +20,7 @@ export interface TasksListResponse {
 }
 
 export interface TasksFilters {
-  taskType?: 'LIQUIDATION' | 'ACQUISITION' | 'AUTHORIZATION' | 'ARBITRAGE'
+  taskType?: TaskType
   status?: string
   dateFrom?: string
   dateTo?: string
