@@ -1,5 +1,6 @@
 import { useWeb3Auth } from "@/context/web3auth";
 import { useState } from "react";
+import { Avatar } from "./avatar";
 
 function SkeletonButton() {
   return (
@@ -16,6 +17,7 @@ export const LoginButton = ({ isLoading: isLoadingUser }: { isLoading: boolean }
     isAuthenticated,
     login,
     logout,
+    user
   } = useWeb3Auth();
   const [error, setError] = useState<string | null>(null);
 
@@ -35,7 +37,6 @@ export const LoginButton = ({ isLoading: isLoadingUser }: { isLoading: boolean }
     }
   };
 
-  // Si Web3Auth no está inicializado, mostramos un botón deshabilitado
   if (!isInitialized) {
     return <SkeletonButton />;
   }
@@ -43,12 +44,12 @@ export const LoginButton = ({ isLoading: isLoadingUser }: { isLoading: boolean }
   return (
     <>
       {isAuthenticated ? (
-        <button onClick={() => logout()} className="btn btn-primary">Cerrar sesión</button>
+        <Avatar name={user?.name || ""} />
       ) : isLoading ? (
         <SkeletonButton />
       ) : (
-        <button onClick={handleLogin} disabled={isLoading} className="btn btn-primary">
-          {"Iniciar sesión"}
+        <button onClick={handleLogin} disabled={isLoading} className="btn btn-outline">
+          {"Login"}
         </button>
       )}
       {error && <div className="text-red-500 text-sm mt-2">{error}</div>}

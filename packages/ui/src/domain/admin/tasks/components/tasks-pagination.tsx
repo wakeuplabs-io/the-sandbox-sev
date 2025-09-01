@@ -1,4 +1,5 @@
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { clsx } from "clsx";
 
 interface TasksPaginationProps {
   currentPage: number;
@@ -74,11 +75,14 @@ export function TasksPagination({
               key={index}
               onClick={() => (typeof page === "number" ? onPageChange(page) : null)}
               disabled={page === "..."}
-              className={`
-                btn btn-sm
-                ${page === currentPage ? "btn-primary" : "btn-outline"}
-                ${page === "..." ? "btn-disabled" : ""}
-              `}
+              className={clsx(
+                "btn btn-sm",
+                {
+                  "btn-primary": page === currentPage,
+                  "btn-outline": page !== currentPage,
+                  "btn-disabled": page === "...",
+                }
+              )}
             >
               {page}
             </button>

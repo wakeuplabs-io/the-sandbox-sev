@@ -1,62 +1,51 @@
-import React from 'react'
-import { Link } from '@tanstack/react-router'
-import { MobileMenu } from './MobileMenu'
-import { DesktopNav } from './DesktopNav'
-import { FaHamburger } from 'react-icons/fa'
-import { LoginButton } from '../login-button'
-import { useLayout } from '@/context/layout-context'
+import React from "react";
+import { Link } from "@tanstack/react-router";
+import { MobileMenu } from "./mobile-menu";
+import { DesktopNav } from "./desktop-nav";
+import { FaHamburger } from "react-icons/fa";
+import { LoginButton } from "../login-button";
+import { useLayout } from "@/context/layout-context";
 interface HeaderProps {
-	links: Array<{ to: string; label: string; icon?: React.ReactNode }>
-	onSidebarToggle?: () => void
-	showSidebarToggle?: boolean
+  links: Array<{ to: string; label: string; icon?: React.ReactNode }>;
+  onSidebarToggle?: () => void;
+  showSidebarToggle?: boolean;
 }
 
 export function Header({ links, onSidebarToggle, showSidebarToggle }: HeaderProps) {
-	const { isLoading, isMobileMenuOpen, setIsMobileMenuOpen } = useLayout();
-	const handleMobileMenuToggle = () => {
-		setIsMobileMenuOpen(!isMobileMenuOpen)
-	}
+  const { isLoading, isMobileMenuOpen, setIsMobileMenuOpen } = useLayout();
+  const handleMobileMenuToggle = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
 
-	return (
-		<div className="navbar bg-base-100 border-b border-base-300 shadow-lg">
-			<div className="navbar-start">
-				{/* Sidebar Toggle for Mobile */}
-				{showSidebarToggle && (
-					<button
-						className="btn btn-ghost btn-sm p-2 lg:hidden"
-						onClick={onSidebarToggle}
-						aria-label="Toggle sidebar"
-					>
-						<FaHamburger />
-					</button>
-				)}
-				
-				{/* Logo */}
-				<Link to="/" className="btn btn-ghost text-xl">
-					<div className="avatar placeholder bg-primary text-primary-content rounded-full w-10 h-10 flex items-center justify-center">
-						<span className="text-xl font-bold">S</span>
-					</div>
-					<span className="hidden sm:block ml-2 font-bold">Sandbox</span>
-				</Link>
-			</div>
+  return (
+    <div className="navbar bg-base-100 border-b border-base-300 shadow-lg">
+      <div className="navbar-start">
+        {showSidebarToggle && (
+          <button
+            className="btn btn-ghost btn-sm p-2 lg:hidden"
+            onClick={onSidebarToggle}
+            aria-label="Toggle sidebar"
+          >
+            <FaHamburger />
+          </button>
+        )}
 
-			{/* Center Navigation - Desktop */}
-			<div className="navbar-center hidden lg:flex">
-				<DesktopNav links={links} />
-			</div>
+        <Link to="/" className="btn btn-ghost text-xl">
+          <span className="hidden sm:block ml-2 font-bold">Sandbox</span>
+        </Link>
+      </div>
 
-			<div className="navbar-end">
-				<LoginButton isLoading={isLoading} />
-			</div>
+      <div className="navbar-center hidden lg:flex">
+        <DesktopNav links={links} />
+      </div>
 
-			{/* Right side - Mobile Menu */}
-			<div className="navbar-end lg:hidden">
-				<MobileMenu
-					isOpen={isMobileMenuOpen}
-					onToggle={handleMobileMenuToggle}
-					links={links}
-				/>
-			</div>
-		</div>
-	)
+      <div className="navbar-end">
+        <LoginButton isLoading={isLoading} />
+      </div>
+
+      <div className="navbar-end lg:hidden">
+        <MobileMenu isOpen={isMobileMenuOpen} onToggle={handleMobileMenuToggle} links={links} />
+      </div>
+    </div>
+  );
 }

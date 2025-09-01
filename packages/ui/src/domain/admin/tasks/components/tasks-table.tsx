@@ -1,8 +1,11 @@
 import { FaEye } from "react-icons/fa";
+import { clsx } from "clsx";
+import { useTaskTypeColors } from "@/hooks/use-task-type-colors";
 import type { Task } from "../types/tasks-list.types";
 import { truncateHash } from "@/shared/lib/utils";
 import { EtherScanLink } from "@/shared/components/ether-scan-link";
 import { CopyToClipboard } from "@/shared/components/copy-to-clipboard";
+
 
 interface TasksTableProps {
   tasks: Task[];
@@ -11,6 +14,7 @@ interface TasksTableProps {
 }
 
 export function TasksTable({ tasks, isLoading, onViewTask }: TasksTableProps) {
+  const { getTaskTypeBadgeClasses } = useTaskTypeColors()
   if (isLoading) {
     return (
       <div className="card bg-base-100 shadow-xl">
@@ -66,15 +70,10 @@ export function TasksTable({ tasks, isLoading, onViewTask }: TasksTableProps) {
                   <td className="font-mono text-sm">{task.transactionId}</td>
                   <td>
                     <span
-                      className={`badge badge-sm ${
-                        task.taskType === "LIQUIDATION"
-                          ? "badge-error"
-                          : task.taskType === "ACQUISITION"
-                            ? "badge-success"
-                            : task.taskType === "AUTHORIZATION"
-                              ? "badge-warning"
-                              : "badge-info"
-                      }`}
+                      className={clsx(
+                        "badge badge-sm",
+                        getTaskTypeBadgeClasses(task.taskType as any)
+                      )}
                     >
                       {task.taskType}
                     </span>

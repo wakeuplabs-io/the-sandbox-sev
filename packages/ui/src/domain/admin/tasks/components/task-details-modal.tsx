@@ -1,9 +1,10 @@
 import { FaTimes } from "react-icons/fa";
+import { clsx } from "clsx";
+import { useTaskTypeColors } from "@/hooks/use-task-type-colors";
 import type { Task } from "../types/tasks-list.types";
 import { truncateHash } from "@/shared/lib/utils";
 import { CopyToClipboard } from "@/shared/components/copy-to-clipboard";
-import { TaskTypeEnum } from "@/shared/constants";
-import { TaskType } from "../types/tasks-new.types";
+
 
 interface TaskDetailsModalProps {
   task: Task | null;
@@ -12,22 +13,11 @@ interface TaskDetailsModalProps {
 }
 
 export function TaskDetailsModal({ task, isOpen, onClose }: TaskDetailsModalProps) {
+  const { getTaskTypeBadgeClasses } = useTaskTypeColors()
+  
   if (!isOpen || !task) return null;
 
-  const getTaskTypeColor = (taskType: TaskType) => {
-    switch (taskType) {
-      case TaskTypeEnum.LIQUIDATION:
-        return "badge-error";
-      case TaskTypeEnum.ACQUISITION:
-        return "badge-success";
-      case TaskTypeEnum.AUTHORIZATION:
-        return "badge-warning";
-      case TaskTypeEnum.ARBITRAGE:
-        return "badge-info";
-      default:
-        return "badge-neutral";
-    }
-  };
+
 
   return (
     <div className="modal modal-open">
@@ -62,7 +52,14 @@ export function TaskDetailsModal({ task, isOpen, onClose }: TaskDetailsModalProp
                 <span className="label-text font-semibold">Task Type</span>
               </label>
               <div className="input input-bordered bg-base-200 w-full">
-                <span className={`badge ${getTaskTypeColor(task.taskType)}`}>{task.taskType}</span>
+                <span 
+                  className={clsx(
+                    "badge",
+                    getTaskTypeBadgeClasses(task.taskType as any)
+                  )}
+                >
+                  {task.taskType}
+                </span>
               </div>
             </div>
 
