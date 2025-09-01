@@ -101,7 +101,63 @@ function parseAcquisitionData(cleanedData: string, config: any, parsedRows: Pars
 
 function parseLiquidationData(cleanedData: string, config: any, parsedRows: ParsedRow[]): ParsedRow[] {
   console.log('Using LIQUIDATION-specific parsing logic')
-  return parseGenericData(cleanedData, config, parsedRows, 'LIQUIDATION')
+  
+  // Split by lines and group them into rows
+  const lines = cleanedData
+    .split('\n')
+    .map(line => line.trim())
+    .filter(line => line.length > 0)
+
+  console.log(`Total lines after split: ${lines.length}`)
+
+  let currentRowLines: string[] = []
+  let rowIndex = 0
+  const expectedTabs = config.columns.length - 1 // Number of tabs needed for a complete row
+
+  lines.forEach((line, index) => {
+    console.log(`Line ${index}: "${line}"`)
+    
+    const tabCount = (line.match(/\t/g) || []).length
+    console.log(`  tabCount: ${tabCount}, expectedTabs: ${expectedTabs}`)
+    
+    // Check if this line starts with a new transaction ID pattern
+    const isNewTransaction = line.trim().includes('_Liquidation_')
+    const isCompleteRow = tabCount >= expectedTabs
+    
+    console.log(`  isNewTransaction: ${isNewTransaction}, isCompleteRow: ${isCompleteRow}`)
+    
+    // If we have accumulated lines and this is a new transaction, process the previous row
+    if (isNewTransaction && currentRowLines.length > 0) {
+      console.log(`Processing previous row ${rowIndex}:`, currentRowLines)
+      processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, 'LIQUIDATION')
+      currentRowLines = []
+      rowIndex++
+    }
+    
+    // Only add lines that have meaningful content (not just quotes or empty content)
+    if (line.trim() !== '"' && line.trim().length > 1) {
+      currentRowLines.push(line)
+    } else {
+      console.log(`  Skipping line with insufficient content: "${line}"`)
+    }
+    
+    // If this line is complete and we have a row, process it immediately
+    if (isCompleteRow && currentRowLines.length > 0) {
+      console.log(`Processing complete row ${rowIndex}:`, currentRowLines)
+      processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, 'LIQUIDATION')
+      currentRowLines = []
+      rowIndex++
+    }
+  })
+
+  // Process any remaining incomplete row
+  if (currentRowLines.length > 0) {
+    console.log(`Processing final incomplete row ${rowIndex}:`, currentRowLines)
+    processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, 'LIQUIDATION')
+  }
+
+  console.log(`Total rows parsed: ${parsedRows.length}`)
+  return parsedRows
 }
 
 function parseAuthorizationData(cleanedData: string, config: any, parsedRows: ParsedRow[]): ParsedRow[] {

@@ -1,95 +1,56 @@
 import { Context } from 'hono'
-import * as HttpStatusCodes from 'stoker/http-status-codes'
-import { createTask, getAllTasks, getTaskByTransactionId } from './tasks.service'
-import { getUserAddress } from '@/middlewares/auth'
-import { getPublicHttpsClient, getWalletHttpsClient } from '@/services/wallet-clients'
+import { getTasks, getTaskByTransactionId, createTask } from './tasks.service'
+import { CreateTaskSchema, GetTasksQuerySchema } from './tasks.schema'
 import { VerifierService } from '@/services/verifier-service'
-import env from '@/env'
+import { z } from 'zod'
 
-export const createTaskController = async (c: Context): Promise<Response> => {
+export const getTasksController = async (c: Context) => {
   try {
-    // Get user address from context
-    const userAddress = getUserAddress(c)
-    if (!userAddress) {
-      return c.json({ error: 'User not authenticated' }, 401)
-    }
-
-    // Parse request body
-    const body = await c.req.json()
-
-    // Create VerifierService instance
-    const verifierService = new VerifierService({
-      contractAddress: env.EXECUTION_VERIFIER_ADDRESS as any,
-      publicClient: getPublicHttpsClient(),
-      walletClient: getWalletHttpsClient(),
-    })
-
-    // Create task
-    const task = await createTask(body, userAddress, verifierService)
-
-    return c.json(task, HttpStatusCodes.CREATED)
-  } catch (error: any) {
-    console.error('Error creating task:', error)
     
-    if (error.message.includes('already exists')) {
-      return c.json({
-        success: false,
-        error: error.message,
-      }, HttpStatusCodes.CONFLICT)
-    }
-
-    return c.json({
-      success: false,
-      error: 'Internal server error',
-      message: error.message,
-    }, HttpStatusCodes.INTERNAL_SERVER_ERROR)
+    const page = Number(c.req.query("page")) || 1;
+    const limit = Number(c.req.query("limit")) || 10;
+    const taskType = c.req.query("taskType") as z.infer<typeof GetTasksQuerySchema>["taskType"]
+    const search = c.req.query("search") as z.infer<typeof GetTasksQuerySchema>["search"]
+    const dateFrom = c.req.query("dateFrom") as z.infer<typeof GetTasksQuerySchema>["dateFrom"]
+    const dateTo = c.req.query("dateTo") as z.infer<typeof GetTasksQuerySchema>["dateTo"]
+    const status = c.req.query("status") as z.infer<typeof GetTasksQuerySchema>["status"]
+    const query = { page, limit, taskType, search, dateFrom, dateTo, status } as z.infer<typeof GetTasksQuerySchema>
+    const result = await getTasks(query)
+    
+    return c.json(result)
+  } catch (error: any) {
+    return c.json({ error: error.message }, 500)
   }
 }
 
-export const getAllTasksController = async (c: Context): Promise<Response> => {
-  try {
-    const tasks = await getAllTasks()
-    
-    return c.json(tasks, HttpStatusCodes.OK)
-  } catch (error: any) {
-    console.error('Error getting tasks:', error)
-    
-    return c.json({
-      success: false,
-      error: 'Internal server error',
-      message: error.message,
-    }, HttpStatusCodes.INTERNAL_SERVER_ERROR)
-  }
-}
-
-export const getTaskByTransactionIdController = async (c: Context): Promise<Response> => {
+export const getTaskByTransactionIdController = async (c: Context) => {
   try {
     const { transactionId } = c.req.param()
-    
-    if (!transactionId) {
-      return c.json({
-        success: false,
-        error: 'Transaction ID is required',
-      }, HttpStatusCodes.BAD_REQUEST)
-    }
-
     const task = await getTaskByTransactionId(transactionId)
     
     if (!task) {
-      return c.json({
-        success: false,
-        error: 'Task not found',
-      }, HttpStatusCodes.NOT_FOUND)
+      return c.json({ error: 'Task not found' }, 404)
     }
-
-    return c.json(task, HttpStatusCodes.OK)
-  } catch (error: any) {
-    console.error('Error getting task:', error)
     
-    return c.json({
-      success: false,
-      error: 'Internal server error',
-      message: error.message,
-    }, HttpStatusCodes.INTERNAL_SERVER_ERROR)
+    return c.json(task)
+  } catch (error: any) {
+    return c.json({ error: error.message }, 500)
+  }
+}
+
+export const createTaskController = async (c: Context) => {
+  try {
+    const taskData = await c.req.json() as z.infer<typeof CreateTaskSchema>
+    const userAddress = c.get('userAddress')
+    
+    if (!userAddress) {
+      return c.json({ error: 'User not authenticated' }, 401)
+    }
+  
+    const task = await createTask(taskData, userAddress)
+    
+    return c.json(task, 201)
+  } catch (error: any) {
+    return c.json({ error: error.message }, 500)
   }
 }

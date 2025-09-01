@@ -5,9 +5,10 @@ interface SubmitActionsProps {
   hasErrors: boolean
   validTasksCount: number
   totalTasksCount: number
+  isLoading?: boolean
 }
 
-export function SubmitActions({ onSubmit, hasErrors, validTasksCount, totalTasksCount }: SubmitActionsProps) {
+export function SubmitActions({ onSubmit, hasErrors, validTasksCount, totalTasksCount, isLoading = false }: SubmitActionsProps) {
   return (
     <div className="space-y-4">
       {/* Summary */}
@@ -30,14 +31,23 @@ export function SubmitActions({ onSubmit, hasErrors, validTasksCount, totalTasks
       <div className="flex gap-4">
         <button
           onClick={onSubmit}
-          disabled={hasErrors || validTasksCount === 0}
+          disabled={hasErrors || validTasksCount === 0 || isLoading}
           className={`
             btn btn-primary
-            ${hasErrors || validTasksCount === 0 ? 'btn-disabled' : ''}
+            ${hasErrors || validTasksCount === 0 || isLoading ? 'btn-disabled' : ''}
           `}
         >
-          <FaPlus className="h-5 w-5" />
-          Create {validTasksCount} Task{validTasksCount !== 1 ? 's' : ''}
+          {isLoading ? (
+            <>
+              <span className="loading loading-spinner loading-sm"></span>
+              Creating Tasks...
+            </>
+          ) : (
+            <>
+              <FaPlus className="h-5 w-5" />
+              Create {validTasksCount} Task{validTasksCount !== 1 ? 's' : ''}
+            </>
+          )}
         </button>
 
         {hasErrors && (

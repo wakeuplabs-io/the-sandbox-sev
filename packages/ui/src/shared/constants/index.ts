@@ -12,7 +12,7 @@ export const ETHERSCAN_BY_CHAIN_ID: Record<number, string> = {
   //arbitrum sepolia
   421614: "https://sepolia.arbiscan.io",
   //polygon amoy
-  80001: "https://polygon-amoy.etherscan.io",
+  80002: "https://amoy.polygonscan.com/",
   //polygon mainnet
   137: "https://polygonscan.com",
 };

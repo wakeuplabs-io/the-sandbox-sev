@@ -8,9 +8,12 @@ import { validateTaskData } from './utils/task-validators'
 import { ExcelInput } from './components/excel-input'
 import { DataPreviewTable } from './components/data-preview-table'
 import { SubmitActions } from './components/submit-actions'
+import { useTasks } from '@/hooks/use-tasks'
+import { toast } from 'react-toastify'
 
 export function TasksNewPage() {
   const { setIsLoading } = useLayout()
+  const { createTask } = useTasks()
   const [selectedTaskType, setSelectedTaskType] = useState<TaskType | null>(null)
   const [rawExcelData, setRawExcelData] = useState('')
   const [parsedData, setParsedData] = useState<ParsedRow[]>([])
@@ -76,15 +79,24 @@ export function TasksNewPage() {
 
     setIsLoading(true)
     try {
-      // TODO: Implement API call to create tasks
+      // Create all valid tasks
       const validTasks = parsedData.filter(row => row.isValid)
       console.log('Creating tasks:', validTasks)
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      // Create tasks one by one
+      const createdTasks = []
+      for (const row of validTasks) {
+        const taskData = {
+          taskType: selectedTaskType,
+          ...row.data
+        }
+        
+        const createdTask = await createTask.mutateAsync(taskData)
+        createdTasks.push(createdTask)
+      }
       
-      // Show success feedback
-      alert(`Successfully created ${validTasks.length} tasks!`)
+      // Show success toast
+      toast.success(`Successfully created ${createdTasks.length} tasks!`)
       
       // Reset form
       setRawExcelData('')
@@ -93,7 +105,7 @@ export function TasksNewPage() {
       setErrors([])
     } catch (error) {
       console.error('Error creating tasks:', error)
-      alert('Error creating tasks. Please try again.')
+      toast.error('Error creating tasks. Please try again.')
     } finally {
       setIsLoading(false)
     }
@@ -155,10 +167,11 @@ export function TasksNewPage() {
           <div className="card bg-base-100 shadow-xl">
             <div className="card-body">
               <SubmitActions 
-                onSubmit={handleSubmit}
                 hasErrors={hasErrors}
                 validTasksCount={validTasks.length}
                 totalTasksCount={parsedData.length}
+                onSubmit={handleSubmit}
+                isLoading={createTask.isPending}
               />
             </div>
           </div>

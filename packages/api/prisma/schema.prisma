@@ -33,12 +33,6 @@ enum TaskState {
     EXECUTED
 }
 
-enum Priority {
-    HIGH
-    LOW
-    MEDIUM
-}
-
 model User {
     id        Int      @id @default(autoincrement())
     email     String?
@@ -72,9 +66,9 @@ model Task {
     companyAndArtist      String?
     collectionName        String?
     tokenId               String?
-    targetPriceEth        Float?
+    targetPriceEth        String?
     dateDeadline          String?
-    technicalVerification Boolean?
+    technicalVerification String?
     
     // Campos específicos de ACQUISITION (A-M)
     nftName               String?
@@ -91,7 +85,7 @@ model Task {
     deadline              String?
     
     // Campos comunes adicionales
-    priority              Priority?
+    priority              String?
     
     // Relaciones
     userId                Int?

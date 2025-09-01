@@ -1,13 +1,31 @@
 import prisma from '@/lib/prisma'
 import { keccak256, stringToHex } from 'viem'
 import { VerifierService } from '@/services/verifier-service'
+import { z } from 'zod'
 import {
   LiquidationTaskInput,
   AcquisitionTaskInput,
   AuthorizationTaskInput,
   ArbitrageTaskInput,
   CreateTaskInput,
+  GetTasksQuerySchema,
 } from './tasks.schema'
+import { getPublicHttpsClient } from '@/services/wallet-clients'
+import { getWalletHttpsClient } from '@/services/wallet-clients'
+import { CHAIN_BY_ENV } from '@/constants'
+import env from '@/env'
+
+const chain = CHAIN_BY_ENV[env.NODE_ENV];
+const contractAddress = env.EXECUTION_VERIFIER_ADDRESS as `0x${string}`;
+
+const publicClient = getPublicHttpsClient(chain);
+const walletClient = getWalletHttpsClient(chain);
+
+const verifierService = new VerifierService({
+  contractAddress,
+  publicClient,
+  walletClient,
+});
 
 /**
  * Creates a liquidation task
@@ -15,7 +33,6 @@ import {
 export const createLiquidationTask = async (
   data: LiquidationTaskInput, 
   userAddress: string,
-  verifierService: VerifierService
 ): Promise<any> => {
   const taskData = { taskType: 'LIQUIDATION', ...data }
   const taskHash = hashTaskData(taskData)
@@ -59,7 +76,6 @@ export const createLiquidationTask = async (
 export const createAcquisitionTask = async (
   data: AcquisitionTaskInput, 
   userAddress: string,
-  verifierService: VerifierService
 ): Promise<any> => {
   const taskData = { taskType: 'ACQUISITION', ...data }
   const taskHash = hashTaskData(taskData)
@@ -103,7 +119,6 @@ export const createAcquisitionTask = async (
 export const createAuthorizationTask = async (
   data: AuthorizationTaskInput, 
   userAddress: string,
-  verifierService: VerifierService
 ): Promise<any> => {
   const taskData = { taskType: 'AUTHORIZATION', ...data }
   const taskHash = hashTaskData(taskData)
@@ -145,7 +160,6 @@ export const createAuthorizationTask = async (
 export const createArbitrageTask = async (
   data: ArbitrageTaskInput, 
   userAddress: string,
-  verifierService: VerifierService
 ): Promise<any> => {
   const taskData = { taskType: 'ARBITRAGE', ...data }
   const taskHash = hashTaskData(taskData)
@@ -188,7 +202,6 @@ export const createArbitrageTask = async (
 export const createTask = async (
   data: CreateTaskInput, 
   userAddress: string,
-  verifierService: VerifierService
 ): Promise<any> => {
   // Check if task already exists
   const existingTask = await checkTaskExists(data.transactionId)
@@ -198,13 +211,13 @@ export const createTask = async (
 
   switch (data.taskType) {
     case 'LIQUIDATION':
-      return createLiquidationTask(data, userAddress, verifierService)
+      return createLiquidationTask(data, userAddress)
     case 'ACQUISITION':
-      return createAcquisitionTask(data, userAddress, verifierService)
+      return createAcquisitionTask(data, userAddress)
     case 'AUTHORIZATION':
-      return createAuthorizationTask(data, userAddress, verifierService)
+      return createAuthorizationTask(data, userAddress)
     case 'ARBITRAGE':
-      return createArbitrageTask(data, userAddress, verifierService)
+      return createArbitrageTask(data, userAddress)
     default:
       throw new Error(`Invalid task type: ${(data as any).taskType}`)
   }
@@ -244,4 +257,76 @@ export const getAllTasks = async (): Promise<any[]> => {
   return prisma.task.findMany({
     orderBy: { createdAt: 'desc' },
   })
+}
+
+/**
+ * Gets tasks with filtering and pagination
+ */
+export const getTasks = async (query: z.infer<typeof GetTasksQuerySchema>) => {
+  const { page, limit, taskType, search, dateFrom, dateTo, status } = query
+  
+  // Build where clause for filters
+  const where: any = {}
+  
+  if (taskType) {
+    where.taskType = taskType
+  }
+  
+  if (search) {
+    where.OR = [
+      { transactionId: { contains: search, mode: 'insensitive' } },
+      { taskHash: { contains: search, mode: 'insensitive' } },
+      { transactionHash: { contains: search, mode: 'insensitive' } },
+    ]
+  }
+  
+  if (dateFrom || dateTo) {
+    where.createdAt = {}
+    if (dateFrom) {
+      where.createdAt.gte = new Date(dateFrom)
+    }
+    if (dateTo) {
+      where.createdAt.lte = new Date(dateTo)
+    }
+  }
+  
+  if (status) {
+    where.status = status
+  }
+  
+  // Get total count for pagination
+  const total = await prisma.task.count({ where })
+  
+  // Calculate pagination
+  const totalPages = Math.ceil(total / limit)
+  const hasNext = page < totalPages
+  const hasPrev = page > 1
+  
+  // Get tasks with pagination
+  const tasks = await prisma.task.findMany({
+    where,
+    orderBy: { createdAt: 'desc' },
+    skip: (page - 1) * limit,
+    take: limit,
+    include: {
+      user: {
+        select: {
+          id: true,
+          address: true,
+        },
+      },
+    },
+  })
+  
+  return {
+    tasks,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages,
+      hasNext,
+      hasPrev,
+    },
+  }
 }
