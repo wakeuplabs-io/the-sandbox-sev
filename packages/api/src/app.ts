@@ -10,6 +10,7 @@ import createApp from "./lib/create-app";
 import env from "./env";
 import { cors } from "hono/cors";
 import users from "./domain/users/users.routes";
+import tasks from "./domain/tasks/tasks.routes";
 
 /**
  * Array of available API routes
@@ -31,6 +32,7 @@ const routes = createApp()
   )
   .basePath("/api")
   .route("/users", users)
+  .route("/tasks", tasks)
 
 
 /**
