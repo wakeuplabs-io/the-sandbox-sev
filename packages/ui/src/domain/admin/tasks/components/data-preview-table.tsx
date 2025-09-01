@@ -1,5 +1,5 @@
 import { ParsedRow, ValidationError, TaskType, TASK_TYPE_CONFIGS } from '../types/tasks-new.types'
-import { FaExclamationTriangle, FaInfoCircle } from 'react-icons/fa'
+import { FaExclamationTriangle } from 'react-icons/fa'
 
 interface DataPreviewTableProps {
   data: ParsedRow[]
@@ -92,7 +92,7 @@ export function DataPreviewTable({ data, errors, taskType }: DataPreviewTablePro
             </tr>
           </thead>
           <tbody>
-            {data.map((row, index) => (
+            {data.map((row) => (
               <tr key={row.rowIndex} className={getRowClassName(row.rowIndex)}>
                 <td className="text-xs font-mono">
                   {row.rowIndex + 1}

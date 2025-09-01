@@ -15,6 +15,7 @@ export function Layout({ children, showSidebar = false }: LayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const { account, email } = useWeb3Auth();
   const { user } = useGetUser(account || "", email || "");
+  console.log("user", user);
   const handleSidebarToggle = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };

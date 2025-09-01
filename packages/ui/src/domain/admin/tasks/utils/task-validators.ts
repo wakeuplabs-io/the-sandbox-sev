@@ -16,7 +16,6 @@ function validateTransactionId(data: Record<string, any>, rowIndex: number): Val
 }
 
 function validatePriority(data: Record<string, any>, rowIndex: number): ValidationError[] {
-  const errors: ValidationError[] = []
   console.log('validatePriority', data, rowIndex)
   return []
 }
