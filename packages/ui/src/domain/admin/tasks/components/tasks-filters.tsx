@@ -1,5 +1,6 @@
-import { FaSearch, FaFilter, FaSpinner } from 'react-icons/fa'
+import { FaSearch, FaFilter } from 'react-icons/fa'
 import type { TasksFilters } from '../types/tasks-list.types'
+import { TaskTypeEnum } from '@/shared/constants'
 
 interface TasksFiltersProps {
   filters: TasksFilters
@@ -52,10 +53,10 @@ export function TasksFilters({ filters, onFiltersChange}: TasksFiltersProps) {
               onChange={(e) => onFiltersChange({ taskType: e.target.value as any || undefined })}
             >
               <option value="">All Types</option>
-              <option value="LIQUIDATION">Liquidation</option>
-              <option value="ACQUISITION">Acquisition</option>
-              <option value="AUTHORIZATION">Authorization</option>
-              <option value="ARBITRAGE">Arbitrage</option>
+              <option value={TaskTypeEnum.LIQUIDATION}>Liquidation</option>
+              <option value={TaskTypeEnum.ACQUISITION}>Acquisition</option>
+              <option value={TaskTypeEnum.AUTHORIZATION}>Authorization</option>
+              <option value={TaskTypeEnum.ARBITRAGE}>Arbitrage</option>
             </select>
           </div>
 

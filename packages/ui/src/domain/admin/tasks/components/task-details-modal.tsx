@@ -1,31 +1,38 @@
-import { FaTimes, FaExternalLinkAlt } from 'react-icons/fa'
-import type { Task } from '../types/tasks-list.types'
-import { truncateHash } from '@/shared/lib/utils'
-import { CopyToClipboard } from '@/shared/components/copy-to-clipboard'
+import { FaTimes } from "react-icons/fa";
+import type { Task } from "../types/tasks-list.types";
+import { truncateHash } from "@/shared/lib/utils";
+import { CopyToClipboard } from "@/shared/components/copy-to-clipboard";
+import { TaskTypeEnum } from "@/shared/constants";
+import { TaskType } from "../types/tasks-new.types";
 
 interface TaskDetailsModalProps {
-  task: Task | null
-  isOpen: boolean
-  onClose: () => void
+  task: Task | null;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 export function TaskDetailsModal({ task, isOpen, onClose }: TaskDetailsModalProps) {
-  if (!isOpen || !task) return null
+  if (!isOpen || !task) return null;
 
-  const getTaskTypeColor = (taskType: string) => {
+  const getTaskTypeColor = (taskType: TaskType) => {
     switch (taskType) {
-      case 'LIQUIDATION': return 'badge-error'
-      case 'ACQUISITION': return 'badge-success'
-      case 'AUTHORIZATION': return 'badge-warning'
-      case 'ARBITRAGE': return 'badge-info'
-      default: return 'badge-neutral'
+      case TaskTypeEnum.LIQUIDATION:
+        return "badge-error";
+      case TaskTypeEnum.ACQUISITION:
+        return "badge-success";
+      case TaskTypeEnum.AUTHORIZATION:
+        return "badge-warning";
+      case TaskTypeEnum.ARBITRAGE:
+        return "badge-info";
+      default:
+        return "badge-neutral";
     }
-  }
+  };
 
   return (
     <div className="modal modal-open">
       <div className="modal-box w-11/12 max-w-4xl">
-        {/* Header */}
+      
         <div className="flex items-center justify-between mb-6">
           <h3 className="font-bold text-lg">Task Details</h3>
           <button onClick={onClose} className="btn btn-ghost btn-sm">
@@ -39,17 +46,15 @@ export function TaskDetailsModal({ task, isOpen, onClose }: TaskDetailsModalProp
             <span className="font-mono">{task.user.email}</span>
           </div>
         </div>
-        {/* Task Info */}
+
         <div className="space-y-6">
-          {/* Basic Info */}
+      
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="form-control">
               <label className="label">
                 <span className="label-text font-semibold">Task ID</span>
               </label>
-              <div className="input input-bordered bg-base-200 w-full">
-                {task.id}
-              </div>
+              <div className="input input-bordered bg-base-200 w-full">{task.id}</div>
             </div>
 
             <div className="form-control">
@@ -57,9 +62,7 @@ export function TaskDetailsModal({ task, isOpen, onClose }: TaskDetailsModalProp
                 <span className="label-text font-semibold">Task Type</span>
               </label>
               <div className="input input-bordered bg-base-200 w-full">
-                <span className={`badge ${getTaskTypeColor(task.taskType)}`}>
-                  {task.taskType}
-                </span>
+                <span className={`badge ${getTaskTypeColor(task.taskType)}`}>{task.taskType}</span>
               </div>
             </div>
 
@@ -82,7 +85,7 @@ export function TaskDetailsModal({ task, isOpen, onClose }: TaskDetailsModalProp
             </div>
           </div>
 
-          {/* Hashes */}
+      
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="form-control">
               <label className="label">
@@ -92,7 +95,6 @@ export function TaskDetailsModal({ task, isOpen, onClose }: TaskDetailsModalProp
                 {truncateHash(task.taskHash, 8, 8)}
                 <CopyToClipboard text={task.taskHash} />
               </div>
-              
             </div>
 
             <div className="form-control">
@@ -106,7 +108,7 @@ export function TaskDetailsModal({ task, isOpen, onClose }: TaskDetailsModalProp
             </div>
           </div>
 
-          {/* Task Data */}
+          
           <div className="form-control">
             <label className="label">
               <span className="label-text font-semibold">Task Data</span>
@@ -117,28 +119,11 @@ export function TaskDetailsModal({ task, isOpen, onClose }: TaskDetailsModalProp
               </pre>
             </div>
           </div>
-
-          {/* Updated At */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text font-semibold">Last Updated</span>
-            </label>
-            <div className="input input-bordered bg-base-200 w-full">
-              {new Date(task.updatedAt).toLocaleString()}
-            </div>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="modal-action">
-          <button onClick={onClose} className="btn btn-primary">
-            Close
-          </button>
         </div>
       </div>
+
       
-      {/* Backdrop */}
       <div className="modal-backdrop" onClick={onClose}></div>
     </div>
-  )
+  );
 }

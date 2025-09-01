@@ -1,3 +1,4 @@
+import { TaskTypeEnum } from '@/shared/constants';
 import { TaskType } from '../types/tasks-new.types'
 
 interface TaskTypeButtonsProps {
@@ -8,22 +9,22 @@ interface TaskTypeButtonsProps {
 export function TaskTypeButtons({ selectedType, onTypeChange }: TaskTypeButtonsProps) {
   const taskTypes: { type: TaskType; label: string; description: string }[] = [
     {
-      type: 'LIQUIDATION',
+      type: TaskTypeEnum.LIQUIDATION,
       label: 'Liquidation',
       description: 'Liquidate assets'
     },
     {
-      type: 'ACQUISITION',
+      type: TaskTypeEnum.ACQUISITION,
       label: 'Acquisition',
       description: 'Acquire new assets'
     },
     {
-      type: 'AUTHORIZATION',
+      type: TaskTypeEnum.AUTHORIZATION,
       label: 'Authorization',
       description: 'Authorize transactions'
     },
     {
-      type: 'ARBITRAGE',
+      type: TaskTypeEnum.ARBITRAGE,
       label: 'Arbitrage',
       description: 'Arbitrage opportunities'
     }
