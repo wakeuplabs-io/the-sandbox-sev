@@ -1,3 +1,4 @@
+import { TaskTypeEnum } from '@/shared/constants'
 import { TaskType, ParsedRow, TASK_TYPE_CONFIGS } from '../types/tasks-new.types'
 
 export function parseExcelData(rawData: string, taskType: TaskType): ParsedRow[] {
@@ -20,13 +21,13 @@ export function parseExcelData(rawData: string, taskType: TaskType): ParsedRow[]
 
   // Use different parsing strategies for different task types
   switch (taskType) {
-    case 'ARBITRAGE':
+    case TaskTypeEnum.ARBITRAGE:
       return parseArbitrageData(cleanedData, config, parsedRows)
-    case 'ACQUISITION':
+    case TaskTypeEnum.ACQUISITION:
       return parseAcquisitionData(cleanedData, config, parsedRows)
-    case 'LIQUIDATION':
+    case TaskTypeEnum.LIQUIDATION:
       return parseLiquidationData(cleanedData, config, parsedRows)
-    case 'AUTHORIZATION':
+    case TaskTypeEnum.AUTHORIZATION:
       return parseAuthorizationData(cleanedData, config, parsedRows)
     default:
       console.error(`Unknown task type: ${taskType}`)
@@ -55,16 +56,11 @@ function parseArbitrageData(cleanedData: string, config: any, parsedRows: Parsed
     const tabCount = (line.match(/\t/g) || []).length
     console.log(`  tabCount: ${tabCount}, expectedTabs: ${expectedTabs}`)
     
-    // Check if this line starts with a new transaction ID pattern
-    const isNewTransaction = line.trim().match(/^\d{4}_Arbitrage_/)
-    const isCompleteRow = tabCount >= expectedTabs
-    
-    console.log(`  isNewTransaction: ${isNewTransaction}, isCompleteRow: ${isCompleteRow}`)
-    
-    // If we have accumulated lines and this is a new transaction, process the previous row
-    if (isNewTransaction && currentRowLines.length > 0) {
+    // If we have accumulated lines and this line has enough tabs for a complete row,
+    // process the previous row first
+    if (tabCount >= expectedTabs && currentRowLines.length > 0) {
       console.log(`Processing previous row ${rowIndex}:`, currentRowLines)
-      processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, 'ARBITRAGE')
+      processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, TaskTypeEnum.ARBITRAGE)
       currentRowLines = []
       rowIndex++
     }
@@ -76,10 +72,10 @@ function parseArbitrageData(cleanedData: string, config: any, parsedRows: Parsed
       console.log(`  Skipping line with insufficient content: "${line}"`)
     }
     
-    // If this line is complete and we have a row, process it immediately
-    if (isCompleteRow && currentRowLines.length > 0) {
+    // If this line is complete, process it immediately
+    if (tabCount >= expectedTabs && currentRowLines.length > 0) {
       console.log(`Processing complete row ${rowIndex}:`, currentRowLines)
-      processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, 'ARBITRAGE')
+      processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, TaskTypeEnum.ARBITRAGE)
       currentRowLines = []
       rowIndex++
     }
@@ -88,7 +84,7 @@ function parseArbitrageData(cleanedData: string, config: any, parsedRows: Parsed
   // Process any remaining incomplete row
   if (currentRowLines.length > 0) {
     console.log(`Processing final incomplete row ${rowIndex}:`, currentRowLines)
-    processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, 'ARBITRAGE')
+    processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, TaskTypeEnum.ARBITRAGE)
   }
 
   console.log(`Total rows parsed: ${parsedRows.length}`)
@@ -116,16 +112,11 @@ function parseAcquisitionData(cleanedData: string, config: any, parsedRows: Pars
     const tabCount = (line.match(/\t/g) || []).length
     console.log(`  tabCount: ${tabCount}, expectedTabs: ${expectedTabs}`)
     
-    // Check if this line starts with a new transaction ID pattern
-    const isNewTransaction = line.trim().match(/^\d{4}_Acquisition_/)
-    const isCompleteRow = tabCount >= expectedTabs
-    
-    console.log(`  isNewTransaction: ${isNewTransaction}, isCompleteRow: ${isCompleteRow}`)
-    
-    // If this is a new transaction and we have accumulated lines, process the previous row
-    if (isNewTransaction && currentRowLines.length > 0) {
+    // If we have accumulated lines and this line has enough tabs for a complete row,
+    // process the previous row first
+    if (tabCount >= expectedTabs && currentRowLines.length > 0) {
       console.log(`Processing previous row ${rowIndex}:`, currentRowLines)
-      processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, 'ACQUISITION')
+      processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, TaskTypeEnum.ACQUISITION)
       currentRowLines = []
       rowIndex++
     }
@@ -137,10 +128,10 @@ function parseAcquisitionData(cleanedData: string, config: any, parsedRows: Pars
       console.log(`  Skipping line with insufficient content: "${line}"`)
     }
     
-    // If this line is complete and we have accumulated content, process it immediately
-    if (isCompleteRow && currentRowLines.length > 0) {
+    // If this line is complete, process it immediately
+    if (tabCount >= expectedTabs && currentRowLines.length > 0) {
       console.log(`Processing complete row ${rowIndex}:`, currentRowLines)
-      processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, 'ACQUISITION')
+      processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, TaskTypeEnum.ACQUISITION)
       currentRowLines = []
       rowIndex++
     }
@@ -149,7 +140,7 @@ function parseAcquisitionData(cleanedData: string, config: any, parsedRows: Pars
   // Process any remaining incomplete row
   if (currentRowLines.length > 0) {
     console.log(`Processing final incomplete row ${rowIndex}:`, currentRowLines)
-    processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, 'ACQUISITION')
+    processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, TaskTypeEnum.ACQUISITION)
   }
 
   console.log(`Total rows parsed: ${parsedRows.length}`)
@@ -177,16 +168,11 @@ function parseLiquidationData(cleanedData: string, config: any, parsedRows: Pars
     const tabCount = (line.match(/\t/g) || []).length
     console.log(`  tabCount: ${tabCount}, expectedTabs: ${expectedTabs}`)
     
-    // Check if this line starts with a new transaction ID pattern
-    const isNewTransaction = line.trim().match(/^\d{4}_Liquidation_/)
-    const isCompleteRow = tabCount >= expectedTabs
-    
-    console.log(`  isNewTransaction: ${isNewTransaction}, isCompleteRow: ${isCompleteRow}`)
-    
-    // If we have accumulated lines and this is a new transaction, process the previous row
-    if (isNewTransaction && currentRowLines.length > 0) {
+    // If we have accumulated lines and this line has enough tabs for a complete row,
+    // process the previous row first
+    if (tabCount >= expectedTabs && currentRowLines.length > 0) {
       console.log(`Processing previous row ${rowIndex}:`, currentRowLines)
-      processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, 'LIQUIDATION')
+      processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, TaskTypeEnum.LIQUIDATION)
       currentRowLines = []
       rowIndex++
     }
@@ -198,10 +184,10 @@ function parseLiquidationData(cleanedData: string, config: any, parsedRows: Pars
       console.log(`  Skipping line with insufficient content: "${line}"`)
     }
     
-    // If this line is complete and we have a row, process it immediately
-    if (isCompleteRow && currentRowLines.length > 0) {
+    // If this line is complete, process it immediately
+    if (tabCount >= expectedTabs && currentRowLines.length > 0) {
       console.log(`Processing complete row ${rowIndex}:`, currentRowLines)
-      processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, 'LIQUIDATION')
+      processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, TaskTypeEnum.LIQUIDATION)
       currentRowLines = []
       rowIndex++
     }
@@ -210,7 +196,7 @@ function parseLiquidationData(cleanedData: string, config: any, parsedRows: Pars
   // Process any remaining incomplete row
   if (currentRowLines.length > 0) {
     console.log(`Processing final incomplete row ${rowIndex}:`, currentRowLines)
-    processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, 'LIQUIDATION')
+    processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, TaskTypeEnum.LIQUIDATION)
   }
 
   console.log(`Total rows parsed: ${parsedRows.length}`)
@@ -220,12 +206,12 @@ function parseLiquidationData(cleanedData: string, config: any, parsedRows: Pars
 function parseAuthorizationData(cleanedData: string, config: any, parsedRows: ParsedRow[]): ParsedRow[] {
   console.log('Using AUTHORIZATION-specific parsing logic')
   
-  // Split by lines and group them into rows
-  const lines = cleanedData
-    .split('\n')
-    .map(line => line.trim())
-    .filter(line => line.length > 0)
-
+  // First, let's try to identify complete rows by looking for transaction ID patterns
+  // This helps us handle multi-line content within cells
+  const transactionIdPattern = /^\d{4}_Authorization\d*_/
+  
+  // Split by lines but be smarter about multi-line content
+  const lines = cleanedData.split('\n')
   console.log(`Total lines after split: ${lines.length}`)
 
   let currentRowLines: string[] = []
@@ -236,33 +222,27 @@ function parseAuthorizationData(cleanedData: string, config: any, parsedRows: Pa
     console.log(`Line ${index}: "${line}"`)
     
     const tabCount = (line.match(/\t/g) || []).length
-    console.log(`  tabCount: ${tabCount}, expectedTabs: ${expectedTabs}`)
+    const isNewTransaction = transactionIdPattern.test(line.trim())
     
-    // Check if this line starts with a new transaction ID pattern
-    const isNewTransaction = line.trim().match(/^\d{4}_Authorization_/)
-    const isCompleteRow = tabCount >= expectedTabs
+    console.log(`  tabCount: ${tabCount}, expectedTabs: ${expectedTabs}, isNewTransaction: ${isNewTransaction}`)
     
-    console.log(`  isNewTransaction: ${isNewTransaction}, isCompleteRow: ${isCompleteRow}`)
-    
-    // If we have accumulated lines and this is a new transaction, process the previous row
+    // If this is a new transaction and we have accumulated lines, process the previous row
     if (isNewTransaction && currentRowLines.length > 0) {
       console.log(`Processing previous row ${rowIndex}:`, currentRowLines)
-      processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, 'AUTHORIZATION')
+      processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, TaskTypeEnum.AUTHORIZATION)
       currentRowLines = []
       rowIndex++
     }
     
-    // Only add lines that have meaningful content (not just quotes or empty content)
-    if (line.trim() !== '"' && line.trim().length > 1) {
+    // Add this line to current row (skip empty lines)
+    if (line.trim().length > 0) {
       currentRowLines.push(line)
-    } else {
-      console.log(`  Skipping line with insufficient content: "${line}"`)
     }
     
-    // If this line is complete and we have a row, process it immediately
-    if (isCompleteRow && currentRowLines.length > 0) {
+    // If this line has enough tabs and is a new transaction, process it immediately
+    if (tabCount >= expectedTabs && isNewTransaction && currentRowLines.length > 0) {
       console.log(`Processing complete row ${rowIndex}:`, currentRowLines)
-      processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, 'AUTHORIZATION')
+        processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, TaskTypeEnum.AUTHORIZATION)
       currentRowLines = []
       rowIndex++
     }
@@ -271,7 +251,7 @@ function parseAuthorizationData(cleanedData: string, config: any, parsedRows: Pa
   // Process any remaining incomplete row
   if (currentRowLines.length > 0) {
     console.log(`Processing final incomplete row ${rowIndex}:`, currentRowLines)
-    processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, 'AUTHORIZATION')
+    processRow(currentRowLines.join('\n'), rowIndex, config, parsedRows, TaskTypeEnum.AUTHORIZATION)
   }
 
   console.log(`Total rows parsed: ${parsedRows.length}`)
