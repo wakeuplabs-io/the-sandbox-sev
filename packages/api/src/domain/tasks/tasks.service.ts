@@ -368,9 +368,7 @@ export const executeTask = async (
         data: {
           taskId: data.taskId,
           proofType: proofData.proofType,
-          proofDescription: proofData.proofDescription,
-          txHash: proofData.txHash,
-          proofImageUrl: proofData.proofImageUrl,
+          proofValue: proofData.proofValue,
           fileName: proofData.fileName,
           fileSize: proofData.fileSize,
           mimeType: proofData.mimeType,
@@ -436,22 +434,3 @@ export const batchExecuteTasks = async (
   }
 }
 
-/**
- * Gets tasks that are ready for execution (STORED state)
- */
-export const getTasksReadyForExecution = async (): Promise<any[]> => {
-  return prisma.task.findMany({
-    where: { state: 'STORED' },
-    orderBy: { createdAt: 'desc' },
-    include: {
-      user: {
-        select: {
-          id: true,
-          address: true,
-          nickname: true,
-          email: true,
-        },
-      },
-    },
-  })
-}

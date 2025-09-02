@@ -8,7 +8,8 @@ import {
   createTaskController,
   executeTaskController,
   batchExecuteTasksController,
-  getTasksReadyForExecutionController,
+  uploadProofImageController,
+  generateImageUploadUrlController,
 } from "./tasks.controller";
 import { CreateTaskSchema, GetTasksQuerySchema, ExecuteTaskSchema, BatchExecuteTasksSchema } from "./tasks.schema";
 import { requireRole } from "@/middlewares/require-role";
@@ -45,10 +46,21 @@ const tasks = new Hono()
     zValidator("json", BatchExecuteTasksSchema),
     batchExecuteTasksController
   )
-  .get(
-    "/ready-for-execution",
+
+  .post(
+    "/upload-proof-image",
     requireRole([Role.ADMIN, Role.CONSULTANT]),
-    getTasksReadyForExecutionController
+    uploadProofImageController
+  )
+  .post(
+    "/generate-upload-url",
+    requireRole([Role.ADMIN, Role.CONSULTANT]),
+    zValidator("json", z.object({
+      fileName: z.string(),
+      mimeType: z.string(),
+      taskId: z.string(),
+    })),
+    generateImageUploadUrlController
   );
 
 export default tasks;

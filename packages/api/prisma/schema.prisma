@@ -38,7 +38,6 @@ enum TaskState {
 enum ProofType {
     TEXT
     IMAGE
-    TRANSACTION
 }
 
 enum ProofStatus {
@@ -117,10 +116,7 @@ model TaskExecutionProof {
     task      Task     @relation("TaskExecutionProofs", fields: [taskId], references: [id])
     proofType ProofType @default(TEXT)
     
-    proofHash        String? 
-    proofDescription String? 
-    
-    proofImageUrl    String? 
+    proofValue       String? 
     fileName         String? 
     fileSize         Int?    
     mimeType         String? 

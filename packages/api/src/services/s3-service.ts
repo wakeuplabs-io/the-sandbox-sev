@@ -12,7 +12,7 @@ const s3Client = new S3Client({
   } : undefined,
 })
 
-export interface UploadImageResult {
+export interface UploadFileResult {
   url: string
   key: string
   fileName: string
@@ -21,27 +21,27 @@ export interface UploadImageResult {
 }
 
 /**
- * Uploads an image to S3 and returns the URL and metadata
+ * Uploads a file to S3 and returns the URL and metadata
  */
-export const uploadImageToS3 = async (
+export const uploadFileToS3 = async (
   file: Buffer,
   originalFileName: string,
   mimeType: string,
-  folder: string = 'task-proofs'
-): Promise<UploadImageResult> => {
-  if (!env.S3_BUCKET_NAME) {
-    throw new Error('S3_BUCKET_NAME is not configured')
+  folderPath: string
+): Promise<UploadFileResult> => {
+  if (!env.ASSETS_BUCKET_NAME) {
+    throw new Error('ASSETS_BUCKET_NAME is not configured')
   }
 
   // Generate unique filename
   const fileExtension = originalFileName.split('.').pop() || 'jpg'
   const uniqueFileName = `${uuidv4()}.${fileExtension}`
-  const key = `${folder}/${uniqueFileName}`
+  const key = `${folderPath}/${uniqueFileName}`
 
   try {
     // Upload to S3
     const command = new PutObjectCommand({
-      Bucket: env.S3_BUCKET_NAME,
+      Bucket: env.ASSETS_BUCKET_NAME,
       Key: key,
       Body: file,
       ContentType: mimeType,
@@ -51,7 +51,7 @@ export const uploadImageToS3 = async (
     await s3Client.send(command)
 
     // Construct the public URL
-    const url = `https://${env.S3_BUCKET_NAME}.s3.${env.AWS_REGION}.amazonaws.com/${key}`
+    const url = `https://${env.ASSETS_BUCKET_NAME}.s3.${env.AWS_REGION}.amazonaws.com/${key}`
 
     return {
       url,
@@ -72,18 +72,18 @@ export const uploadImageToS3 = async (
 export const generatePresignedUploadUrl = async (
   fileName: string,
   mimeType: string,
-  folder: string = 'task-proofs'
+  folderPath: string
 ): Promise<{ uploadUrl: string; key: string; publicUrl: string }> => {
-  if (!env.S3_BUCKET_NAME) {
-    throw new Error('S3_BUCKET_NAME is not configured')
+  if (!env.ASSETS_BUCKET_NAME) {
+    throw new Error('ASSETS_BUCKET_NAME is not configured')
   }
 
   const fileExtension = fileName.split('.').pop() || 'jpg'
   const uniqueFileName = `${uuidv4()}.${fileExtension}`
-  const key = `${folder}/${uniqueFileName}`
+  const key = `${folderPath}/${uniqueFileName}`
 
   const command = new PutObjectCommand({
-    Bucket: env.S3_BUCKET_NAME,
+    Bucket: env.ASSETS_BUCKET_NAME,
     Key: key,
     ContentType: mimeType,
     ACL: 'public-read',
@@ -91,7 +91,7 @@ export const generatePresignedUploadUrl = async (
 
   try {
     const uploadUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 }) // 1 hour
-    const publicUrl = `https://${env.S3_BUCKET_NAME}.s3.${env.AWS_REGION}.amazonaws.com/${key}`
+    const publicUrl = `https://${env.ASSETS_BUCKET_NAME}.s3.${env.AWS_REGION}.amazonaws.com/${key}`
 
     return {
       uploadUrl,
@@ -108,5 +108,5 @@ export const generatePresignedUploadUrl = async (
  * Validates if S3 is properly configured
  */
 export const isS3Configured = (): boolean => {
-  return !!(env.AWS_ACCESS_KEY_ID && env.AWS_SECRET_ACCESS_KEY && env.S3_BUCKET_NAME)
+  return !!(env.AWS_ACCESS_KEY_ID && env.AWS_SECRET_ACCESS_KEY && env.ASSETS_BUCKET_NAME)
 }

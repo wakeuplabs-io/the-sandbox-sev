@@ -108,10 +108,8 @@ export const TasksListResponseSchema = z.object({
 
 // Schema for proof data
 export const ProofDataSchema = z.object({
-  proofType: z.enum(['TEXT', 'IMAGE', 'TRANSACTION']),
-  proofDescription: z.string().optional(),
-  txHash: z.string().optional(),
-  proofImageUrl: z.string().optional(),
+  proofType: z.enum(['TEXT', 'IMAGE']),
+  proofValue: z.string(),
   fileName: z.string().optional(),
   fileSize: z.number().optional(),
   mimeType: z.string().optional(),
