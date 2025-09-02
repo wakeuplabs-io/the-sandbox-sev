@@ -1,0 +1,168 @@
+import { useState } from 'react'
+import { FaChevronDown, FaChevronRight, FaPlay, FaClock, FaExclamationTriangle } from 'react-icons/fa'
+import { clsx } from 'clsx'
+import { useTaskTypeColors } from '@/hooks/use-task-type-colors'
+import { ProofUploadArea } from './proof-upload-area'
+import type { Task } from '../../types/tasks-list.types'
+
+interface TaskExecutionCardProps {
+  task: Task
+  onProofReady: (hasProof: boolean) => void
+}
+
+export function TaskExecutionCard({ task, onProofReady }: TaskExecutionCardProps) {
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [hasProof, setHasProof] = useState(false)
+  const { getTaskTypeBadgeClasses } = useTaskTypeColors()
+
+  const handleProofChange = (hasProofData: boolean) => {
+    setHasProof(hasProofData)
+    onProofReady(hasProofData)
+  }
+
+  const handleExecuteTask = () => {
+    console.log('Executing task:', task.id)
+    // TODO: Implement individual task execution
+  }
+
+  const getPriorityIcon = (priority?: string) => {
+    if (!priority) return null
+    
+    if (priority.toLowerCase().includes('high')) {
+      return <FaExclamationTriangle className="h-4 w-4 text-error" />
+    } else if (priority.toLowerCase().includes('medium')) {
+      return <FaClock className="h-4 w-4 text-warning" />
+    }
+    return <FaClock className="h-4 w-4 text-info" />
+  }
+
+  const getPriorityBadgeClass = (priority?: string) => {
+    if (!priority) return 'badge-neutral'
+    
+    if (priority.toLowerCase().includes('high')) {
+      return 'badge-error'
+    } else if (priority.toLowerCase().includes('medium')) {
+      return 'badge-warning'
+    }
+    return 'badge-info'
+  }
+
+  return (
+    <div className="card bg-base-100 shadow-xl">
+      <div className="card-body p-4">
+        {/* Header - Always visible */}
+        <div 
+          className="flex items-center justify-between cursor-pointer hover:bg-base-200/50 rounded-lg p-2 -m-2"
+          onClick={() => setIsExpanded(!isExpanded)}
+        >
+          <div className="flex items-center gap-4">
+            {/* Expand/Collapse Icon */}
+            {isExpanded ? (
+              <FaChevronDown className="h-4 w-4 text-base-content/60" />
+            ) : (
+              <FaChevronRight className="h-4 w-4 text-base-content/60" />
+            )}
+            
+            {/* Task Info */}
+            <div className="flex items-center gap-3">
+              <span className="font-mono text-sm font-semibold">
+                {task.transactionId}
+              </span>
+              
+              <span
+                className={clsx(
+                  "badge badge-sm",
+                  getTaskTypeBadgeClasses(task.taskType as any)
+                )}
+              >
+                {task.taskType}
+              </span>
+              
+              <span className="badge badge-sm badge-info">
+                {task.state}
+              </span>
+              
+              {task.priority && (
+                <div className="flex items-center gap-1">
+                  {getPriorityIcon(task.priority)}
+                  <span
+                    className={clsx(
+                      "badge badge-sm",
+                      getPriorityBadgeClass(task.priority)
+                    )}
+                  >
+                    {task.priority}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Status Indicators */}
+          <div className="flex items-center gap-2">
+            {hasProof && (
+              <span className="badge badge-sm badge-success">
+                Proof Ready
+              </span>
+            )}
+            <span className="text-sm text-base-content/60">
+              {new Date(task.createdAt).toLocaleDateString()}
+            </span>
+          </div>
+        </div>
+
+        {/* Collapsible Content */}
+        <div 
+          className={`transition-all duration-300 ease-in-out overflow-hidden ${
+            isExpanded ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
+          }`}
+        >
+          <div className="mt-4 pt-4 border-t border-base-300 space-y-4">
+              {/* Task Details */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="font-semibold text-base-content/70">Task ID:</span>
+                  <span className="ml-2 font-mono">{task.id}</span>
+                </div>
+                <div>
+                  <span className="font-semibold text-base-content/70">Created:</span>
+                  <span className="ml-2">{new Date(task.createdAt).toLocaleString()}</span>
+                </div>
+                {task.chain && (
+                  <div>
+                    <span className="font-semibold text-base-content/70">Chain:</span>
+                    <span className="ml-2">{task.chain}</span>
+                  </div>
+                )}
+                {task.platform && (
+                  <div>
+                    <span className="font-semibold text-base-content/70">Platform:</span>
+                    <span className="ml-2">{task.platform}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Proof Upload Area */}
+              <ProofUploadArea
+                taskId={task.id}
+                onProofChange={handleProofChange}
+              />
+
+              {/* Individual Execute Button */}
+              {hasProof && (
+                <div className="flex justify-end pt-2">
+                  <button
+                    onClick={handleExecuteTask}
+                    className="btn btn-primary btn-sm"
+                  >
+                    <FaPlay className="h-4 w-4 mr-2" />
+                    Execute This Task
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+  )
+}

@@ -35,6 +35,18 @@ enum TaskState {
     CANCELLED
 }
 
+enum ProofType {
+    TEXT
+    IMAGE
+    TRANSACTION
+}
+
+enum ProofStatus {
+    PENDING
+    VERIFIED
+    REJECTED
+}
+
 model User {
     id        Int      @id @default(autoincrement())
     email     String?
@@ -43,6 +55,7 @@ model User {
     role      Role     @default(MEMBER)
     createdAt DateTime @default(now())
     tasks     Task[]   @relation("UserTasks")
+    proofs    TaskExecutionProof[] @relation("UserProofs")
 }
 
 model Task {
@@ -102,10 +115,19 @@ model TaskExecutionProof {
     id        String   @id @default(cuid())
     taskId    String
     task      Task     @relation("TaskExecutionProofs", fields: [taskId], references: [id])
-    txHash    String
-    proofHash     String?
-    proofImageUrl String?
-    proofDescription String?
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    proofType ProofType @default(TEXT)
+    
+    proofHash        String? 
+    proofDescription String? 
+    
+    proofImageUrl    String? 
+    fileName         String? 
+    fileSize         Int?    
+    mimeType         String? 
+    
+    uploadedBy       Int?
+    uploadedByUser   User?    @relation("UserProofs", fields: [uploadedBy], references: [id])
+    
+    createdAt        DateTime @default(now())
+    updatedAt        DateTime @updatedAt
 }

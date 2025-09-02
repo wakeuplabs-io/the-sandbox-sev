@@ -73,6 +73,7 @@ export const CreateTaskSchema = z.discriminatedUnion('taskType', [
   ArbitrageTaskSchema.extend({ taskType: z.literal('ARBITRAGE') }),
 ])
 
+
 // Tipos TypeScript
 export type LiquidationTaskInput = z.infer<typeof LiquidationTaskSchema>
 export type AcquisitionTaskInput = z.infer<typeof AcquisitionTaskSchema>
@@ -104,3 +105,30 @@ export const TasksListResponseSchema = z.object({
     hasPrev: z.boolean(),
   }),
 })
+
+// Schema for proof data
+export const ProofDataSchema = z.object({
+  proofType: z.enum(['TEXT', 'IMAGE', 'TRANSACTION']),
+  proofDescription: z.string().optional(),
+  txHash: z.string().optional(),
+  proofImageUrl: z.string().optional(),
+  fileName: z.string().optional(),
+  fileSize: z.number().optional(),
+  mimeType: z.string().optional(),
+})
+
+// Schema for executing a single task
+export const ExecuteTaskSchema = z.object({
+  taskId: z.string(),
+  proofs: z.array(ProofDataSchema).min(1, 'At least one proof is required'),
+})
+
+// Schema for batch executing multiple tasks
+export const BatchExecuteTasksSchema = z.object({
+  tasks: z.array(ExecuteTaskSchema).min(1, 'At least one task is required'),
+})
+
+// Types
+export type ProofData = z.infer<typeof ProofDataSchema>
+export type ExecuteTaskInput = z.infer<typeof ExecuteTaskSchema>
+export type BatchExecuteTasksInput = z.infer<typeof BatchExecuteTasksSchema>

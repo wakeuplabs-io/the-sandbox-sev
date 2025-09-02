@@ -1,6 +1,6 @@
 import { Context } from 'hono'
-import { getTasks, getTaskByTransactionId, createTask } from './tasks.service'
-import { CreateTaskSchema, GetTasksQuerySchema } from './tasks.schema'
+import { getTasks, getTaskByTransactionId, createTask, executeTask, batchExecuteTasks, getTasksReadyForExecution } from './tasks.service'
+import { CreateTaskSchema, GetTasksQuerySchema, ExecuteTaskSchema, BatchExecuteTasksSchema } from './tasks.schema'
 import { VerifierService } from '@/services/verifier-service'
 import { z } from 'zod'
 
@@ -56,6 +56,56 @@ export const createTaskController = async (c: Context) => {
     const task = await createTask(taskData, user)
     
     return c.json(task, 201)
+  } catch (error: any) {
+    return c.json({ error: error.message }, 500)
+  }
+}
+
+export const executeTaskController = async (c: Context) => {
+  try {
+    const taskData = await c.req.json() as z.infer<typeof ExecuteTaskSchema>
+    const user = c.get("user");
+    
+    if (!user) {
+      return c.json({ error: "User not authenticated" }, 401);
+    }
+
+    const result = await executeTask(taskData, user)
+    
+    return c.json(result, 200)
+  } catch (error: any) {
+    return c.json({ error: error.message }, 500)
+  }
+}
+
+export const batchExecuteTasksController = async (c: Context) => {
+  try {
+    const batchData = await c.req.json() as z.infer<typeof BatchExecuteTasksSchema>
+    const user = c.get("user");
+    
+    if (!user) {
+      return c.json({ error: "User not authenticated" }, 401);
+    }
+
+    const result = await batchExecuteTasks(batchData, user)
+    
+    return c.json(result, 200)
+  } catch (error: any) {
+    return c.json({ error: error.message }, 500)
+  }
+}
+
+export const getTasksReadyForExecutionController = async (c: Context) => {
+  try {
+    const user = c.get("user");
+    
+    if (!user) {
+      return c.json({ error: "User not authenticated" }, 401);
+    }
+
+    const tasks = await getTasksReadyForExecution()
+    
+    return c.json({ tasks }, 200)
   } catch (error: any) {
     return c.json({ error: error.message }, 500)
   }

@@ -1,11 +1,11 @@
 import { FaSearch, FaFilter } from 'react-icons/fa'
-import type { TasksFilters } from '../types/tasks-list.types'
+import type { TasksListFilters } from '../../types/tasks-list.types'
 import { TaskTypeEnum, TaskStateEnum } from '@/shared/constants'
 import { Select, type SelectOption } from '@/shared/components'
 
 interface TasksFiltersProps {
-  filters: TasksFilters
-  onFiltersChange: (filters: Partial<TasksFilters>) => void
+  filters: TasksListFilters
+  onFiltersChange: (filters: Partial<TasksListFilters>) => void
 }
 
 const taskTypeOptions: SelectOption[] = [

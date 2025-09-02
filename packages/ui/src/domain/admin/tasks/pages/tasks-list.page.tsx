@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { FaPlus } from 'react-icons/fa'
-import { useTasksList } from './hooks/use-tasks-list'
-import { TasksFilters, TasksTable, TasksPagination, TaskDetailsModal } from './components'
-import type { Task } from './types/tasks-list.types'
+import { useTasksList } from '../hooks/use-tasks-list'
+import { TasksFilters, TasksTable, TasksPagination, TaskDetailsModal } from '../components'
+import type { Task } from '../types/tasks-list.types'
 
-export function TasksIndexPage() {
+export function TasksListPage() {
   const {
     tasks,
     totalTasks,

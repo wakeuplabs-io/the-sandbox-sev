@@ -6,8 +6,11 @@ import {
   getTasksController,
   getTaskByTransactionIdController,
   createTaskController,
+  executeTaskController,
+  batchExecuteTasksController,
+  getTasksReadyForExecutionController,
 } from "./tasks.controller";
-import { CreateTaskSchema, GetTasksQuerySchema } from "./tasks.schema";
+import { CreateTaskSchema, GetTasksQuerySchema, ExecuteTaskSchema, BatchExecuteTasksSchema } from "./tasks.schema";
 import { requireRole } from "@/middlewares/require-role";
 import { Role } from "@/generated/prisma";
 
@@ -29,6 +32,23 @@ const tasks = new Hono()
     requireRole([Role.ADMIN, Role.CONSULTANT]),
     zValidator("json", CreateTaskSchema),
     createTaskController
+  )
+  .post(
+    "/execute",
+    requireRole([Role.ADMIN, Role.CONSULTANT]),
+    zValidator("json", ExecuteTaskSchema),
+    executeTaskController
+  )
+  .post(
+    "/batch-execute",
+    requireRole([Role.ADMIN, Role.CONSULTANT]),
+    zValidator("json", BatchExecuteTasksSchema),
+    batchExecuteTasksController
+  )
+  .get(
+    "/ready-for-execution",
+    requireRole([Role.ADMIN, Role.CONSULTANT]),
+    getTasksReadyForExecutionController
   );
 
 export default tasks;

@@ -18,6 +18,11 @@ const EnvSchema = z.object({
   RPC_URL: z.string(),
   DATABASE_URL: z.string(),
   EXECUTION_VERIFIER_ADDRESS: z.string(),
+  // S3 Configuration
+  AWS_ACCESS_KEY_ID: z.string().optional(),
+  AWS_SECRET_ACCESS_KEY: z.string().optional(),
+  AWS_REGION: z.string().default("us-east-1"),
+  S3_BUCKET_NAME: z.string().optional(),
 });
 
 export type env = z.infer<typeof EnvSchema>;

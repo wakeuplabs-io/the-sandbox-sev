@@ -1,5 +1,5 @@
 import { TaskTypeEnum } from '@/shared/constants';
-import { TaskType } from '../types/tasks-new.types'
+import { TaskType } from '../../types/tasks-new.types'
 
 interface TaskTypeButtonsProps {
   selectedType: TaskType | null

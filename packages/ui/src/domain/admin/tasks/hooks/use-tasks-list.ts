@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { useTasks } from '@/hooks/use-tasks'
 import { useDebounce } from '@/hooks/use-debounce'
-import type { TasksFilters, TasksListResponse } from '../types/tasks-list.types'
+import type { TasksListFilters, TasksListResponse } from '../types/tasks-list.types'
 
 export const useTasksList = () => {
   const { getAllTasks } = useTasks()
-  const [filters, setFilters] = useState<TasksFilters>({
+  const [filters, setFilters] = useState<TasksListFilters>({
     page: 1,
     limit: 10,
   })
@@ -28,7 +28,7 @@ export const useTasksList = () => {
   }
 
   // Update filters
-  const updateFilters = (newFilters: Partial<TasksFilters>) => {
+  const updateFilters = (newFilters: Partial<TasksListFilters>) => {
     setFilters(prev => ({
       ...prev,
       ...newFilters,

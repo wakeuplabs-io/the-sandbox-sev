@@ -1,4 +1,11 @@
-export { TasksFilters } from './tasks-filters'
-export { TasksTable } from './tasks-table'
-export { TasksPagination } from './tasks-pagination'
-export { TaskDetailsModal } from './task-details-modal'
+// Shared components
+export * from './shared'
+
+// List components
+export * from './list'
+
+// New task components
+export * from './new'
+
+// Execute task components
+export * from './execute'

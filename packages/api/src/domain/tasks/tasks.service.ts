@@ -9,6 +9,9 @@ import {
   ArbitrageTaskInput,
   CreateTaskInput,
   GetTasksQuerySchema,
+  ExecuteTaskInput,
+  BatchExecuteTasksInput,
+  ProofData,
 } from './tasks.schema'
 import { getPublicHttpsClient } from '@/services/wallet-clients'
 import { getWalletHttpsClient } from '@/services/wallet-clients'
@@ -336,4 +339,119 @@ export const getTasks = async (query: z.infer<typeof GetTasksQuerySchema>) => {
       hasPrev,
     },
   }
+}
+
+/**
+ * Executes a single task by creating proofs and updating state
+ */
+export const executeTask = async (
+  data: ExecuteTaskInput,
+  user: User,
+): Promise<any> => {
+  // Verify task exists and is in STORED state
+  const task = await prisma.task.findUnique({
+    where: { id: data.taskId },
+  })
+
+  if (!task) {
+    throw new Error(`Task with ID ${data.taskId} not found`)
+  }
+
+  if (task.state !== 'STORED') {
+    throw new Error(`Task ${data.taskId} is not in STORED state. Current state: ${task.state}`)
+  }
+
+  // Create proofs
+  const createdProofs = await Promise.all(
+    data.proofs.map(async (proofData: ProofData) => {
+      return prisma.taskExecutionProof.create({
+        data: {
+          taskId: data.taskId,
+          proofType: proofData.proofType,
+          proofDescription: proofData.proofDescription,
+          txHash: proofData.txHash,
+          proofImageUrl: proofData.proofImageUrl,
+          fileName: proofData.fileName,
+          fileSize: proofData.fileSize,
+          mimeType: proofData.mimeType,
+          uploadedBy: user.id,
+        },
+      })
+    })
+  )
+
+  // Update task state to EXECUTED
+  const updatedTask = await prisma.task.update({
+    where: { id: data.taskId },
+    data: { state: 'EXECUTED' },
+    include: {
+      executionProofs: true,
+      user: {
+        select: {
+          id: true,
+          address: true,
+          nickname: true,
+          email: true,
+        },
+      },
+    },
+  })
+
+  return {
+    task: updatedTask,
+    proofs: createdProofs,
+  }
+}
+
+/**
+ * Executes multiple tasks in batch
+ */
+export const batchExecuteTasks = async (
+  data: BatchExecuteTasksInput,
+  user: User,
+): Promise<any> => {
+  const results = []
+  const errors = []
+
+  for (const taskData of data.tasks) {
+    try {
+      const result = await executeTask(taskData, user)
+      results.push(result)
+    } catch (error) {
+      errors.push({
+        taskId: taskData.taskId,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      })
+    }
+  }
+
+  return {
+    successful: results,
+    failed: errors,
+    summary: {
+      total: data.tasks.length,
+      successful: results.length,
+      failed: errors.length,
+    },
+  }
+}
+
+/**
+ * Gets tasks that are ready for execution (STORED state)
+ */
+export const getTasksReadyForExecution = async (): Promise<any[]> => {
+  return prisma.task.findMany({
+    where: { state: 'STORED' },
+    orderBy: { createdAt: 'desc' },
+    include: {
+      user: {
+        select: {
+          id: true,
+          address: true,
+          nickname: true,
+          email: true,
+        },
+      },
+    },
+  })
 }

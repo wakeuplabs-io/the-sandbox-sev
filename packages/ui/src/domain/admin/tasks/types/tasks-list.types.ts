@@ -21,7 +21,7 @@ export interface TasksListResponse {
   pagination: PaginationInfo
 }
 
-export interface TasksFilters {
+export interface TasksListFilters {
   taskType?: TaskType
   state?: TaskStateEnum
   status?: string

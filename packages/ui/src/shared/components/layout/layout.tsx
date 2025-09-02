@@ -2,7 +2,7 @@ import React from "react";
 import { Outlet } from "@tanstack/react-router";
 import { useGetUser } from "@/hooks/use-get-user";
 import { useWeb3Auth } from "@/context/web3auth";
-import { FaHome, FaUserShield } from "react-icons/fa";
+import { FaHome, FaUserShield, FaPlay } from "react-icons/fa";
 import { Header } from "@/shared/components/layout/header";
 import { Footer } from "@/shared/components/layout/footer";
 
@@ -29,6 +29,11 @@ export function Layout({ children, showSidebar = false }: LayoutProps) {
       to: "/admin/tasks",
       label: "Tasks",
       icon: <FaUserShield />,
+    },
+    {
+      to: "/admin/tasks/execute",
+      label: "Execute Tasks",
+      icon: <FaPlay />,
     },
   ];
 

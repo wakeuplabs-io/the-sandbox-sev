@@ -1,4 +1,4 @@
-import { ParsedRow, ValidationError, TaskType, TASK_TYPE_CONFIGS } from '../types/tasks-new.types'
+import { ParsedRow, ValidationError, TaskType, TASK_TYPE_CONFIGS } from '../../types/tasks-new.types'
 import { FaExclamationTriangle } from 'react-icons/fa'
 
 interface DataPreviewTableProps {

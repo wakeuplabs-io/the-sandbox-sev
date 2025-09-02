@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { TasksNewPage } from "../../domain/admin/tasks/tasks-new.page";
+import { TasksNewPage } from "../../domain/admin/tasks/pages/tasks-new.page";
 import { withAuth } from "@/hoc/with-auth";
 import { UserRoleEnum } from "@/shared/constants";
 
