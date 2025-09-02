@@ -264,7 +264,7 @@ export const getAllTasks = async (): Promise<any[]> => {
  * Gets tasks with filtering and pagination
  */
 export const getTasks = async (query: z.infer<typeof GetTasksQuerySchema>) => {
-  const { page, limit, taskType, search, dateFrom, dateTo, status } = query
+  const { page, limit, taskType, search, dateFrom, dateTo, status, state } = query
   
   // Build where clause for filters
   const where: any = {}
@@ -293,6 +293,10 @@ export const getTasks = async (query: z.infer<typeof GetTasksQuerySchema>) => {
   
   if (status) {
     where.status = status
+  }
+  
+  if (state) {
+    where.state = state
   }
   
   // Get total count for pagination

@@ -89,6 +89,7 @@ export const GetTasksQuerySchema = z.object({
   dateFrom: z.string().optional(),
   dateTo: z.string().optional(),
   status: z.string().optional(),
+  state: z.enum(['STORED', 'EXECUTED', 'BLOCKED', 'CANCELLED']).optional(),
 })
 
 // Response schema for paginated tasks

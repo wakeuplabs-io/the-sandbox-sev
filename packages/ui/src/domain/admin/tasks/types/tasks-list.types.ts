@@ -1,10 +1,12 @@
 import { PaginationInfo } from "@/shared/types"
 import { TaskType } from "./tasks-new.types"
+import { TaskStateEnum } from "@/shared/constants"
 
 export interface Task {
   id: string
   transactionId: string
   taskType: TaskType
+  state: TaskStateEnum
   taskHash: string
   transactionHash: string
   createdAt: string
@@ -21,6 +23,7 @@ export interface TasksListResponse {
 
 export interface TasksFilters {
   taskType?: TaskType
+  state?: TaskStateEnum
   status?: string
   dateFrom?: string
   dateTo?: string

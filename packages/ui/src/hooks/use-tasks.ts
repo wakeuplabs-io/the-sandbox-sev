@@ -50,6 +50,10 @@ const { isAuthenticated, isInitialized } = useWeb3Auth();
         if (filters.status) {
           params.append('status', filters.status);
         }
+        
+        if (filters.state) {
+          params.append('state', filters.state);
+        }
 
         const response = await client.api.tasks.$get({
           query: Object.fromEntries(params),

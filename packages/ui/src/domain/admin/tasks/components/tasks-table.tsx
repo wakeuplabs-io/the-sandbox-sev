@@ -1,6 +1,7 @@
 import { FaEye } from "react-icons/fa";
 import { clsx } from "clsx";
 import { useTaskTypeColors } from "@/hooks/use-task-type-colors";
+import { useTaskStateColors } from "@/hooks/use-task-state-colors";
 import type { Task } from "../types/tasks-list.types";
 import { truncateHash } from "@/shared/lib/utils";
 import { EtherScanLink } from "@/shared/components/ether-scan-link";
@@ -15,6 +16,7 @@ interface TasksTableProps {
 
 export function TasksTable({ tasks, isLoading, onViewTask }: TasksTableProps) {
   const { getTaskTypeBadgeClasses } = useTaskTypeColors()
+  const { getTaskStateBadgeClasses } = useTaskStateColors()
   if (isLoading) {
     return (
       <div className="card bg-base-100 shadow-xl">
@@ -22,7 +24,6 @@ export function TasksTable({ tasks, isLoading, onViewTask }: TasksTableProps) {
           <div className="space-y-4">
             {[...Array(5)].map((_, i) => (
               <div key={i} className="flex items-center space-x-4 animate-pulse">
-                <div className="h-4 bg-base-300 rounded w-1/4"></div>
                 <div className="h-4 bg-base-300 rounded w-1/6"></div>
                 <div className="h-4 bg-base-300 rounded w-1/6"></div>
                 <div className="h-4 bg-base-300 rounded w-1/4"></div>
@@ -54,9 +55,9 @@ export function TasksTable({ tasks, isLoading, onViewTask }: TasksTableProps) {
           <table className="table table-zebra w-full">
             <thead>
               <tr>
-                <th className="w-16">ID</th>
                 <th>Transaction ID</th>
                 <th>Task Type</th>
+                <th>State</th>
                 <th>Task Hash</th>
                 <th>Transaction Hash</th>
                 <th>Created At</th>
@@ -66,7 +67,6 @@ export function TasksTable({ tasks, isLoading, onViewTask }: TasksTableProps) {
             <tbody>
               {tasks.map(task => (
                 <tr key={task.id} className="hover">
-                  <td className="font-mono text-xs">{task.id.slice(0, 8)}...</td>
                   <td className="font-mono text-sm">{task.transactionId}</td>
                   <td>
                     <span
@@ -76,6 +76,16 @@ export function TasksTable({ tasks, isLoading, onViewTask }: TasksTableProps) {
                       )}
                     >
                       {task.taskType}
+                    </span>
+                  </td>
+                  <td>
+                    <span
+                      className={clsx(
+                        "badge badge-sm",
+                        getTaskStateBadgeClasses(task.state as any)
+                      )}
+                    >
+                      {task.state}
                     </span>
                   </td>
                   <td className="font-mono text-xs">

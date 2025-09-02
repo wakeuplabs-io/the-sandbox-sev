@@ -18,7 +18,8 @@ export const getTasksController = async (c: Context) => {
     const dateFrom = c.req.query("dateFrom") as z.infer<typeof GetTasksQuerySchema>["dateFrom"]
     const dateTo = c.req.query("dateTo") as z.infer<typeof GetTasksQuerySchema>["dateTo"]
     const status = c.req.query("status") as z.infer<typeof GetTasksQuerySchema>["status"]
-    const query = { page, limit, taskType, search, dateFrom, dateTo, status } as z.infer<typeof GetTasksQuerySchema>
+    const state = c.req.query("state") as z.infer<typeof GetTasksQuerySchema>["state"]
+    const query = { page, limit, taskType, search, dateFrom, dateTo, status, state } as z.infer<typeof GetTasksQuerySchema>
     const result = await getTasks(query)
     
     return c.json(result)

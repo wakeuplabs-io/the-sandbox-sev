@@ -1,11 +1,28 @@
 import { FaSearch, FaFilter } from 'react-icons/fa'
 import type { TasksFilters } from '../types/tasks-list.types'
-import { TaskTypeEnum } from '@/shared/constants'
+import { TaskTypeEnum, TaskStateEnum } from '@/shared/constants'
+import { Select, type SelectOption } from '@/shared/components'
 
 interface TasksFiltersProps {
   filters: TasksFilters
   onFiltersChange: (filters: Partial<TasksFilters>) => void
 }
+
+const taskTypeOptions: SelectOption[] = [
+  { value: '', label: 'All Types' },
+  { value: TaskTypeEnum.LIQUIDATION, label: 'Liquidation' },
+  { value: TaskTypeEnum.ACQUISITION, label: 'Acquisition' },
+  { value: TaskTypeEnum.AUTHORIZATION, label: 'Authorization' },
+  { value: TaskTypeEnum.ARBITRAGE, label: 'Arbitrage' },
+]
+
+const taskStateOptions: SelectOption[] = [
+  { value: '', label: 'All States' },
+  { value: TaskStateEnum.STORED, label: 'Stored' },
+  { value: TaskStateEnum.EXECUTED, label: 'Executed' },
+  { value: TaskStateEnum.BLOCKED, label: 'Blocked' },
+  { value: TaskStateEnum.CANCELLED, label: 'Cancelled' },
+]
 
 export function TasksFilters({ filters, onFiltersChange}: TasksFiltersProps) {
   return (
@@ -16,12 +33,11 @@ export function TasksFilters({ filters, onFiltersChange}: TasksFiltersProps) {
           Filters
         </h3>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           {/* Search by Transaction ID */}
           <div className="form-control">
             <label className="label">
               <span className="label-text">Search Transaction ID</span>
-              
             </label>
             <div className="relative">
               <input
@@ -43,22 +59,22 @@ export function TasksFilters({ filters, onFiltersChange}: TasksFiltersProps) {
           </div>
 
           {/* Task Type Filter */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">Task Type</span>
-            </label>
-            <select
-              className="select select-bordered w-full"
-              value={filters.taskType || ''}
-              onChange={(e) => onFiltersChange({ taskType: e.target.value as any || undefined })}
-            >
-              <option value="">All Types</option>
-              <option value={TaskTypeEnum.LIQUIDATION}>Liquidation</option>
-              <option value={TaskTypeEnum.ACQUISITION}>Acquisition</option>
-              <option value={TaskTypeEnum.AUTHORIZATION}>Authorization</option>
-              <option value={TaskTypeEnum.ARBITRAGE}>Arbitrage</option>
-            </select>
-          </div>
+          <Select
+            label="Task Type"
+            placeholder="All Types"
+            options={taskTypeOptions}
+            value={filters.taskType || ''}
+            onChange={(e) => onFiltersChange({ taskType: e.target.value as any || undefined })}
+          />
+
+          {/* Task State Filter */}
+          <Select
+            label="Task State"
+            placeholder="All States"
+            options={taskStateOptions}
+            value={filters.state || ''}
+            onChange={(e) => onFiltersChange({ state: e.target.value as any || undefined })}
+          />
 
           {/* Date From */}
           <div className="form-control">
@@ -94,6 +110,7 @@ export function TasksFilters({ filters, onFiltersChange}: TasksFiltersProps) {
             onClick={() => onFiltersChange({
               search: undefined,
               taskType: undefined,
+              state: undefined,
               dateFrom: undefined,
               dateTo: undefined,
             })}
