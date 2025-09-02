@@ -1,7 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "./use-user";
 import { useWeb3Auth } from "@/context/web3auth";
-import { User, PaginationInfo } from "@/domain/admin/users/types";
+import { User } from "@/domain/admin/users/types";
+import { PaginationInfo } from "@/shared/types";
+
+interface UsersResponse {
+  users: User[];
+  pagination: PaginationInfo;
+}
 
 export const useGetUsers = (page: number = 1, limit: number = 10) => {
   const { getUsers } = useUser();
@@ -13,7 +19,7 @@ export const useGetUsers = (page: number = 1, limit: number = 10) => {
     enabled: !!isAuthenticated,
   });
 
-  const data = query.data as { users: User[]; pagination: PaginationInfo } | undefined;
+  const data = query.data as UsersResponse | undefined;
 
   return {
     users: data?.users || [],

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Navigation } from './Navigation'
+import { Navigation } from './navigation'
 
 interface DesktopNavProps {
 	links: Array<{ to: string; label: string; icon?: React.ReactNode }>
