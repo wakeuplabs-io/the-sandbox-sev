@@ -1,64 +1,62 @@
 import { useState } from 'react'
-import { FaImage, FaLink, FaTrash, FaCheck, FaFile } from 'react-icons/fa'
+import { FaImage, FaTrash, FaCheck, FaFile, FaSpinner } from 'react-icons/fa'
 import { clsx } from 'clsx'
+import { useTaskExecution } from '@/hooks/use-task-execution'
 
 interface ProofData {
-  type: 'image' | 'transaction' | 'text'
-  data: string
+  proofType: 'TEXT' | 'IMAGE'
+  proofValue: string
   fileName?: string
+  fileSize?: number
+  mimeType?: string
 }
 
 interface ProofUploadAreaProps {
   taskId: string
   onProofChange: (hasProof: boolean) => void
+  onProofsChange: (proofs: ProofData[]) => void
 }
 
-export function ProofUploadArea({ taskId, onProofChange }: ProofUploadAreaProps) {
+export function ProofUploadArea({ taskId, onProofChange, onProofsChange }: ProofUploadAreaProps) {
   const [proofs, setProofs] = useState<ProofData[]>([])
-  const [activeTab, setActiveTab] = useState<'image' | 'transaction' | 'text'>('image')
-  const [transactionHash, setTransactionHash] = useState('')
+  const [activeTab, setActiveTab] = useState<'image' | 'text'>('image')
   const [textDescription, setTextDescription] = useState('')
+  
+  const { uploadProofImage, isUploading, uploadError } = useTaskExecution()
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
-      // TODO: Upload to S3 and get URL
-      const imageUrl = URL.createObjectURL(file) // Temporary for now
-      
-      const newProof: ProofData = {
-        type: 'image',
-        data: imageUrl,
-        fileName: file.name
+      const result = await uploadProofImage(file, taskId)
+      if (result) {
+        const newProof: ProofData = {
+          proofType: 'IMAGE',
+          proofValue: result.proofValue,
+          fileName: result.fileName,
+          fileSize: result.fileSize,
+          mimeType: result.mimeType
+        }
+        
+        const updatedProofs = [...proofs, newProof]
+        setProofs(updatedProofs)
+        onProofChange(true)
+        onProofsChange(updatedProofs)
       }
-      
-      setProofs(prev => [...prev, newProof])
-      onProofChange(true)
-    }
-  }
-
-  const handleTransactionSubmit = () => {
-    if (transactionHash.trim()) {
-      const newProof: ProofData = {
-        type: 'transaction',
-        data: transactionHash.trim()
-      }
-      
-      setProofs(prev => [...prev, newProof])
-      setTransactionHash('')
-      onProofChange(true)
     }
   }
 
   const handleTextSubmit = () => {
     if (textDescription.trim()) {
       const newProof: ProofData = {
-        type: 'text',
-        data: textDescription.trim()
+        proofType: 'TEXT',
+        proofValue: textDescription.trim()
       }
       
-      setProofs(prev => [...prev, newProof])
+      const updatedProofs = [...proofs, newProof]
+      setProofs(updatedProofs)
       setTextDescription('')
       onProofChange(true)
+      onProofsChange(updatedProofs)
     }
   }
 
@@ -66,17 +64,18 @@ export function ProofUploadArea({ taskId, onProofChange }: ProofUploadAreaProps)
     setProofs(prev => {
       const newProofs = prev.filter((_, i) => i !== index)
       onProofChange(newProofs.length > 0)
+      onProofsChange(newProofs)
       return newProofs
     })
   }
 
   const renderProofPreview = (proof: ProofData, index: number) => {
-    switch (proof.type) {
-      case 'image':
+    switch (proof.proofType) {
+      case 'IMAGE':
         return (
           <div key={index} className="flex items-center gap-3 p-3 bg-base-200 rounded-lg">
             <img 
-              src={proof.data} 
+              src={proof.proofValue} 
               alt="Proof" 
               className="w-16 h-16 object-cover rounded"
             />
@@ -93,29 +92,12 @@ export function ProofUploadArea({ taskId, onProofChange }: ProofUploadAreaProps)
           </div>
         )
       
-      case 'transaction':
-        return (
-          <div key={index} className="flex items-center gap-3 p-3 bg-base-200 rounded-lg">
-            <FaLink className="h-6 w-6 text-primary" />
-            <div className="flex-1">
-              <p className="font-mono text-sm">{proof.data}</p>
-              <p className="text-xs text-base-content/60">Transaction hash</p>
-            </div>
-            <button
-              onClick={() => handleRemoveProof(index)}
-              className="btn btn-ghost btn-sm text-error"
-            >
-              <FaTrash className="h-4 w-4" />
-            </button>
-          </div>
-        )
-      
-      case 'text':
+      case 'TEXT':
         return (
           <div key={index} className="flex items-center gap-3 p-3 bg-base-200 rounded-lg">
             <FaFile className="h-6 w-6 text-info" />
             <div className="flex-1">
-              <p className="text-sm line-clamp-2">{proof.data}</p>
+              <p className="text-sm line-clamp-2">{proof.proofValue}</p>
               <p className="text-xs text-base-content/60">Text description</p>
             </div>
             <button
@@ -146,13 +128,6 @@ export function ProofUploadArea({ taskId, onProofChange }: ProofUploadAreaProps)
           Image
         </button>
         <button
-          className={clsx("tab", { "tab-active": activeTab === 'transaction' })}
-          onClick={() => setActiveTab('transaction')}
-        >
-          <FaLink className="h-4 w-4 mr-2" />
-          TX Hash
-        </button>
-        <button
           className={clsx("tab", { "tab-active": activeTab === 'text' })}
           onClick={() => setActiveTab('text')}
         >
@@ -166,43 +141,32 @@ export function ProofUploadArea({ taskId, onProofChange }: ProofUploadAreaProps)
         {activeTab === 'image' && (
           <div className="space-y-3">
             <div className="border-2 border-dashed border-base-300 rounded-lg p-6 text-center">
-              <FaImage className="h-8 w-8 mx-auto text-base-content/40 mb-2" />
-              <p className="text-sm text-base-content/60 mb-3">
-                Drag & drop an image or click to upload
-              </p>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="file-input file-input-bordered file-input-sm w-full max-w-xs"
-              />
+              {isUploading ? (
+                <div className="flex flex-col items-center">
+                  <FaSpinner className="h-8 w-8 mx-auto text-primary mb-2 animate-spin" />
+                  <p className="text-sm text-base-content/60">Uploading image...</p>
+                </div>
+              ) : (
+                <>
+                  <FaImage className="h-8 w-8 mx-auto text-base-content/40 mb-2" />
+                  <p className="text-sm text-base-content/60 mb-3">
+                    Drag & drop an image or click to upload
+                  </p>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={isUploading}
+                    className="file-input file-input-bordered file-input-sm w-full max-w-xs"
+                  />
+                </>
+              )}
             </div>
-          </div>
-        )}
-
-        {activeTab === 'transaction' && (
-          <div className="space-y-3">
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Transaction Hash</span>
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder="0x..."
-                  className="input input-bordered flex-1"
-                  value={transactionHash}
-                  onChange={(e) => setTransactionHash(e.target.value)}
-                />
-                <button
-                  onClick={handleTransactionSubmit}
-                  disabled={!transactionHash.trim()}
-                  className="btn btn-primary"
-                >
-                  <FaCheck className="h-4 w-4" />
-                </button>
+            {uploadError && (
+              <div className="alert alert-error">
+                <span>{uploadError}</span>
               </div>
-            </div>
+            )}
           </div>
         )}
 

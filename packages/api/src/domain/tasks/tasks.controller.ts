@@ -113,6 +113,7 @@ export const uploadProofImageController = async (c: Context) => {
     const file = formData.get('file') as File;
     const taskId = formData.get('taskId') as string;
     
+    
     if (!file) {
       return c.json({ error: "No file provided" }, 400);
     }

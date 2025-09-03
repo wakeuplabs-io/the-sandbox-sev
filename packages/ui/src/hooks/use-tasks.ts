@@ -1,6 +1,6 @@
 import { useApiClient } from "./use-api-client";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import type { TasksFilters } from "@/domain/admin/tasks/types/tasks-list.types";
+import type { TasksListFilters } from "@/domain/admin/tasks/types/tasks-list.types";
 import { useWeb3Auth } from "@/context/web3auth";
 
 export const useTasks = () => {
@@ -21,7 +21,7 @@ const { isAuthenticated, isInitialized } = useWeb3Auth();
     },
   });
 
-  const getAllTasks = (filters: TasksFilters) => {
+  const getAllTasks = (filters: TasksListFilters) => {
     return useQuery({
       queryKey: ["tasks", filters],
       enabled: isAuthenticated && isInitialized,

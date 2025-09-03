@@ -1,23 +1,31 @@
 import { useState } from 'react'
-import { FaChevronDown, FaChevronRight, FaPlay, FaClock, FaExclamationTriangle } from 'react-icons/fa'
+import { FaChevronDown, FaChevronRight, FaPlay } from 'react-icons/fa'
 import { clsx } from 'clsx'
 import { useTaskTypeColors } from '@/hooks/use-task-type-colors'
 import { ProofUploadArea } from './proof-upload-area'
 import type { Task } from '../../types/tasks-list.types'
+import { useTaskPriority } from '@/hooks/use-task-priority'
 
 interface TaskExecutionCardProps {
   task: Task
   onProofReady: (hasProof: boolean) => void
+  onProofsChange?: (proofs: any[]) => void
 }
 
-export function TaskExecutionCard({ task, onProofReady }: TaskExecutionCardProps) {
+export function TaskExecutionCard({ task, onProofReady, onProofsChange }: TaskExecutionCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [hasProof, setHasProof] = useState(false)
   const { getTaskTypeBadgeClasses } = useTaskTypeColors()
+  const { getPriorityIcon, getPriorityIconClass, getPriorityBadgeClasses } = useTaskPriority()
 
   const handleProofChange = (hasProofData: boolean) => {
     setHasProof(hasProofData)
     onProofReady(hasProofData)
+  }
+
+  const handleProofsChange = (newProofs: any[]) => {
+    handleProofChange(newProofs.length > 0)
+    onProofsChange?.(newProofs)
   }
 
   const handleExecuteTask = () => {
@@ -25,27 +33,7 @@ export function TaskExecutionCard({ task, onProofReady }: TaskExecutionCardProps
     // TODO: Implement individual task execution
   }
 
-  const getPriorityIcon = (priority?: string) => {
-    if (!priority) return null
-    
-    if (priority.toLowerCase().includes('high')) {
-      return <FaExclamationTriangle className="h-4 w-4 text-error" />
-    } else if (priority.toLowerCase().includes('medium')) {
-      return <FaClock className="h-4 w-4 text-warning" />
-    }
-    return <FaClock className="h-4 w-4 text-info" />
-  }
-
-  const getPriorityBadgeClass = (priority?: string) => {
-    if (!priority) return 'badge-neutral'
-    
-    if (priority.toLowerCase().includes('high')) {
-      return 'badge-error'
-    } else if (priority.toLowerCase().includes('medium')) {
-      return 'badge-warning'
-    }
-    return 'badge-info'
-  }
+  const IconComponent = getPriorityIcon(task.priority)
 
   return (
     <div className="card bg-base-100 shadow-xl">
@@ -84,11 +72,11 @@ export function TaskExecutionCard({ task, onProofReady }: TaskExecutionCardProps
               
               {task.priority && (
                 <div className="flex items-center gap-1">
-                  {getPriorityIcon(task.priority)}
+                  {IconComponent ? <IconComponent className={getPriorityIconClass(task.priority)} /> : null}
                   <span
                     className={clsx(
                       "badge badge-sm",
-                      getPriorityBadgeClass(task.priority)
+                      getPriorityBadgeClasses(task.priority)
                     )}
                   >
                     {task.priority}
@@ -146,6 +134,7 @@ export function TaskExecutionCard({ task, onProofReady }: TaskExecutionCardProps
               <ProofUploadArea
                 taskId={task.id}
                 onProofChange={handleProofChange}
+                onProofsChange={handleProofsChange}
               />
 
               {/* Individual Execute Button */}

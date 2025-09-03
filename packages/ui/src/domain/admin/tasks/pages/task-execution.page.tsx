@@ -1,18 +1,22 @@
 import { useState } from 'react'
 import { FaPlay, FaTrash, FaFilter } from 'react-icons/fa'
 import { useTasksList } from '../hooks/use-tasks-list'
+import { useTaskExecution } from '@/hooks/use-task-execution'
 import { TaskExecutionCard } from '../components/execute/task-execution-card'
 import { TasksFilters } from '../components/list/tasks-filters'
 import { TaskStateEnum } from '@/shared/constants'
 
 export function TaskExecutionPage() {
   const { tasks, isLoading, filters, updateFilters } = useTasksList()
+  const { batchExecuteTasks, isExecuting } = useTaskExecution()
   
   // Filter to show only STORED tasks
   const storedTasks = tasks.filter(task => task.state === TaskStateEnum.STORED)
   
   // Track tasks with proofs ready for execution
   const [tasksWithProofs, setTasksWithProofs] = useState<Set<string>>(new Set())
+  // Track proofs for each task
+  const [taskProofs, setTaskProofs] = useState<Record<string, any[]>>({})
   
   const handleTaskProofReady = (taskId: string, hasProof: boolean) => {
     setTasksWithProofs(prev => {
@@ -25,16 +29,50 @@ export function TaskExecutionPage() {
       return newSet
     })
   }
+
+  const handleTaskProofsChange = (taskId: string, proofs: any[]) => {
+    setTaskProofs(prev => ({
+      ...prev,
+      [taskId]: proofs
+    }))
+  }
   
-  const handleExecuteAll = () => {
+  const handleExecuteAll = async () => {
     const readyTasks = storedTasks.filter(task => tasksWithProofs.has(task.id))
-    console.log('Executing tasks:', readyTasks)
-    // TODO: Implement batch execution
+    
+    if (readyTasks.length === 0) {
+      return
+    }
+
+    // Prepare batch execution data
+    const batchData = readyTasks.map(task => ({
+      taskId: task.id,
+      proofs: taskProofs[task.id] || []
+    }))
+
+    // Execute batch
+    const result = await batchExecuteTasks(batchData)
+    
+    if (result) {
+      // Clear executed tasks from state
+      setTasksWithProofs(prev => {
+        const newSet = new Set(prev)
+        readyTasks.forEach(task => newSet.delete(task.id))
+        return newSet
+      })
+      
+      // Clear proofs for executed tasks
+      setTaskProofs(prev => {
+        const newProofs = { ...prev }
+        readyTasks.forEach(task => delete newProofs[task.id])
+        return newProofs
+      })
+    }
   }
   
   const handleClearAllProofs = () => {
     setTasksWithProofs(new Set())
-    // TODO: Clear all proof data
+    setTaskProofs({})
   }
 
   return (
@@ -70,6 +108,7 @@ export function TaskExecutionPage() {
                 <button
                   onClick={handleClearAllProofs}
                   className="btn btn-outline btn-sm"
+                  disabled={isExecuting}
                 >
                   <FaTrash className="h-4 w-4 mr-2" />
                   Clear All Proofs
@@ -77,9 +116,10 @@ export function TaskExecutionPage() {
                 <button
                   onClick={handleExecuteAll}
                   className="btn btn-primary btn-sm"
+                  disabled={isExecuting}
                 >
                   <FaPlay className="h-4 w-4 mr-2" />
-                  Execute All Ready Tasks
+                  {isExecuting ? 'Executing...' : 'Execute All Ready Tasks'}
                 </button>
               </div>
             </div>
@@ -124,6 +164,7 @@ export function TaskExecutionPage() {
                   key={task.id}
                   task={task}
                   onProofReady={(hasProof) => handleTaskProofReady(task.id, hasProof)}
+                  onProofsChange={(proofs) => handleTaskProofsChange(task.id, proofs)}
                 />
               ))}
             </div>

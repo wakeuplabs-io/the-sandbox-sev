@@ -45,7 +45,6 @@ export const uploadFileToS3 = async (
       Key: key,
       Body: file,
       ContentType: mimeType,
-      ACL: 'public-read', // Make the file publicly accessible
     })
 
     await s3Client.send(command)
@@ -86,7 +85,7 @@ export const generatePresignedUploadUrl = async (
     Bucket: env.ASSETS_BUCKET_NAME,
     Key: key,
     ContentType: mimeType,
-    ACL: 'public-read',
+    // ACL removed - modern S3 buckets don't allow ACLs by default
   })
 
   try {
