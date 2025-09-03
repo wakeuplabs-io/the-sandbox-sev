@@ -1,7 +1,8 @@
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { clsx } from "clsx";
+import { useMemo } from "react";
 
-interface TasksPaginationProps {
+interface PaginationActionsProps {
   currentPage: number;
   totalPages: number;
   totalTasks: number;
@@ -12,7 +13,7 @@ interface TasksPaginationProps {
   onPrevPage: () => void;
 }
 
-export function TasksPagination({
+export function PaginationActions({
   currentPage,
   totalPages,
   totalTasks,
@@ -21,7 +22,7 @@ export function TasksPagination({
   onPageChange,
   onNextPage,
   onPrevPage,
-}: TasksPaginationProps) {
+}: PaginationActionsProps) {
   const getPageNumbers = () => {
     const pages = [];
     const maxVisible = 5;
@@ -57,6 +58,7 @@ export function TasksPagination({
     return pages;
   };
 
+  const pageNumbers = useMemo(() => getPageNumbers(), [currentPage, totalPages, totalTasks]);
   return (
     <div className="flex items-center justify-between mt-6">
       <div className="text-sm text-base-content/70">
@@ -70,7 +72,7 @@ export function TasksPagination({
         </button>
 
         <div className="flex gap-1">
-          {getPageNumbers().map((page, index) => (
+          {pageNumbers.map((page, index) => (
             <button
               key={index}
               onClick={() => (typeof page === "number" ? onPageChange(page) : null)}

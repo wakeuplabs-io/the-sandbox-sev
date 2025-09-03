@@ -2,10 +2,10 @@ import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { FaPlus } from 'react-icons/fa'
 import { usePublicTasksList } from './hooks/use-public-tasks-list'
-import type { Task } from './types/tasks-list.types'
+import type { Task } from '@the-sandbox-sev/api'
 import { TasksFilters } from './components/tasks-filters'
 import { TasksTable } from './components/tasks-table'
-import { TasksPagination } from './components/tasks-pagination'
+import { PaginationActions } from '../../shared/components/pagination-actions'
 import { TaskDetailsModal } from '@/shared/components/task-details-modal'
 
 export function TasksListPage() {
@@ -88,7 +88,7 @@ export function TasksListPage() {
         isLoading={isLoading}
         onViewTask={handleViewTask}
       />
-      <TasksPagination
+      <PaginationActions
         currentPage={currentPage}
         totalPages={totalPages}
         totalTasks={totalTasks}

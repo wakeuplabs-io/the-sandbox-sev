@@ -1,20 +1,10 @@
 import { PaginationInfo } from "@/shared/types"
 import { TaskStateEnum } from "@/shared/constants"
-import { TaskType } from "@/domain/admin/tasks/new/types/tasks-new.types"
+import { Task, TaskExecutionProof, TaskType } from "@the-sandbox-sev/api"
 
-export interface Task {
-  id: string
-  transactionId: string
-  taskType: TaskType
-  state: TaskStateEnum
-  taskHash: string
-  transactionHash: string
-  createdAt: string
-  updatedAt: string
-  // Otros campos que vengan de la API
-  [key: string]: any
+export interface TaskWithProofs extends Task {
+  executionProofs: TaskExecutionProof[]
 }
-
 
 export interface TasksListResponse {
   tasks: Task[]
