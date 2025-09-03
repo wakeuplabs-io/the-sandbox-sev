@@ -126,7 +126,16 @@ export const BatchExecuteTasksSchema = z.object({
   tasks: z.array(ExecuteTaskSchema).min(1, 'At least one task is required'),
 })
 
+// Schema for public tasks query (limited filters for public access)
+export const GetPublicTasksQuerySchema = z.object({
+  page: z.coerce.number().min(1).default(1),
+  limit: z.coerce.number().min(1).max(50).default(10), // Max 50 for public endpoint
+  taskType: z.enum(['LIQUIDATION', 'ACQUISITION', 'AUTHORIZATION', 'ARBITRAGE']).optional(),
+  search: z.string().optional(),
+})
+
 // Types
 export type ProofData = z.infer<typeof ProofDataSchema>
 export type ExecuteTaskInput = z.infer<typeof ExecuteTaskSchema>
 export type BatchExecuteTasksInput = z.infer<typeof BatchExecuteTasksSchema>
+export type GetPublicTasksQuery = z.infer<typeof GetPublicTasksQuerySchema>

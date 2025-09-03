@@ -1,9 +1,12 @@
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { FaPlus } from 'react-icons/fa'
-import { useTasksList } from '../hooks/use-tasks-list'
-import { TasksFilters, TasksTable, TasksPagination, TaskDetailsModal } from '../components'
-import type { Task } from '../types/tasks-list.types'
+import { usePublicTasksList } from './hooks/use-public-tasks-list'
+import type { Task } from './types/tasks-list.types'
+import { TasksFilters } from './components/tasks-filters'
+import { TasksTable } from './components/tasks-table'
+import { TasksPagination } from './components/tasks-pagination'
+import { TaskDetailsModal } from '@/shared/components/task-details-modal'
 
 export function TasksListPage() {
   const {
@@ -21,7 +24,7 @@ export function TasksListPage() {
     nextPage,
     prevPage,
     refetch,
-  } = useTasksList()
+  } = usePublicTasksList()
 
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -68,6 +71,7 @@ export function TasksListPage() {
       <TasksFilters
         filters={filters}
         onFiltersChange={updateFilters}
+        isPublic={true}
       />
 
       <div className="text-sm text-base-content/70">

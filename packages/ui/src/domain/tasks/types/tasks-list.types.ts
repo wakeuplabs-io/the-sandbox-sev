@@ -1,6 +1,6 @@
 import { PaginationInfo } from "@/shared/types"
-import { TaskType } from "./tasks-new.types"
 import { TaskStateEnum } from "@/shared/constants"
+import { TaskType } from "@/domain/admin/tasks/new/types/tasks-new.types"
 
 export interface Task {
   id: string
@@ -37,4 +37,11 @@ export interface TaskTableColumn {
   label: string
   sortable?: boolean
   width?: string
+}
+
+export interface GetPublicTasksQuery {
+  page?: number
+  limit?: number
+  taskType?: TaskType
+  search?: string
 }

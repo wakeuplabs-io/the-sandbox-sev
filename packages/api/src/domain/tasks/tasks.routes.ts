@@ -10,11 +10,17 @@ import {
   batchExecuteTasksController,
   uploadProofImageController,
   generateImageUploadUrlController,
+  getPublicTasksController,
 } from "./tasks.controller";
-import { CreateTaskSchema, GetTasksQuerySchema, ExecuteTaskSchema, BatchExecuteTasksSchema } from "./tasks.schema";
+import { CreateTaskSchema, GetTasksQuerySchema, GetPublicTasksQuerySchema, ExecuteTaskSchema, BatchExecuteTasksSchema } from "./tasks.schema";
 import { requireRole } from "@/middlewares/require-role";
 import { Role } from "@/generated/prisma";
 
+// Public routes (no authentication required)
+const publicTasks = new Hono()
+  .get("/", zValidator("query", GetPublicTasksQuerySchema), getPublicTasksController);
+
+// Protected routes (authentication required)
 const tasks = new Hono()
   .use("/*", authMiddleware)
   .get("/", zValidator("query", GetTasksQuerySchema), getTasksController)
@@ -46,7 +52,6 @@ const tasks = new Hono()
     zValidator("json", BatchExecuteTasksSchema),
     batchExecuteTasksController
   )
-
   .post(
     "/upload-proof-image",
     requireRole([Role.ADMIN, Role.CONSULTANT]),
@@ -63,4 +68,9 @@ const tasks = new Hono()
     generateImageUploadUrlController
   );
 
-export default tasks;
+// Main router that combines public and protected routes
+const mainTasksRouter = new Hono()
+  .route("/public", publicTasks)
+  .route("/", tasks);
+
+export default mainTasksRouter;

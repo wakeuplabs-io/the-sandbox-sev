@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { FaImage, FaTrash, FaCheck, FaFile, FaSpinner } from 'react-icons/fa'
 import { clsx } from 'clsx'
-import { useTaskExecution } from '@/hooks/use-task-execution'
+import { useTaskExecution } from '../hooks/use-task-execution'
 
 interface ProofData {
   proofType: 'TEXT' | 'IMAGE'

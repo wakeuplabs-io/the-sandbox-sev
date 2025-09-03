@@ -10,14 +10,19 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TasksIndexRouteImport } from './routes/tasks.index'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AdminTasksIndexRouteImport } from './routes/admin/tasks.index'
 import { Route as AdminTasksNewRouteImport } from './routes/admin/tasks.new'
-import { Route as AdminTasksExecuteRouteImport } from './routes/admin/tasks.execute'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TasksIndexRoute = TasksIndexRouteImport.update({
+  id: '/tasks/',
+  path: '/tasks/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
@@ -35,23 +40,18 @@ const AdminTasksNewRoute = AdminTasksNewRouteImport.update({
   path: '/admin/tasks/new',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminTasksExecuteRoute = AdminTasksExecuteRouteImport.update({
-  id: '/admin/tasks/execute',
-  path: '/admin/tasks/execute',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin/users': typeof AdminUsersRoute
-  '/admin/tasks/execute': typeof AdminTasksExecuteRoute
+  '/tasks': typeof TasksIndexRoute
   '/admin/tasks/new': typeof AdminTasksNewRoute
   '/admin/tasks': typeof AdminTasksIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin/users': typeof AdminUsersRoute
-  '/admin/tasks/execute': typeof AdminTasksExecuteRoute
+  '/tasks': typeof TasksIndexRoute
   '/admin/tasks/new': typeof AdminTasksNewRoute
   '/admin/tasks': typeof AdminTasksIndexRoute
 }
@@ -59,7 +59,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin/users': typeof AdminUsersRoute
-  '/admin/tasks/execute': typeof AdminTasksExecuteRoute
+  '/tasks/': typeof TasksIndexRoute
   '/admin/tasks/new': typeof AdminTasksNewRoute
   '/admin/tasks/': typeof AdminTasksIndexRoute
 }
@@ -68,21 +68,16 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin/users'
-    | '/admin/tasks/execute'
+    | '/tasks'
     | '/admin/tasks/new'
     | '/admin/tasks'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/admin/users'
-    | '/admin/tasks/execute'
-    | '/admin/tasks/new'
-    | '/admin/tasks'
+  to: '/' | '/admin/users' | '/tasks' | '/admin/tasks/new' | '/admin/tasks'
   id:
     | '__root__'
     | '/'
     | '/admin/users'
-    | '/admin/tasks/execute'
+    | '/tasks/'
     | '/admin/tasks/new'
     | '/admin/tasks/'
   fileRoutesById: FileRoutesById
@@ -90,7 +85,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminUsersRoute: typeof AdminUsersRoute
-  AdminTasksExecuteRoute: typeof AdminTasksExecuteRoute
+  TasksIndexRoute: typeof TasksIndexRoute
   AdminTasksNewRoute: typeof AdminTasksNewRoute
   AdminTasksIndexRoute: typeof AdminTasksIndexRoute
 }
@@ -102,6 +97,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tasks/': {
+      id: '/tasks/'
+      path: '/tasks'
+      fullPath: '/tasks'
+      preLoaderRoute: typeof TasksIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/users': {
@@ -125,20 +127,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminTasksNewRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/tasks/execute': {
-      id: '/admin/tasks/execute'
-      path: '/admin/tasks/execute'
-      fullPath: '/admin/tasks/execute'
-      preLoaderRoute: typeof AdminTasksExecuteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminUsersRoute: AdminUsersRoute,
-  AdminTasksExecuteRoute: AdminTasksExecuteRoute,
+  TasksIndexRoute: TasksIndexRoute,
   AdminTasksNewRoute: AdminTasksNewRoute,
   AdminTasksIndexRoute: AdminTasksIndexRoute,
 }

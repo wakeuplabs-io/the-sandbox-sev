@@ -1,6 +1,6 @@
 import { Context } from 'hono'
-import { getTasks, getTaskByTransactionId, createTask, executeTask, batchExecuteTasks } from './tasks.service'
-import { CreateTaskSchema, GetTasksQuerySchema, ExecuteTaskSchema, BatchExecuteTasksSchema } from './tasks.schema'
+import { getTasks, getTaskByTransactionId, createTask, executeTask, batchExecuteTasks, getPublicTasks } from './tasks.service'
+import { CreateTaskSchema, GetTasksQuerySchema, GetPublicTasksQuerySchema, ExecuteTaskSchema, BatchExecuteTasksSchema } from './tasks.schema'
 import { uploadFileToS3, generatePresignedUploadUrl, isS3Configured } from '@/services/s3-service'
 import { z } from 'zod'
 
@@ -189,6 +189,22 @@ export const generateImageUploadUrlController = async (c: Context) => {
       proofValue: result.publicUrl,
       key: result.key,
     }, 200);
+  } catch (error: any) {
+    return c.json({ error: error.message }, 500);
+  }
+}
+
+export const getPublicTasksController = async (c: Context) => {
+  try {
+    const page = Number(c.req.query("page")) || 1;
+    const limit = Number(c.req.query("limit")) || 10;
+    const taskType = c.req.query("taskType") as z.infer<typeof GetPublicTasksQuerySchema>["taskType"];
+    const search = c.req.query("search") as z.infer<typeof GetPublicTasksQuerySchema>["search"];
+    
+    const query = { page, limit, taskType, search } as z.infer<typeof GetPublicTasksQuerySchema>;
+    const result = await getPublicTasks(query);
+    
+    return c.json(result);
   } catch (error: any) {
     return c.json({ error: error.message }, 500);
   }

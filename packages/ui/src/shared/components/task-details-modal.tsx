@@ -1,7 +1,7 @@
 import { FaTimes } from "react-icons/fa";
 import { clsx } from "clsx";
 import { useTaskTypeColors } from "@/hooks/use-task-type-colors";
-import type { Task } from "../types/tasks-list.types";
+import type { Task } from "@/domain/tasks/types/tasks-list.types";
 import { truncateHash } from "@/shared/lib/utils";
 import { CopyToClipboard } from "@/shared/components/copy-to-clipboard";
 

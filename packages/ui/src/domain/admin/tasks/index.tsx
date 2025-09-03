@@ -1,17 +1,17 @@
 import { useState } from 'react'
 import { FaPlay, FaTrash, FaFilter } from 'react-icons/fa'
-import { useTasksList } from '../hooks/use-tasks-list'
-import { useTaskExecution } from '@/hooks/use-task-execution'
-import { TaskExecutionCard } from '../components/execute/task-execution-card'
-import { TasksFilters } from '../components/list/tasks-filters'
+import { useTaskExecution } from './hooks/use-task-execution'
+import { TaskExecutionCard } from './components/task-execution-card'
+import { TasksFilters } from '../../tasks/components/tasks-filters'
 import { TaskStateEnum } from '@/shared/constants'
+import { useAdminTasksList } from './hooks/use-admin-tasks-list'
 
 export function TaskExecutionPage() {
-  const { tasks, isLoading, filters, updateFilters } = useTasksList()
+  const { tasks, isLoading, filters, updateFilters } = useAdminTasksList()
   const { batchExecuteTasks, isExecuting } = useTaskExecution()
   
-  // Filter to show only STORED tasks
-  const storedTasks = tasks.filter(task => task.state === TaskStateEnum.STORED)
+  // Show all tasks (no filtering by state)
+  const allTasks = tasks
   
   // Track tasks with proofs ready for execution
   const [tasksWithProofs, setTasksWithProofs] = useState<Set<string>>(new Set())
@@ -38,7 +38,10 @@ export function TaskExecutionPage() {
   }
   
   const handleExecuteAll = async () => {
-    const readyTasks = storedTasks.filter(task => tasksWithProofs.has(task.id))
+    // Only execute STORED tasks that have proofs
+    const readyTasks = allTasks.filter(task => 
+      task.state === TaskStateEnum.STORED && tasksWithProofs.has(task.id)
+    )
     
     if (readyTasks.length === 0) {
       return
@@ -80,10 +83,10 @@ export function TaskExecutionPage() {
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-base-content mb-2">
           <FaPlay className="inline-block mr-3" />
-          Execute Tasks
+          Task Execution & History
         </h1>
         <p className="text-base-content/70">
-          Upload execution proofs for stored tasks and execute them in batch
+          View all tasks, upload execution proofs, and execute stored tasks in batch
         </p>
       </div>
 
@@ -93,15 +96,15 @@ export function TaskExecutionPage() {
         onFiltersChange={updateFilters}
       />
 
-      {/* Batch Actions - Always visible when there are tasks with proofs */}
-      {tasksWithProofs.size > 0 && (
+      {/* Batch Actions - Show when there are STORED tasks with proofs */}
+      {tasksWithProofs.size > 0 && allTasks.some(task => task.state === TaskStateEnum.STORED && tasksWithProofs.has(task.id)) && (
         <div className="card bg-base-100 shadow-xl mb-6">
           <div className="card-body">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <FaFilter className="h-5 w-5 text-primary" />
                 <span className="text-lg font-semibold">
-                  {tasksWithProofs.size} task{tasksWithProofs.size !== 1 ? 's' : ''} ready for execution
+                  {allTasks.filter(task => task.state === TaskStateEnum.STORED && tasksWithProofs.has(task.id)).length} stored task{allTasks.filter(task => task.state === TaskStateEnum.STORED && tasksWithProofs.has(task.id)).length !== 1 ? 's' : ''} ready for execution
                 </span>
               </div>
               <div className="flex gap-2">
@@ -144,14 +147,14 @@ export function TaskExecutionPage() {
               </div>
             </div>
           </div>
-        ) : storedTasks.length === 0 ? (
+        ) : allTasks.length === 0 ? (
           <div className="card bg-base-100 shadow-xl">
             <div className="card-body text-center">
               <h3 className="text-lg font-semibold text-base-content/70">
-                No stored tasks found
+                No tasks found
               </h3>
               <p className="text-base-content/50">
-                All tasks have been executed or there are no tasks matching your filters.
+                No tasks match your current filters.
               </p>
             </div>
           </div>
@@ -159,7 +162,7 @@ export function TaskExecutionPage() {
           <>
             {/* Task Cards */}
             <div className="space-y-4">
-              {storedTasks.map(task => (
+              {allTasks.map(task => (
                 <TaskExecutionCard
                   key={task.id}
                   task={task}
@@ -168,8 +171,6 @@ export function TaskExecutionPage() {
                 />
               ))}
             </div>
-
-
           </>
         )}
       </div>

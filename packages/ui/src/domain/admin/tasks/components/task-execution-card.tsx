@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { FaChevronDown, FaChevronRight, FaPlay } from 'react-icons/fa'
+import { FaChevronDown, FaChevronRight, FaPlay, FaCheck, FaTimes } from 'react-icons/fa'
 import { clsx } from 'clsx'
 import { useTaskTypeColors } from '@/hooks/use-task-type-colors'
 import { ProofUploadArea } from './proof-upload-area'
-import type { Task } from '../../types/tasks-list.types'
+import type { Task } from '@/domain/tasks/types/tasks-list.types'
 import { useTaskPriority } from '@/hooks/use-task-priority'
+import { TaskStateEnum } from '@/shared/constants'
 
 interface TaskExecutionCardProps {
   task: Task
@@ -34,6 +35,12 @@ export function TaskExecutionCard({ task, onProofReady, onProofsChange }: TaskEx
   }
 
   const IconComponent = getPriorityIcon(task.priority)
+  
+  // Determine if task can be executed
+  const canExecute = task.state === TaskStateEnum.STORED
+  const isExecuted = task.state === TaskStateEnum.EXECUTED
+  const isBlocked = task.state === TaskStateEnum.BLOCKED
+  const isCancelled = task.state === TaskStateEnum.CANCELLED
 
   return (
     <div className="card bg-base-100 shadow-xl">
@@ -66,7 +73,15 @@ export function TaskExecutionCard({ task, onProofReady, onProofsChange }: TaskEx
                 {task.taskType}
               </span>
               
-              <span className="badge badge-sm badge-info">
+              <span className={clsx(
+                "badge badge-sm",
+                {
+                  'badge-info': task.state === TaskStateEnum.STORED,
+                  'badge-success': task.state === TaskStateEnum.EXECUTED,
+                  'badge-warning': task.state === TaskStateEnum.BLOCKED,
+                  'badge-error': task.state === TaskStateEnum.CANCELLED,
+                }
+              )}>
                 {task.state}
               </span>
               
@@ -88,9 +103,27 @@ export function TaskExecutionCard({ task, onProofReady, onProofsChange }: TaskEx
 
           {/* Status Indicators */}
           <div className="flex items-center gap-2">
-            {hasProof && (
+            {hasProof && canExecute && (
               <span className="badge badge-sm badge-success">
                 Proof Ready
+              </span>
+            )}
+            {isExecuted && (
+              <span className="badge badge-sm badge-success">
+                <FaCheck className="h-3 w-3 mr-1" />
+                Executed
+              </span>
+            )}
+            {isBlocked && (
+              <span className="badge badge-sm badge-warning">
+                <FaTimes className="h-3 w-3 mr-1" />
+                Blocked
+              </span>
+            )}
+            {isCancelled && (
+              <span className="badge badge-sm badge-error">
+                <FaTimes className="h-3 w-3 mr-1" />
+                Cancelled
               </span>
             )}
             <span className="text-sm text-base-content/60">
@@ -130,15 +163,15 @@ export function TaskExecutionCard({ task, onProofReady, onProofsChange }: TaskEx
                 )}
               </div>
 
-              {/* Proof Upload Area */}
+              {/* Proof Upload Area - Show for all tasks */}
               <ProofUploadArea
                 taskId={task.id}
                 onProofChange={handleProofChange}
                 onProofsChange={handleProofsChange}
               />
 
-              {/* Individual Execute Button */}
-              {hasProof && (
+              {/* Individual Execute Button - Only for STORED tasks with proofs */}
+              {canExecute && hasProof && (
                 <div className="flex justify-end pt-2">
                   <button
                     onClick={handleExecuteTask}

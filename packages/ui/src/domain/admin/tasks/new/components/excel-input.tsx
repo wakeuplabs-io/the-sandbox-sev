@@ -1,4 +1,4 @@
-import { TaskType, TASK_TYPE_CONFIGS } from '../../types/tasks-new.types'
+import { TaskType, TASK_TYPE_CONFIGS } from '../types/tasks-new.types'
 import { FaInfoCircle } from 'react-icons/fa'
 
 interface ExcelInputProps {

@@ -9,6 +9,7 @@ import {
   ArbitrageTaskInput,
   CreateTaskInput,
   GetTasksQuerySchema,
+  GetPublicTasksQuery,
   ExecuteTaskInput,
   BatchExecuteTasksInput,
   ProofData,
@@ -17,7 +18,7 @@ import { getPublicHttpsClient } from '@/services/wallet-clients'
 import { getWalletHttpsClient } from '@/services/wallet-clients'
 import { CHAIN_BY_ENV } from '@/constants'
 import env from '@/env'
-import { TaskType, User } from '@/generated/prisma'
+import { TaskState, TaskType, User } from '@/generated/prisma'
 
 const chain = CHAIN_BY_ENV[env.NODE_ENV];
 const contractAddress = env.EXECUTION_VERIFIER_ADDRESS as `0x${string}`;
@@ -430,6 +431,69 @@ export const batchExecuteTasks = async (
       total: data.tasks.length,
       successful: results.length,
       failed: errors.length,
+    },
+  }
+}
+
+/**
+ * Gets public executed tasks (no authentication required)
+ */
+export const getPublicTasks = async (query: GetPublicTasksQuery) => {
+  const { page, limit, taskType, search } = query
+
+  const where: any = {
+    state: TaskState.EXECUTED
+  }
+  
+  if (taskType) {
+    where.taskType = taskType
+  }
+  
+  if (search) {
+    where.OR = [
+      { transactionId: { contains: search, mode: 'insensitive' } },
+      { collectionName: { contains: search, mode: 'insensitive' } },
+      { nftName: { contains: search, mode: 'insensitive' } },
+      { companyAndArtist: { contains: search, mode: 'insensitive' } },
+    ]
+  }
+  
+  // Get total count for pagination
+  const total = await prisma.task.count({ where })
+  
+  // Calculate pagination
+  const totalPages = Math.ceil(total / limit)
+  const hasNext = page < totalPages
+  const hasPrev = page > 1
+  
+  // Get tasks with pagination - include only public-safe data
+  const tasks = await prisma.task.findMany({
+    where,
+    orderBy: { createdAt: 'desc' },
+    skip: (page - 1) * limit,
+    take: limit,
+    include: {
+      executionProofs: true,
+      user: {
+        select: {
+          id: true,
+          address: true,
+          nickname: true,
+          email: true,
+        },
+      },
+    },
+  })
+  
+  return {
+    tasks,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages,
+      hasNext,
+      hasPrev,
     },
   }
 }
