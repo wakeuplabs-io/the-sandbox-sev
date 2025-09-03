@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { FaImage, FaTrash, FaCheck, FaFile, FaSpinner } from 'react-icons/fa'
 import { clsx } from 'clsx'
 import { useTaskExecution } from '../hooks/use-task-execution'
@@ -15,14 +15,30 @@ interface ProofUploadAreaProps {
   taskId: string
   onProofChange: (hasProof: boolean) => void
   onProofsChange: (proofs: ProofData[]) => void
+  clearInputsRef?: React.MutableRefObject<(() => void) | null>
 }
 
-export function ProofUploadArea({ taskId, onProofChange, onProofsChange }: ProofUploadAreaProps) {
+export function ProofUploadArea({ taskId, onProofChange, onProofsChange, clearInputsRef }: ProofUploadAreaProps) {
   const [proofs, setProofs] = useState<ProofData[]>([])
   const [activeTab, setActiveTab] = useState<'image' | 'text'>('image')
   const [textDescription, setTextDescription] = useState('')
   
   const { uploadProofImage, isUploading, uploadError } = useTaskExecution()
+
+  // Function to clear all inputs
+  const clearInputs = () => {
+    setProofs([])
+    setTextDescription('')
+    onProofChange(false)
+    onProofsChange([])
+  }
+
+  // Expose clear function to parent via ref
+  useEffect(() => {
+    if (clearInputsRef) {
+      clearInputsRef.current = clearInputs
+    }
+  }, [clearInputsRef])
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]

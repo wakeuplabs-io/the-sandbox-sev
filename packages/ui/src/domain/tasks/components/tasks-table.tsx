@@ -2,7 +2,7 @@ import { FaEye } from "react-icons/fa";
 import { clsx } from "clsx";
 import { useTaskTypeColors } from "@/hooks/use-task-type-colors";
 import { useTaskStateColors } from "@/hooks/use-task-state-colors";
-import type { Task } from "../types/tasks-list.types";
+import type { Task } from "@the-sandbox-sev/api";
 import { truncateHash } from "@/shared/lib/utils";
 import { EtherScanLink } from "@/shared/components/ether-scan-link";
 import { CopyToClipboard } from "@/shared/components/copy-to-clipboard";
@@ -71,7 +71,7 @@ export function TasksTable({ tasks, isLoading, onViewTask }: TasksTableProps) {
                   <td>
                     <span
                       className={clsx(
-                        "badge badge-sm",
+                        "badge text-xs",
                         getTaskTypeBadgeClasses(task.taskType as any)
                       )}
                     >
@@ -81,7 +81,7 @@ export function TasksTable({ tasks, isLoading, onViewTask }: TasksTableProps) {
                   <td>
                     <span
                       className={clsx(
-                        "badge badge-sm",
+                        "badge",
                         getTaskStateBadgeClasses(task.state as any)
                       )}
                     >

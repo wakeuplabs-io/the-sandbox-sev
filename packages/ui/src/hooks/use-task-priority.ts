@@ -24,14 +24,14 @@ export function useTaskPriority() {
   }
 
   const getPriorityBadgeClasses = (priority?: string) => {
-    if (!priority) return 'badge-neutral'
+    if (!priority) return 'badge-neutral badge-sm'
     
     if (priority.toLowerCase().includes('high')) {
-      return 'badge-error'
+      return 'badge-error badge-sm border-2 border-error/20'
     } else if (priority.toLowerCase().includes('medium')) {
-      return 'badge-warning'
+      return 'badge-warning badge-sm border-2 border-warning/20'
     }
-    return 'badge-info'
+    return 'badge-info badge-sm border-2 border-info/20'
   }
 
   const getPriorityTextColor = (priority?: string) => {

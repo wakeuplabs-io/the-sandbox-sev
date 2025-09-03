@@ -1,4 +1,4 @@
-import { FaTimes } from "react-icons/fa";
+import { FaTimes, FaImage, FaFileAlt, FaUser, FaCalendarAlt } from "react-icons/fa";
 import { clsx } from "clsx";
 import { useTaskTypeColors } from "@/hooks/use-task-type-colors";
 import type { Task } from "@the-sandbox-sev/api";
@@ -10,6 +10,64 @@ interface TaskDetailsModalProps {
   task: Task | null;
   isOpen: boolean;
   onClose: () => void;
+}
+
+interface ProofCardProps {
+  proof: any;
+}
+
+function ProofCard({ proof }: ProofCardProps) {
+  return (
+    <div className="card bg-base-200 shadow-sm">
+      <div className="card-body p-4">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            {proof.proofType === 'IMAGE' ? (
+              <FaImage className="h-4 w-4 text-primary" />
+            ) : (
+              <FaFileAlt className="h-4 w-4 text-secondary" />
+            )}
+            <span className="badge badge-outline">{proof.proofType}</span>
+          </div>
+          <div className="flex items-center gap-2 text-xs text-base-content/60">
+            <FaCalendarAlt className="h-3 w-3" />
+            {new Date(proof.createdAt).toLocaleString()}
+          </div>
+        </div>
+        
+        {proof.proofType === 'IMAGE' ? (
+          <div>
+            <img 
+              src={proof.proofValue} 
+              alt={proof.fileName || 'Proof image'}
+              className="max-w-full h-auto rounded-lg border border-base-300"
+            />
+            {proof.fileName && (
+              <p className="text-xs text-base-content/60 mt-2 font-mono">{proof.fileName}</p>
+            )}
+            {proof.fileSize && (
+              <p className="text-xs text-base-content/50">
+                Size: {(proof.fileSize / 1024).toFixed(1)} KB
+              </p>
+            )}
+          </div>
+        ) : (
+          <div className="bg-base-100 p-3 rounded-lg border border-base-300">
+            <p className="text-sm font-mono break-words whitespace-pre-wrap">{proof.proofValue}</p>
+          </div>
+        )}
+        
+        {proof.uploadedByUser && (
+          <div className="flex items-center gap-2 mt-3 pt-3 border-t border-base-300">
+            <FaUser className="h-3 w-3 text-base-content/60" />
+            <span className="text-xs text-base-content/60">
+              Uploaded by: {proof.uploadedByUser.nickname || proof.uploadedByUser.email}
+            </span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export function TaskDetailsModal({ task, isOpen, onClose }: TaskDetailsModalProps) {
@@ -54,7 +112,7 @@ export function TaskDetailsModal({ task, isOpen, onClose }: TaskDetailsModalProp
               <div className="input input-bordered bg-base-200 w-full">
                 <span 
                   className={clsx(
-                    "badge",
+                    "badge text-xs",
                     getTaskTypeBadgeClasses(task.taskType as any)
                   )}
                 >
@@ -116,6 +174,21 @@ export function TaskDetailsModal({ task, isOpen, onClose }: TaskDetailsModalProp
               </pre>
             </div>
           </div>
+
+          {/* Execution Proofs Section */}
+          {task.executionProofs && task.executionProofs.length > 0 && (
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-semibold">Execution Proofs</span>
+                <span className="badge badge-primary">{task.executionProofs.length}</span>
+              </label>
+              <div className="space-y-3 max-h-96 overflow-y-auto">
+                {task.executionProofs.map((proof: any, index: number) => (
+                  <ProofCard key={proof.id || index} proof={proof} />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

@@ -27,14 +27,9 @@ export function Layout({ children, showSidebar = false }: LayoutProps) {
     },
     {
       to: "/admin/tasks",
-      label: "Tasks",
+      label: "Admin",
       icon: <FaUserShield />,
-    },
-    {
-      to: "/admin/tasks/execute",
-      label: "Execute Tasks",
-      icon: <FaPlay />,
-    },
+    }
   ];
 
   return (

@@ -1,10 +1,12 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { FaPlay, FaTrash, FaFilter } from 'react-icons/fa'
 import { useTaskExecution } from './hooks/use-task-execution'
 import { TaskExecutionCard } from './components/task-execution-card'
 import { TasksFilters } from '../../tasks/components/tasks-filters'
 import { TaskStateEnum } from '@/shared/constants'
 import { useAdminTasksList } from './hooks/use-admin-tasks-list'
+import { TaskDetailsModal } from '@/shared/components/task-details-modal'
+import type { Task } from '@the-sandbox-sev/api'
 
 export function TaskExecutionPage() {
   const { tasks, isLoading, filters, updateFilters } = useAdminTasksList()
@@ -17,6 +19,13 @@ export function TaskExecutionPage() {
   const [tasksWithProofs, setTasksWithProofs] = useState<Set<string>>(new Set())
   // Track proofs for each task
   const [taskProofs, setTaskProofs] = useState<Record<string, any[]>>({})
+  
+  // Modal state
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  
+  // Refs to clear inputs after execution
+  const clearInputsRefs = useRef<Record<string, React.MutableRefObject<(() => void) | null>>>({})
   
   const handleTaskProofReady = (taskId: string, hasProof: boolean) => {
     setTasksWithProofs(prev => {
@@ -70,12 +79,37 @@ export function TaskExecutionPage() {
         readyTasks.forEach(task => delete newProofs[task.id])
         return newProofs
       })
+      
+      // Clear inputs for executed tasks
+      readyTasks.forEach(task => {
+        const clearRef = clearInputsRefs.current[task.id]
+        if (clearRef?.current) {
+          clearRef.current()
+        }
+      })
     }
   }
   
   const handleClearAllProofs = () => {
     setTasksWithProofs(new Set())
     setTaskProofs({})
+    
+    // Clear all inputs
+    Object.values(clearInputsRefs.current).forEach(clearRef => {
+      if (clearRef?.current) {
+        clearRef.current()
+      }
+    })
+  }
+
+  const handleViewTask = (task: Task) => {
+    setSelectedTask(task)
+    setIsModalOpen(true)
+  }
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+    setSelectedTask(null)
   }
 
   return (
@@ -162,18 +196,35 @@ export function TaskExecutionPage() {
           <>
             {/* Task Cards */}
             <div className="space-y-4">
-              {allTasks.map(task => (
-                <TaskExecutionCard
-                  key={task.id}
-                  task={task}
-                  onProofReady={(hasProof) => handleTaskProofReady(task.id, hasProof)}
-                  onProofsChange={(proofs) => handleTaskProofsChange(task.id, proofs)}
-                />
-              ))}
+              {allTasks.map(task => {
+                // Create ref for this task if it doesn't exist
+                if (!clearInputsRefs.current[task.id]) {
+                  clearInputsRefs.current[task.id] = { current: null }
+                }
+                
+                return (
+                  <TaskExecutionCard
+                    key={task.id}
+                    task={task}
+                    onProofReady={(hasProof) => handleTaskProofReady(task.id, hasProof)}
+                    onProofsChange={(proofs) => handleTaskProofsChange(task.id, proofs)}
+                    onViewTask={handleViewTask}
+                    clearInputsRef={clearInputsRefs.current[task.id]}
+                    taskProofs={taskProofs[task.id] || []}
+                  />
+                )
+              })}
             </div>
           </>
         )}
       </div>
+      
+      {/* Task Details Modal */}
+      <TaskDetailsModal
+        task={selectedTask}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </div>
   )
 }

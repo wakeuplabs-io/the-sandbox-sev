@@ -3,11 +3,11 @@ import { TaskStateEnum } from "@/shared/constants";
 export function useTaskStateColors() {
   const getTaskStateBadgeClasses = (state: TaskStateEnum) => {
     switch (state) {
-      case TaskStateEnum.STORED: return "badge-info";
-      case TaskStateEnum.EXECUTED: return "badge-success";
-      case TaskStateEnum.BLOCKED: return "badge-error";
-      case TaskStateEnum.CANCELLED: return "badge-warning";
-      default: return "badge-neutral";
+      case TaskStateEnum.STORED: return "badge-info badge-sm";
+      case TaskStateEnum.EXECUTED: return "badge-success badge-sm";
+      case TaskStateEnum.BLOCKED: return "badge-error badge-sm";
+      case TaskStateEnum.CANCELLED: return "badge-warning badge-sm";
+      default: return "badge-neutral badge-sm";
     }
   };
 
