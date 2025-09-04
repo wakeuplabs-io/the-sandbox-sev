@@ -113,8 +113,8 @@ export default $config({
         PRIVATE_KEY: process.env.PRIVATE_KEY ?? '',
         RPC_URL: process.env.RPC_URL ?? '',
         EXECUTION_VERIFIER_ADDRESS: process.env.EXECUTION_VERIFIER_ADDRESS ?? '',
-        ASSETS_BUCKET_NAME: process.env.ASSETS_BUCKET_NAME ?? '',
-        ASSETS_URL: process.env.ASSETS_URL ?? '',
+        ASSETS_BUCKET_NAME: assetsBucket.name,
+        ASSETS_URL: ASSETS_URL,
       },
       permissions: [
         {
