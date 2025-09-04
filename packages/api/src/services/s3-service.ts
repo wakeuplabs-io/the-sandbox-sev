@@ -104,8 +104,27 @@ export const generatePresignedUploadUrl = async (
 }
 
 /**
- * Validates if S3 is properly configured
+ * Validates if S3 is properly configured and accessible
  */
-export const isS3Configured = (): boolean => {
-  return !!(env.AWS_ACCESS_KEY_ID && env.AWS_SECRET_ACCESS_KEY && env.ASSETS_BUCKET_NAME)
+export const isS3Configured = async (): Promise<boolean> => {
+  try {
+    if (!env.ASSETS_BUCKET_NAME) {
+      console.error('ASSETS_BUCKET_NAME is not configured')
+      return false
+    }
+
+    // Try to list objects in the bucket to verify access
+    const { ListObjectsV2Command } = await import('@aws-sdk/client-s3')
+    const command = new ListObjectsV2Command({
+      Bucket: env.ASSETS_BUCKET_NAME,
+      MaxKeys: 1, // Just check if we can access the bucket
+    })
+
+    await s3Client.send(command)
+    console.log('S3 bucket is accessible:', env.ASSETS_BUCKET_NAME)
+    return true
+  } catch (error) {
+    console.error('S3 configuration validation failed:', error)
+    return false
+  }
 }
