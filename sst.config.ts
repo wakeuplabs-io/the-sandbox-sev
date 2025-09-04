@@ -113,13 +113,16 @@ export default $config({
         PRIVATE_KEY: process.env.PRIVATE_KEY ?? '',
         RPC_URL: process.env.RPC_URL ?? '',
         EXECUTION_VERIFIER_ADDRESS: process.env.EXECUTION_VERIFIER_ADDRESS ?? '',
-        ASSETS_BUCKET_NAME: assetsBucket.name,
+        ASSETS_BUCKET_NAME: $interpolate`${assetsBucket.name}`,
         ASSETS_URL: ASSETS_URL,
       },
       permissions: [
         {
           actions: ["s3:PutObject", "s3:PutObjectAcl", "s3:GetObject", "s3:ListBucket"],
-          resources: [$interpolate`${assetsBucket.arn}/*`],
+          resources: [
+            $interpolate`${assetsBucket.arn}`,
+            $interpolate`${assetsBucket.arn}/*`
+          ],
         },
       ],
       copyFiles: [
