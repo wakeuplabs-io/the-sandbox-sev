@@ -1,13 +1,23 @@
 @import "tailwindcss";
-@tailwind utilities;
+@plugin "daisyui" { 
+  themes: dark --default
+}; 
 
-@plugin "daisyui";
+@plugin "daisyui/theme" {
+  name: "dark";
+  default: true;
+  --color-primary: #0084FF;
+  --color-secondary: #E5C64A;
+  --color-neutral: #20212B;
+  --color-success: #04C940;
+  --color-error: #DD4656;
+}
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
+  color-scheme: dark light;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
 
