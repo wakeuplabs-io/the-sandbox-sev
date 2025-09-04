@@ -1,36 +1,49 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Outlet } from "@tanstack/react-router";
 import { useGetUser } from "@/hooks/use-get-user";
 import { useWeb3Auth } from "@/context/web3auth";
-import { FaHome, FaUserShield } from "react-icons/fa";
+import { FaHome, FaUser, FaUserShield } from "react-icons/fa";
 import { Header } from "@/shared/components/layout/header";
 import { Footer } from "@/shared/components/layout/footer";
+import { UserRoleEnum } from "@/shared/constants";
 
 interface LayoutProps {
   children?: React.ReactNode;
   showSidebar?: boolean;
 }
 
+const nlinks = [
+  {
+    to: "/",
+    label: "Home",
+    icon: <FaHome />,
+    roles: [],
+  },
+  {
+    to: "/admin/tasks",
+    label: "Tasks",
+    icon: <FaUserShield />,
+    roles: [UserRoleEnum.ADMIN, UserRoleEnum.CONSULTANT],
+  },
+  {
+    to: "/admin/users",
+    label: "Users",
+    icon: <FaUser />,
+    roles: [UserRoleEnum.ADMIN],
+  },
+];
+
 export function Layout({ children, showSidebar = false }: LayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const { account, email } = useWeb3Auth();
   const { user } = useGetUser(account || "", email || "");
-  console.log("user", user);
+  
   const handleSidebarToggle = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
-  const navigationLinks = [
-    {
-      to: "/",
-      label: "Home",
-      icon: <FaHome />,
-    },
-    {
-      to: "/admin/tasks",
-      label: "Admin",
-      icon: <FaUserShield />,
-    }
-  ];
+  const navigationLinks = useMemo(() => {
+        return nlinks.filter((link) => link.roles.length === 0 || link.roles.includes(user?.role as UserRoleEnum));
+  }, [user]);
 
   return (
     <div className="min-h-screen w-screen">
