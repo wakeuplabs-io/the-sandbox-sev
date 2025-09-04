@@ -4,6 +4,7 @@ import { useTaskTypeColors } from "@/hooks/use-task-type-colors";
 import type { Task } from "@the-sandbox-sev/api";
 import { truncateHash } from "@/shared/lib/utils";
 import { CopyToClipboard } from "@/shared/components/copy-to-clipboard";
+import { Image } from "./image";
 
 
 interface TaskDetailsModalProps {
@@ -37,11 +38,15 @@ function ProofCard({ proof }: ProofCardProps) {
         
         {proof.proofType === 'IMAGE' ? (
           <div>
-            <img 
-              src={proof.proofValue} 
-              alt={proof.fileName || 'Proof image'}
-              className="max-w-full h-auto rounded-lg border border-base-300"
-            />
+            <div className="w-full h-32 rounded-lg overflow-hidden border border-base-300 cursor-pointer hover:shadow-md transition-shadow duration-200">
+              <Image
+                image={proof.proofValue}
+                alt={proof.fileName || 'Proof image'}
+                aspectRatio="video"
+                className="rounded-lg hover:scale-105 transition-transform duration-200"
+                onClick={() => window.open(proof.proofValue, '_blank')}
+              />
+            </div>
             {proof.fileName && (
               <p className="text-xs text-base-content/60 mt-2 font-mono">{proof.fileName}</p>
             )}

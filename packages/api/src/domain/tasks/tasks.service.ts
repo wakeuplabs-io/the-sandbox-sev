@@ -386,7 +386,12 @@ export const executeTask = async (data: ExecuteTaskInput, user: User): Promise<a
       where: { id: data.taskId },
       data: { state: TaskState.EXECUTED },
       include: {
-        executionProofs: true,
+        executionProofs: {
+          include: {
+            uploadedByUser: true,
+          },
+        },
+
         user: {
           select: {
             id: true,
@@ -473,7 +478,11 @@ export const getPublicTasks = async (query: GetPublicTasksQuery) => {
     skip: (page - 1) * limit,
     take: limit,
     include: {
-      executionProofs: true,
+      executionProofs: {
+        include: {
+          uploadedByUser: true,
+        },
+      },
       user: {
         select: {
           id: true,
