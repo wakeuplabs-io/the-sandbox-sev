@@ -4,12 +4,10 @@ import env from '@/env'
 import { v4 as uuidv4 } from 'uuid'
 
 // Initialize S3 client
+// In Lambda, AWS credentials are automatically provided via IAM role
+// No need to explicitly set credentials - AWS SDK will use the execution role
 const s3Client = new S3Client({
-  region: env.AWS_REGION,
-  credentials: env.AWS_ACCESS_KEY_ID && env.AWS_SECRET_ACCESS_KEY ? {
-    accessKeyId: env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
-  } : undefined,
+  region: process.env.AWS_REGION || 'sa-east-1',
 })
 
 export interface UploadFileResult {
@@ -50,7 +48,8 @@ export const uploadFileToS3 = async (
     await s3Client.send(command)
 
     // Construct the public URL
-    const url = `https://${env.ASSETS_BUCKET_NAME}.s3.${env.AWS_REGION}.amazonaws.com/${key}`
+    const region = process.env.AWS_REGION || 'sa-east-1'
+    const url = `https://${env.ASSETS_BUCKET_NAME}.s3.${region}.amazonaws.com/${key}`
 
     return {
       url,
@@ -90,7 +89,8 @@ export const generatePresignedUploadUrl = async (
 
   try {
     const uploadUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 }) // 1 hour
-    const publicUrl = `https://${env.ASSETS_BUCKET_NAME}.s3.${env.AWS_REGION}.amazonaws.com/${key}`
+    const region = process.env.AWS_REGION || 'sa-east-1'
+    const publicUrl = `https://${env.ASSETS_BUCKET_NAME}.s3.${region}.amazonaws.com/${key}`
 
     return {
       uploadUrl,

@@ -19,9 +19,8 @@ const EnvSchema = z.object({
   DATABASE_URL: z.string(),
   EXECUTION_VERIFIER_ADDRESS: z.string(),
   // S3 Configuration
-  AWS_ACCESS_KEY_ID: z.string().optional(),
-  AWS_SECRET_ACCESS_KEY: z.string().optional(),
-  AWS_REGION: z.string().default("us-east-1"),
+  // AWS credentials are automatically provided by Lambda execution role
+  AWS_REGION: z.string().default("sa-east-1"),
   ASSETS_URL: z.string().optional(),
   ASSETS_BUCKET_NAME: z.string().optional(),
 });
