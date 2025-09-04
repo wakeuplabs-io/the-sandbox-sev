@@ -1,5 +1,6 @@
 import { TaskTypeEnum } from '@/shared/constants'
-import { TaskType, ParsedRow, TASK_TYPE_CONFIGS } from '../types/tasks-new.types'
+import { ParsedRow, TASK_TYPE_CONFIGS } from '../types/tasks-new.types'
+import { TaskType } from '@the-sandbox-sev/api'
 
 export function parseExcelData(rawData: string, taskType: TaskType): ParsedRow[] {
   // First, let's clean and normalize the data
