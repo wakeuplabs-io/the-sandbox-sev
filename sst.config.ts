@@ -115,6 +115,9 @@ export default $config({
         EXECUTION_VERIFIER_ADDRESS: process.env.EXECUTION_VERIFIER_ADDRESS ?? '',
         ASSETS_BUCKET_NAME: assetsBucket.name,
         ASSETS_URL: ASSETS_URL,
+        AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID ?? '',
+        AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY ?? '',
+        AWS_REGION: process.env.AWS_REGION ?? 'sa-east-1',
       },
       permissions: [
         {
