@@ -73,6 +73,7 @@ export const CreateTaskSchema = z.discriminatedUnion('taskType', [
   ArbitrageTaskSchema.extend({ taskType: z.literal('ARBITRAGE') }),
 ])
 
+
 // Tipos TypeScript
 export type LiquidationTaskInput = z.infer<typeof LiquidationTaskSchema>
 export type AcquisitionTaskInput = z.infer<typeof AcquisitionTaskSchema>
@@ -89,6 +90,7 @@ export const GetTasksQuerySchema = z.object({
   dateFrom: z.string().optional(),
   dateTo: z.string().optional(),
   status: z.string().optional(),
+  state: z.enum(['STORED', 'EXECUTED', 'BLOCKED', 'CANCELLED']).optional(),
 })
 
 // Response schema for paginated tasks
@@ -103,3 +105,37 @@ export const TasksListResponseSchema = z.object({
     hasPrev: z.boolean(),
   }),
 })
+
+// Schema for proof data
+export const ProofDataSchema = z.object({
+  proofType: z.enum(['TEXT', 'IMAGE']),
+  proofValue: z.string(),
+  fileName: z.string().optional(),
+  fileSize: z.number().optional(),
+  mimeType: z.string().optional(),
+})
+
+// Schema for executing a single task
+export const ExecuteTaskSchema = z.object({
+  taskId: z.string(),
+  proofs: z.array(ProofDataSchema).min(1, 'At least one proof is required'),
+})
+
+// Schema for batch executing multiple tasks
+export const BatchExecuteTasksSchema = z.object({
+  tasks: z.array(ExecuteTaskSchema).min(1, 'At least one task is required'),
+})
+
+// Schema for public tasks query (limited filters for public access)
+export const GetPublicTasksQuerySchema = z.object({
+  page: z.coerce.number().min(1).default(1),
+  limit: z.coerce.number().min(1).max(50).default(10), // Max 50 for public endpoint
+  taskType: z.enum(['LIQUIDATION', 'ACQUISITION', 'AUTHORIZATION', 'ARBITRAGE']).optional(),
+  search: z.string().optional(),
+})
+
+// Types
+export type ProofData = z.infer<typeof ProofDataSchema>
+export type ExecuteTaskInput = z.infer<typeof ExecuteTaskSchema>
+export type BatchExecuteTasksInput = z.infer<typeof BatchExecuteTasksSchema>
+export type GetPublicTasksQuery = z.infer<typeof GetPublicTasksQuerySchema>

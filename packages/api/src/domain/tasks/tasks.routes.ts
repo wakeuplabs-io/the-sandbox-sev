@@ -6,11 +6,21 @@ import {
   getTasksController,
   getTaskByTransactionIdController,
   createTaskController,
+  executeTaskController,
+  batchExecuteTasksController,
+  uploadProofImageController,
+  generateImageUploadUrlController,
+  getPublicTasksController,
 } from "./tasks.controller";
-import { CreateTaskSchema, GetTasksQuerySchema } from "./tasks.schema";
+import { CreateTaskSchema, GetTasksQuerySchema, GetPublicTasksQuerySchema, ExecuteTaskSchema, BatchExecuteTasksSchema } from "./tasks.schema";
 import { requireRole } from "@/middlewares/require-role";
 import { Role } from "@/generated/prisma";
 
+// Public routes (no authentication required)
+const publicTasks = new Hono()
+  .get("/", zValidator("query", GetPublicTasksQuerySchema), getPublicTasksController);
+
+// Protected routes (authentication required)
 const tasks = new Hono()
   .use("/*", authMiddleware)
   .get("/", zValidator("query", GetTasksQuerySchema), getTasksController)
@@ -29,6 +39,38 @@ const tasks = new Hono()
     requireRole([Role.ADMIN, Role.CONSULTANT]),
     zValidator("json", CreateTaskSchema),
     createTaskController
+  )
+  .post(
+    "/execute",
+    requireRole([Role.ADMIN, Role.CONSULTANT]),
+    zValidator("json", ExecuteTaskSchema),
+    executeTaskController
+  )
+  .post(
+    "/batch-execute",
+    requireRole([Role.ADMIN, Role.CONSULTANT]),
+    zValidator("json", BatchExecuteTasksSchema),
+    batchExecuteTasksController
+  )
+  .post(
+    "/upload-proof-image",
+    requireRole([Role.ADMIN, Role.CONSULTANT]),
+    uploadProofImageController
+  )
+  .post(
+    "/generate-upload-url",
+    requireRole([Role.ADMIN, Role.CONSULTANT]),
+    zValidator("json", z.object({
+      fileName: z.string(),
+      mimeType: z.string(),
+      taskId: z.string(),
+    })),
+    generateImageUploadUrlController
   );
 
-export default tasks;
+// Main router that combines public and protected routes
+const mainTasksRouter = new Hono()
+  .route("/public", publicTasks)
+  .route("/", tasks);
+
+export default mainTasksRouter;

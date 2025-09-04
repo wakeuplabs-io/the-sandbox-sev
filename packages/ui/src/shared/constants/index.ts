@@ -13,6 +13,13 @@ export enum TaskTypeEnum {
   ARBITRAGE = "ARBITRAGE",
 }
 
+export enum TaskStateEnum {
+  STORED = "STORED",
+  EXECUTED = "EXECUTED",
+  BLOCKED = "BLOCKED",
+  CANCELLED = "CANCELLED",
+}
+
 
 export const ETHERSCAN_BY_CHAIN_ID: Record<number, string> = {
   //arbitrum mainnet

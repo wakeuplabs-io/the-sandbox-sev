@@ -1,4 +1,4 @@
-export type TaskType = 'LIQUIDATION' | 'ACQUISITION' | 'AUTHORIZATION' | 'ARBITRAGE'
+import { TaskType } from "@the-sandbox-sev/api"
 
 export interface ParsedRow {
   rowIndex: number

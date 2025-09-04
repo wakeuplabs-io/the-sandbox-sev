@@ -1,6 +1,6 @@
 import { useApiClient } from "./use-api-client";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import type { TasksFilters } from "@/domain/admin/tasks/types/tasks-list.types";
+import type { TasksListFilters, GetPublicTasksQuery } from "@/domain/tasks/types/tasks-list.types";
 import { useWeb3Auth } from "@/context/web3auth";
 
 export const useTasks = () => {
@@ -21,7 +21,7 @@ const { isAuthenticated, isInitialized } = useWeb3Auth();
     },
   });
 
-  const getAllTasks = (filters: TasksFilters) => {
+  const getAllTasks = (filters: TasksListFilters) => {
     return useQuery({
       queryKey: ["tasks", filters],
       enabled: isAuthenticated && isInitialized,
@@ -49,6 +49,10 @@ const { isAuthenticated, isInitialized } = useWeb3Auth();
         
         if (filters.status) {
           params.append('status', filters.status);
+        }
+        
+        if (filters.state) {
+          params.append('state', filters.state);
         }
 
         const response = await client.api.tasks.$get({
@@ -82,9 +86,24 @@ const { isAuthenticated, isInitialized } = useWeb3Auth();
     });
   };
 
+  const getPublicTasks = (filters: GetPublicTasksQuery) => {
+    return useQuery({
+      queryKey: ["public-tasks", filters],
+      queryFn: async () => {
+        const response = await client.api.tasks.public.$get({ query: filters });
+        if (!response.ok) {
+          throw new Error("Failed to fetch public tasks");
+        }
+        
+        return response.json();
+      },
+    });
+  };
+
   return {
     createTask,
     getAllTasks,
     getTaskByTransactionId,
+    getPublicTasks,
   };
 };

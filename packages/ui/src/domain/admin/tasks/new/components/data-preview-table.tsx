@@ -1,5 +1,6 @@
-import { ParsedRow, ValidationError, TaskType, TASK_TYPE_CONFIGS } from '../types/tasks-new.types'
+import { ParsedRow, ValidationError, TASK_TYPE_CONFIGS } from '../types/tasks-new.types'
 import { FaExclamationTriangle } from 'react-icons/fa'
+import { TaskType } from '@the-sandbox-sev/api'
 
 interface DataPreviewTableProps {
   data: ParsedRow[]

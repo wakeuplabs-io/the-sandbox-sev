@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { TaskTypeButtons } from "./components/task-type-buttons";
-import { TaskType } from "./types/tasks-new.types";
+import { TaskType } from '@the-sandbox-sev/api'
 import { ParsedRow, ValidationError } from "./types/tasks-new.types";
 import { parseExcelData } from "./utils/excel-parser";
 import { useLayout } from "@/context/layout-context";

@@ -1,5 +1,6 @@
-import { TaskType, TASK_TYPE_CONFIGS } from '../types/tasks-new.types'
+import { TASK_TYPE_CONFIGS } from '../types/tasks-new.types'
 import { FaInfoCircle } from 'react-icons/fa'
+import { TaskType } from '@the-sandbox-sev/api'
 
 interface ExcelInputProps {
   value: string

@@ -31,6 +31,19 @@ enum TaskType {
 enum TaskState {
     STORED
     EXECUTED
+    BLOCKED
+    CANCELLED
+}
+
+enum ProofType {
+    TEXT
+    IMAGE
+}
+
+enum ProofStatus {
+    PENDING
+    VERIFIED
+    REJECTED
 }
 
 model User {
@@ -41,13 +54,14 @@ model User {
     role      Role     @default(MEMBER)
     createdAt DateTime @default(now())
     tasks     Task[]   @relation("UserTasks")
+    proofs    TaskExecutionProof[] @relation("UserProofs")
 }
 
 model Task {
     id                    String   @id @default(cuid())
     transactionId         String   @unique // Transaction ID original
-    taskType              TaskType // LIQUIDATION, ACQUISITION, AUTHORIZATION, ARBITRAGE
-    
+    taskType              TaskType 
+    state                 TaskState @default(STORED)
     // Data de la task (original)
     taskData              Json     // JSON completo de la task
     
@@ -100,10 +114,16 @@ model TaskExecutionProof {
     id        String   @id @default(cuid())
     taskId    String
     task      Task     @relation("TaskExecutionProofs", fields: [taskId], references: [id])
-    txHash    String
-    proofHash     String?
-    proofImageUrl String?
-    proofDescription String?
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    proofType ProofType @default(TEXT)
+    
+    proofValue       String? 
+    fileName         String? 
+    fileSize         Int?    
+    mimeType         String? 
+    
+    uploadedBy       Int?
+    uploadedByUser   User?    @relation("UserProofs", fields: [uploadedBy], references: [id])
+    
+    createdAt        DateTime @default(now())
+    updatedAt        DateTime @updatedAt
 }

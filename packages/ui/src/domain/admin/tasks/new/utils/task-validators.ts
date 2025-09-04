@@ -1,5 +1,6 @@
 import { TaskTypeEnum } from '@/shared/constants'
-import { TaskType, ValidationError } from '../types/tasks-new.types'
+import { ValidationError } from '../types/tasks-new.types'
+import { TaskType } from '@the-sandbox-sev/api'
 
 function validateTransactionId(data: Record<string, any>, rowIndex: number): ValidationError[] {
   const errors: ValidationError[] = []

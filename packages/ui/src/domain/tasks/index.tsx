@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { FaPlus } from 'react-icons/fa'
-import { useTasksList } from './hooks/use-tasks-list'
-import { TasksFilters, TasksTable, TasksPagination, TaskDetailsModal } from './components'
-import type { Task } from './types/tasks-list.types'
+import { usePublicTasksList } from './hooks/use-public-tasks-list'
+import type { Task } from '@the-sandbox-sev/api'
+import { TasksFilters } from './components/tasks-filters'
+import { TasksTable } from './components/tasks-table'
+import { PaginationActions } from '../../shared/components/pagination-actions'
+import { TaskDetailsModal } from '@/shared/components/task-details-modal'
 
-export function TasksIndexPage() {
+export function TasksListPage() {
   const {
     tasks,
     totalTasks,
@@ -21,7 +24,7 @@ export function TasksIndexPage() {
     nextPage,
     prevPage,
     refetch,
-  } = useTasksList()
+  } = usePublicTasksList()
 
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -68,6 +71,7 @@ export function TasksIndexPage() {
       <TasksFilters
         filters={filters}
         onFiltersChange={updateFilters}
+        isPublic={true}
       />
 
       <div className="text-sm text-base-content/70">
@@ -84,7 +88,7 @@ export function TasksIndexPage() {
         isLoading={isLoading}
         onViewTask={handleViewTask}
       />
-      <TasksPagination
+      <PaginationActions
         currentPage={currentPage}
         totalPages={totalPages}
         totalTasks={totalTasks}
