@@ -30,6 +30,11 @@ export const executionVerifierAbi = [
     name: "HashAlreadyStored",
   },
   {
+    type: "error",
+    inputs: [{ name: "userAddress", internalType: "address", type: "address" }],
+    name: "InvalidUserAddress",
+  },
+  {
     type: "event",
     anonymous: false,
     inputs: [

@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { loadFixture } from "@nomicfoundation/hardhat-toolbox-viem/network-helpers";
+import hre from "hardhat";
 
 describe("ExecutionVerifier", function () {
   async function deployExecutionVerifierFixture() {
@@ -64,7 +65,7 @@ describe("ExecutionVerifier", function () {
         account: admin.account.address,
       });
 
-      const storedAddress = await executionVerifier.read.isStored([testHash]);
+      const storedAddress = await executionVerifier.read.isStored([testHash]) as string;
       expect(storedAddress.toLowerCase()).to.equal(userAddress.toLowerCase());
     });
 
@@ -125,8 +126,8 @@ describe("ExecutionVerifier", function () {
         account: admin.account.address,
       });
 
-      const storedAddress1 = await executionVerifier.read.isStored([hash1]);
-      const storedAddress2 = await executionVerifier.read.isStored([hash2]);
+      const storedAddress1 = await executionVerifier.read.isStored([hash1]) as string;
+      const storedAddress2 = await executionVerifier.read.isStored([hash2]) as string;
 
       expect(storedAddress1.toLowerCase()).to.equal(userAddress1.toLowerCase());
       expect(storedAddress2.toLowerCase()).to.equal(userAddress2.toLowerCase());
