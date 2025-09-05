@@ -17,18 +17,28 @@ contract ExecutionVerifier is IExecutionVerifier, IExecutionVerifierErrors, Acce
         _grantRole(STORE_ROLE, msg.sender);
     }
 
-    function storeHash(bytes32 hash, address userAddress) external onlyRole(STORE_ROLE) {
+    function onlyStoreRole(address account) internal view {
+        if (!hasRole(STORE_ROLE, account)) {
+            revert AccessControlUnauthorizedAccount(account, STORE_ROLE);
+        }
+    }
+
+    function storeHash(bytes32 hash, address userAddress) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        if (userAddress == address(0)) {
+            revert InvalidUserAddress(userAddress);
+        }
+        onlyStoreRole(userAddress);
         if (isStored[hash] != address(0)) {
             revert HashAlreadyStored(hash);
         }
         isStored[hash] = userAddress;
     }
 
-    function storeHashBatch(bytes32[] calldata hashes, address[] calldata userAddresses) external onlyRole(STORE_ROLE) {
-        if (hashes.length != userAddresses.length) {
-            revert ArraysLengthMismatch();
+    function storeHashBatch(bytes32[] calldata hashes, address userAddress) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        if (userAddress == address(0)) {
+            revert InvalidUserAddress(userAddress);
         }
-        
+        onlyStoreRole(userAddress);
         if (hashes.length > MAX_BATCH_SIZE) {
             revert BatchSizeTooLarge(hashes.length, MAX_BATCH_SIZE);
         }
@@ -37,7 +47,7 @@ contract ExecutionVerifier is IExecutionVerifier, IExecutionVerifierErrors, Acce
             if (isStored[hashes[i]] != address(0)) {
                 revert HashAlreadyStored(hashes[i]);
             }
-            isStored[hashes[i]] = userAddresses[i];
+            isStored[hashes[i]] = userAddress;
         }
     }
 
@@ -47,6 +57,9 @@ contract ExecutionVerifier is IExecutionVerifier, IExecutionVerifierErrors, Acce
         }
         
         for (uint256 i = 0; i < addresses.length; i++) {
+            if (addresses[i] == address(0)) {
+                revert InvalidUserAddress(addresses[i]);
+            }
             _grantRole(STORE_ROLE, addresses[i]);
         }
     }
