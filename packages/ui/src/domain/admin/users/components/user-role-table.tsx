@@ -1,7 +1,7 @@
 import { UserRoleRow } from "./user-role-row";
-import { Pagination } from "@/shared/components/pagination";
 import type { UserWithChanges } from "../types";
 import { UserRoleEnum } from "@/shared/constants";
+import { PaginationActions } from "@/shared/components/pagination-actions";
 
 interface UserRoleTableProps {
   users: UserWithChanges[];
@@ -70,12 +70,15 @@ export function UserRoleTable({
 
       {pagination && onPageChange && (
         <div className="p-4 border-t border-base-300">
-          <Pagination
+          <PaginationActions
             currentPage={pagination.page}
             totalPages={pagination.totalPages}
+            totalItems={pagination.total}
             onPageChange={onPageChange}
             hasNext={pagination.hasNext}
             hasPrev={pagination.hasPrev}
+            onNextPage={() => onPageChange(pagination.page + 1)}
+            onPrevPage={() => onPageChange(pagination.page - 1)}
           />
         </div>
       )}

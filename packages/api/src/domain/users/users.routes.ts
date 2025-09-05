@@ -5,10 +5,12 @@ import { isAddress } from "viem";
 import { z } from "zod";
 import {
   createUserController,
+  getUserByNicknameController,
   getUserController,
   getUsersController,
+  updateUserController,
 } from "./users.controller";
-import { CreateUserSchema } from "./users.schema";
+import { CreateUserSchema, UpdateUserSchema } from "./users.schema";
 import {
   assignRolesController,
 } from "./roles.controller";
@@ -37,5 +39,6 @@ const users = new Hono()
     getUserController
   )
   .post("/", zValidator("json", CreateUserSchema), createUserController)
-
+  .put("/", zValidator("json", UpdateUserSchema), updateUserController)
+  .get("/nickname/:nickname", getUserByNicknameController)
 export default users;

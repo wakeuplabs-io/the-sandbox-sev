@@ -4,8 +4,8 @@ import { Avatar } from "./avatar";
 
 function SkeletonButton() {
   return (
-    <div className="h-10 rounded-full bg-[#136AFC]/50 animate-pulse flex items-center justify-center font-inter text-[14px] leading-[1.43] px-4">
-      <span className="">Iniciar sesión</span>
+    <div className="btn btn-outline bg-primary/50 animate-pulse">
+      <span className="">Iniciando sesión</span>
     </div>
   );
 }

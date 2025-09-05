@@ -39,9 +39,26 @@ export const useUser = () => {
     return res.json();
   };
   
+  const updateUser = async (data: { nickname: string }) => {
+    const res = await client.api.users.$put({
+      json: data,
+    });
+    if (!res.ok) throw new Error("Error updating user");
+    return res.json();
+  };
+
+  const getUserByNickname = async (nickname: string) => {
+    const res = await client.api.users.nickname[":nickname"].$get({
+      param: { nickname },
+    });
+    if (!res.ok) throw new Error("Error fetching user by nickname");
+    return res.json();
+  };
   return {
     getByAddress,
     getUsers,
     assignRoles,
+    updateUser,
+    getUserByNickname,
   };
 };

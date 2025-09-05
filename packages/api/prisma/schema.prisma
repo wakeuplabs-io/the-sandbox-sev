@@ -49,7 +49,7 @@ enum ProofStatus {
 model User {
     id        Int      @id @default(autoincrement())
     email     String?
-    nickname  String?
+    nickname  String? @unique
     address   String
     role      Role     @default(MEMBER)
     createdAt DateTime @default(now())

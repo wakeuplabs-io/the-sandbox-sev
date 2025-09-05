@@ -5,7 +5,7 @@ import { useMemo } from "react";
 interface PaginationActionsProps {
   currentPage: number;
   totalPages: number;
-  totalTasks: number;
+  totalItems: number;
   hasNext: boolean;
   hasPrev: boolean;
   onPageChange: (page: number) => void;
@@ -16,7 +16,7 @@ interface PaginationActionsProps {
 export function PaginationActions({
   currentPage,
   totalPages,
-  totalTasks,
+  totalItems,
   hasNext,
   hasPrev,
   onPageChange,
@@ -58,12 +58,12 @@ export function PaginationActions({
     return pages;
   };
 
-  const pageNumbers = useMemo(() => getPageNumbers(), [currentPage, totalPages, totalTasks]);
+  const pageNumbers = useMemo(() => getPageNumbers(), [currentPage, totalPages, totalItems]);
   return (
     <div className="flex items-center justify-between mt-6">
       <div className="text-sm text-base-content/70">
-        Showing {(currentPage - 1) * 10 + 1} to {Math.min(currentPage * 10, totalTasks)} of{" "}
-        {totalTasks} tasks
+        Showing {(currentPage - 1) * 10 + 1} to {Math.min(currentPage * 10, totalItems)} of{" "}
+        {totalItems} items
       </div>
 
       <div className="flex items-center gap-2">

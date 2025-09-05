@@ -2,9 +2,11 @@ import React, { useMemo } from "react";
 import { Outlet } from "@tanstack/react-router";
 import { useGetUser } from "@/hooks/use-get-user";
 import { useWeb3Auth } from "@/context/web3auth";
+import { useNicknameSetup } from "@/hooks/use-nickname-setup";
 import { FaHome, FaUser, FaUserShield } from "react-icons/fa";
 import { Header } from "@/shared/components/layout/header";
 import { Footer } from "@/shared/components/layout/footer";
+import { NicknameSetupModal } from "@/shared/components/nickname-setup-modal";
 import { UserRoleEnum } from "@/shared/constants";
 
 interface LayoutProps {
@@ -37,6 +39,7 @@ export function Layout({ children, showSidebar = false }: LayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const { account, email } = useWeb3Auth();
   const { user } = useGetUser(account || "", email || "");
+  const { shouldShowModal, updateNickname, isUpdating, error } = useNicknameSetup();
   
   const handleSidebarToggle = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -56,6 +59,15 @@ export function Layout({ children, showSidebar = false }: LayoutProps) {
         <main className="flex-1 p-4 lg:p-6 ">{children || <Outlet />}</main>
         <Footer />
       </div>
+      
+      {/* Nickname Setup Modal */}
+      <NicknameSetupModal
+        isOpen={shouldShowModal}
+        user={user}
+        onSave={updateNickname}
+        isUpdating={isUpdating}
+        error={error}
+      />
     </div>
   );
 }
