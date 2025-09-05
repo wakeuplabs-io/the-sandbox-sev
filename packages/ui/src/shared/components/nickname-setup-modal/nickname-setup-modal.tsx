@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { FaTimes, FaUser } from "react-icons/fa";
+import { FaUser } from "react-icons/fa";
 import { NicknameForm } from "./nickname-form";
 import { NicknameSetupModalProps } from "./types";
 import { CopyToClipboard } from "../copy-to-clipboard";
@@ -8,21 +7,11 @@ export function NicknameSetupModal({
   isOpen,
   user,
   onSave,
-  isLoading,
   isUpdating,
   error,
 }: NicknameSetupModalProps) {
-  const [isSaving, setIsSaving] = useState(false);
-
   const handleSave = async (nickname: string) => {
-    setIsSaving(true);
-    try {
-      await onSave(nickname);
-    } catch (error) {
-      console.error("Error saving nickname:", error);
-    } finally {
-      setIsSaving(false);
-    }
+    await onSave(nickname);
   };
 
   const formatAddress = (address: string) => {
@@ -33,27 +22,20 @@ export function NicknameSetupModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop */}
       <div className="absolute inset-0 bg-black/50" />
 
-      {/* Modal */}
       <div className="relative bg-base-100 rounded-xl shadow-2xl max-w-md w-full mx-4">
-        {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-base-300">
           <h2 className="text-xl font-bold text-base-content">Welcome to the SEV platform</h2>
-          {/* No close button - modal cannot be dismissed until nickname is set */}
         </div>
 
-        {/* Content */}
         <div className="p-6">
-          {/* Success Message */}
           <div className="mb-6">
             <p className="text-base-content/80">
               We've successfully created a unique public key for your account.
             </p>
           </div>
 
-          {/* Address Display */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-base-content mb-2">Your address</label>
             <div className="flex items-center space-x-3 p-3 bg-base-200 rounded-lg">
@@ -70,8 +52,7 @@ export function NicknameSetupModal({
             </div>
           </div>
 
-          {/* Nickname Form */}
-          <NicknameForm onSubmit={handleSave} isLoading={isSaving || isUpdating} error={error} />
+          <NicknameForm onSubmit={handleSave} isLoading={isUpdating} error={error} />
         </div>
       </div>
     </div>

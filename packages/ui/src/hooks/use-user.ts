@@ -39,7 +39,7 @@ export const useUser = () => {
     return res.json();
   };
   
-  const updateUser = async (id: number, data: { nickname: string }) => {
+  const updateUser = async (data: { nickname: string }) => {
     const res = await client.api.users.$put({
       json: data,
     });

@@ -16,7 +16,7 @@ export const useNicknameSetup = () => {
   const updateNicknameMutation = useMutation({
     mutationFn: async (nickname: string) => {
       if (!user?.id) throw new Error("User ID not available");
-      return await updateUser(user.id, { nickname });
+      return await updateUser({ nickname });
     },
     onSuccess: () => {
       // Invalidar la query del usuario para refrescar los datos
