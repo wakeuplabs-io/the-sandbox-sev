@@ -91,7 +91,7 @@ export function TasksListPage() {
       <PaginationActions
         currentPage={currentPage}
         totalPages={totalPages}
-        totalTasks={totalTasks}
+        totalItems={totalTasks}
         hasNext={hasNext}
         hasPrev={hasPrev}
         onPageChange={goToPage}
