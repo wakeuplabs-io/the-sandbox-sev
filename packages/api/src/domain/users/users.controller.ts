@@ -1,6 +1,7 @@
 import { Context } from "hono";
 import * as HttpStatusCodes from "stoker/http-status-codes";
-import { createUser, getOrCreateUser, getUsers } from "./users.service";
+import { createUser, getOrCreateUser, getUserByNickname, getUsers, updateUser } from "./users.service";
+import { User } from "@/generated/prisma";
 
 export const getUsersController = async (c: Context) => {
   const page = Number(c.req.query("page")) || 1;
@@ -45,4 +46,20 @@ export const createUserController = async (c: Context) => {
       HttpStatusCodes.UNPROCESSABLE_ENTITY
     );
   }
+};
+
+export const updateUserController = async (c: Context) => {
+  const user = c.get("user") as User;
+  const { nickname } = await c.req.json();
+  const updatedUser = await updateUser(Number(user.id), { nickname });
+  return c.json(updatedUser, HttpStatusCodes.OK);
+};
+
+export const getUserByNicknameController = async (c: Context) => {
+  const { nickname } = c.req.param();
+  const user = await getUserByNickname(nickname);
+  if (!user) {
+    return c.json({ message: "User not found" }, HttpStatusCodes.NOT_FOUND);
+  }
+  return c.json(user, HttpStatusCodes.OK);
 };
