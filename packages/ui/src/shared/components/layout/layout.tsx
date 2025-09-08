@@ -34,26 +34,28 @@ export function Layout({ children, showSidebar = false }: LayoutProps) {
   const { account, email } = useWeb3Auth();
   const { user } = useGetUser(account || "", email || "");
   const { shouldShowModal, updateNickname, isUpdating, error } = useNicknameSetup();
-  
+
   const handleSidebarToggle = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
   const navigationLinks = useMemo(() => {
-        return nlinks.filter((link) => link.roles.length === 0 || link.roles.includes(user?.role as UserRoleEnum));
+    return nlinks.filter(
+      link => link.roles.length === 0 || link.roles.includes(user?.role as UserRoleEnum)
+    );
   }, [user]);
 
   return (
     <div className="min-h-screen w-screen">
-      <div className="mx-auto max-w-screen-2xl">
-        <Header
-          links={navigationLinks}
-          onSidebarToggle={handleSidebarToggle}
-          showSidebarToggle={showSidebar}
-        />
+      <Header
+        links={navigationLinks}
+        onSidebarToggle={handleSidebarToggle}
+        showSidebarToggle={showSidebar}
+      />
+      <div className="mx-auto max-w-screen-2xl pt-16">
         <main className="flex-1 py-6">{children || <Outlet />}</main>
-        <Footer />
       </div>
-      
+      <Footer />
+
       {/* Nickname Setup Modal */}
       <NicknameSetupModal
         isOpen={shouldShowModal}

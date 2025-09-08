@@ -1,54 +1,79 @@
+import { FaGithub, FaTwitter, FaDiscord, FaLinkedin, FaHeart } from 'react-icons/fa'
+import { Link } from '@tanstack/react-router'
+
 export function Footer() {
+	const currentYear = new Date().getFullYear()
+
 	return (
-		<footer className="footer footer-center p-10 bg-base-200 text-base-content rounded">
-			<div className="grid grid-flow-col gap-4">
-				<a className="link link-hover">About us</a>
-				<a className="link link-hover">Contact</a>
-				<a className="link link-hover">Privacy Policy</a>
-				<a className="link link-hover">Terms of Service</a>
-			</div>
-			<div className="divider"></div>
-			<div>
-				<div className="grid grid-flow-col gap-4">
-					<a className="link link-hover">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="24"
-							height="24"
-							viewBox="0 0 24 24"
-							className="fill-current"
-						>
-							<path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"></path>
-						</svg>
-					</a>
-					<a className="link link-hover">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="24"
-							height="24"
-							viewBox="0 0 24 24"
-							className="fill-current"
-						>
-							<path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"></path>
-						</svg>
-					</a>
-					<a className="link link-hover">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="24"
-							height="24"
-							viewBox="0 0 24 24"
-							className="fill-current"
-						>
-							<path d="M2.76 20.2a2.76 2.76 0 0 0 2.74 2.74h12.99a2.76 2.76 0 0 0 2.74-2.74V9.49L14.51 2.76H5.5a2.76 2.76 0 0 0-2.74 2.74v14.7zM5.5 4.49h8.51l4.74 4.74v10.97a.76.76 0 0 1-.76.76H5.5a.76.76 0 0 1-.76-.76V5.25a.76.76 0 0 1 .76-.76z"></path>
-							<path d="M13.25 12.75m-1.5 0a1.5 1.5 0 1 1 3 0a1.5 1.5 0 1 1-3 0"></path>
-							<path d="M9.75 15.75a.75.75 0 0 1-.75-.75v-3a.75.75 0 0 1 1.5 0v3a.75.75 0 0 1-.75.75z"></path>
-						</svg>
-					</a>
+		<footer className="footer footer-center text-base-content border-t border-base-300 bg-gradient-to-br from-base-200 via-base-200 to-base-300/50">
+			{/* Main Footer Content */}
+			<div className="w-full max-w-4xl mx-auto px-4 py-12">
+				<div className="flex flex-col items-center space-y-6">
+					{/* Brand Section */}
+					<div className="text-center space-y-4">
+						<Link to="/" className="text-3xl font-bold text-primary hover:text-primary-focus transition-colors">
+							Sandbox
+						</Link>
+						<p className="text-base text-base-content/70 max-w-md">
+							Plataforma de verificación de tareas descentralizada construida sobre blockchain.
+						</p>
+						<div className="flex justify-center space-x-4">
+							<a 
+								href="https://github.com" 
+								target="_blank" 
+								rel="noopener noreferrer"
+								className="group btn btn-ghost btn-sm btn-circle hover:bg-primary hover:text-primary-content transition-all duration-300 hover:scale-110 hover:shadow-lg"
+								aria-label="GitHub"
+							>
+								<FaGithub className="w-5 h-5 group-hover:animate-pulse" />
+							</a>
+							<a 
+								href="https://twitter.com" 
+								target="_blank" 
+								rel="noopener noreferrer"
+								className="group btn btn-ghost btn-sm btn-circle hover:bg-primary hover:text-primary-content transition-all duration-300 hover:scale-110 hover:shadow-lg"
+								aria-label="Twitter"
+							>
+								<FaTwitter className="w-5 h-5 group-hover:animate-pulse" />
+							</a>
+							<a 
+								href="https://discord.com" 
+								target="_blank" 
+								rel="noopener noreferrer"
+								className="group btn btn-ghost btn-sm btn-circle hover:bg-primary hover:text-primary-content transition-all duration-300 hover:scale-110 hover:shadow-lg"
+								aria-label="Discord"
+							>
+								<FaDiscord className="w-5 h-5 group-hover:animate-pulse" />
+							</a>
+							<a 
+								href="https://linkedin.com" 
+								target="_blank" 
+								rel="noopener noreferrer"
+								className="group btn btn-ghost btn-sm btn-circle hover:bg-primary hover:text-primary-content transition-all duration-300 hover:scale-110 hover:shadow-lg"
+								aria-label="LinkedIn"
+							>
+								<FaLinkedin className="w-5 h-5 group-hover:animate-pulse" />
+							</a>
+						</div>
+					</div>
 				</div>
 			</div>
-			<div>
-				<p>Copyright © 2024 - All rights reserved by Sandbox</p>
+
+			{/* Divider */}
+			<div className="divider my-0"></div>
+
+			{/* Bottom Section */}
+			<div className="w-full max-w-7xl mx-auto px-4 py-6">
+				<div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+					<div className="flex items-center space-x-2 text-sm text-base-content/70">
+						<span>© {currentYear} Sandbox. Todos los derechos reservados.</span>
+					</div>
+					<div className="flex items-center space-x-2 text-sm text-base-content/70">
+						<span>{" Hecho con"}</span>
+						<FaHeart className="w-4 h-4 text-red-500 animate-pulse" />
+						<span>por wakeuplabs</span>
+					</div>
+				</div>
 			</div>
 		</footer>
 	)
