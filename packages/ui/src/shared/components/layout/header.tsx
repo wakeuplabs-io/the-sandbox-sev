@@ -23,7 +23,7 @@ export function Header({ links, onSidebarToggle, showSidebarToggle }: HeaderProp
   };
 
   return (
-    <div className="navbar bg-base-100 border-b border-base-300 shadow-lg">
+    <div className="navbar bg-base-100 border-b border-base-300 shadow-lg px-4">
       <div className="navbar-start">
         {showSidebarToggle && (
           <button
@@ -35,8 +35,8 @@ export function Header({ links, onSidebarToggle, showSidebarToggle }: HeaderProp
           </button>
         )}
 
-        <Link to="/" className="btn btn-ghost text-xl">
-          <span className="hidden sm:block ml-2 font-bold">Sandbox</span>
+        <Link to="/" className="text-xl">
+          <span className="hidden sm:block font-bold">Sandbox</span>
         </Link>
       </div>
 

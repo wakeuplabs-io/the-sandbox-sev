@@ -41,7 +41,7 @@ export function TasksListPage() {
 
   if (error) {
     return (
-      <div className="container mx-auto p-6">
+      <div className="section">
         <div className="alert alert-error">
           <h3 className="font-bold">Error loading tasks</h3>
           <p>{error.message}</p>
@@ -54,36 +54,34 @@ export function TasksListPage() {
   }
 
   return (
-    <section className="container mx-auto space-y-6">
-      <div className="card bg-base-100 shadow-xl mb-6">
-        <div className="card-body">
-          <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold">DAO Transparency Dashboard </h1>
-          </div>
-
-          <TasksFilters filters={filters} onFiltersChange={updateFilters} isPublic={true} />
-
-          <div className="text-sm text-base-content/70">
-            {isLoading ? (
-              <span>{isSearching ? "Searching..." : "Loading tasks..."}</span>
-            ) : (
-              <span>
-                Found {totalTasks} task{totalTasks !== 1 ? "s" : ""}
-              </span>
-            )}
-          </div>
-          <TasksTable tasks={tasks} isLoading={isLoading} onViewTask={handleViewTask} />
-          <PaginationActions
-            currentPage={currentPage}
-            totalPages={totalPages}
-            totalItems={totalTasks}
-            hasNext={hasNext}
-            hasPrev={hasPrev}
-            onPageChange={goToPage}
-            onNextPage={nextPage}
-            onPrevPage={prevPage}
-          />
+    <section className="section mb-6">
+      <div className="card-body">
+        <div className="flex items-center justify-between">
+          <h1 className="heading-1">DAO Transparency Dashboard </h1>
         </div>
+
+        <TasksFilters filters={filters} onFiltersChange={updateFilters} isPublic={true} />
+
+        <div className="text-sm text-base-content/70">
+          {isLoading ? (
+            <span>{isSearching ? "Searching..." : "Loading tasks..."}</span>
+          ) : (
+            <span>
+              Found {totalTasks} task{totalTasks !== 1 ? "s" : ""}
+            </span>
+          )}
+        </div>
+        <TasksTable tasks={tasks} isLoading={isLoading} onViewTask={handleViewTask} />
+        <PaginationActions
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={totalTasks}
+          hasNext={hasNext}
+          hasPrev={hasPrev}
+          onPageChange={goToPage}
+          onNextPage={nextPage}
+          onPrevPage={prevPage}
+        />
       </div>
       <TaskDetailsModal task={selectedTask} isOpen={isModalOpen} onClose={handleCloseModal} />
     </section>
