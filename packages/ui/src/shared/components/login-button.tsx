@@ -1,8 +1,8 @@
 import { useWeb3Auth } from "@/context/web3auth";
 import { useState } from "react";
 import { Avatar } from "./avatar";
-import { ProfileModal } from "./layout/profile-modal";
 import { useGetUser } from "@/hooks/use-get-user";
+import { useLayout } from "@/context/layout-context";
 
 function SkeletonButton() {
   return (
@@ -23,7 +23,7 @@ export const LoginButton = ({ isLoading: isLoadingUser }: { isLoading: boolean }
     account,
   } = useWeb3Auth();
   const [error, setError] = useState<string | null>(null);
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const { setIsProfileModalOpen } = useLayout();
   const { user: apiUser } = useGetUser(account || "", web3AuthUser?.email || "");
 
   const isLoading = isLoadingUser || isLoadingWeb3Auth;
@@ -44,19 +44,6 @@ export const LoginButton = ({ isLoading: isLoadingUser }: { isLoading: boolean }
 
   const handleProfileClick = () => {
     setIsProfileModalOpen(true);
-  };
-
-  const handleProfileModalClose = () => {
-    setIsProfileModalOpen(false);
-  };
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-    } catch (e: unknown) {
-      console.error("Logout error:", e);
-      setError(e instanceof Error ? e.message : "Error al cerrar sesión");
-    }
   };
 
   if (!isInitialized) {
@@ -82,15 +69,6 @@ export const LoginButton = ({ isLoading: isLoadingUser }: { isLoading: boolean }
   return (
     <>
       <Avatar name={apiUser?.nickname || apiUser?.email || ""} onClick={handleProfileClick} />
-
-      {/* Profile Modal */}
-      <ProfileModal
-        isOpen={isProfileModalOpen}
-        onClose={handleProfileModalClose}
-        user={apiUser || null}
-        onLogout={handleLogout}
-        isLoggingOut={isLoading}
-      />
     </>
   );
 };

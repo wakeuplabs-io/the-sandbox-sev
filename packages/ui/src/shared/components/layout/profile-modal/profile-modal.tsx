@@ -1,4 +1,4 @@
-import { FaTimes, FaSignOutAlt, FaCopy } from "react-icons/fa";
+import { FaTimes, FaSignOutAlt } from "react-icons/fa";
 import { ProfileModalProps } from "./types";
 import { CopyToClipboard } from "../../copy-to-clipboard";
 import { truncateHash } from "@/shared/lib/utils";
@@ -27,7 +27,7 @@ export function ProfileModal({
   const displayAddress = truncateHash(user.address);
 
   return (
-    <div className="modal modal-open">
+    <div className="modal modal-open z-[60]">
       <div className="modal-box">
         <div className="flex items-center justify-between mb-6">
           <h3 className="font-bold text-lg">Profile</h3>

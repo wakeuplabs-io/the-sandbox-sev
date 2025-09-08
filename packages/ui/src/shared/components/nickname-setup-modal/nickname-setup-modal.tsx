@@ -20,7 +20,7 @@ export function NicknameSetupModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center">
       <div className="absolute inset-0 bg-black/50" />
 
       <div className="relative bg-base-100 rounded-xl shadow-2xl max-w-md w-full mx-4">

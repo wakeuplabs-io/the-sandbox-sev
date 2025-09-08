@@ -8,6 +8,8 @@ import { Header } from "@/shared/components/layout/header";
 import { Footer } from "@/shared/components/layout/footer";
 import { NicknameSetupModal } from "@/shared/components/nickname-setup-modal";
 import { UserRoleEnum } from "@/shared/constants";
+import { ProfileModal } from "./profile-modal";
+import { useLayout } from "@/context/layout-context";
 
 interface LayoutProps {
   children?: React.ReactNode;
@@ -31,12 +33,18 @@ const nlinks = [
 
 export function Layout({ children, showSidebar = false }: LayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
-  const { account, email } = useWeb3Auth();
+  const { account, email, logout } = useWeb3Auth();
   const { user } = useGetUser(account || "", email || "");
   const { shouldShowModal, updateNickname, isUpdating, error } = useNicknameSetup();
-
+  const { isProfileModalOpen, setIsProfileModalOpen } = useLayout();
   const handleSidebarToggle = () => {
     setIsSidebarOpen(!isSidebarOpen);
+  };
+  const handleProfileModalClose = () => {
+    setIsProfileModalOpen(false);
+  };
+  const handleLogout = async () => {
+    await logout();
   };
   const navigationLinks = useMemo(() => {
     return nlinks.filter(
@@ -63,6 +71,14 @@ export function Layout({ children, showSidebar = false }: LayoutProps) {
         onSave={updateNickname}
         isUpdating={isUpdating}
         error={error}
+      />
+       {/* Profile Modal */}
+       <ProfileModal
+        isOpen={isProfileModalOpen}
+        onClose={handleProfileModalClose}
+        user={user || null}
+        onLogout={handleLogout}
+        isLoggingOut={false}
       />
     </div>
   );

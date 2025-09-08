@@ -5,6 +5,8 @@ interface LayoutContextType {
   setIsLoading: (value: boolean) => void;
   isMobileMenuOpen: boolean;
   setIsMobileMenuOpen: (value: boolean) => void;
+  isProfileModalOpen: boolean;
+  setIsProfileModalOpen: (value: boolean) => void;
 }
 
 const LayoutContext = createContext<LayoutContextType | undefined>(undefined);
@@ -12,6 +14,7 @@ const LayoutContext = createContext<LayoutContextType | undefined>(undefined);
 export function LayoutProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(false);
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   return (
     <LayoutContext.Provider
@@ -20,6 +23,8 @@ export function LayoutProvider({ children }: { children: ReactNode }) {
         setIsLoading,
         isMobileMenuOpen,
         setIsMobileMenuOpen,
+        isProfileModalOpen,
+        setIsProfileModalOpen,
       }}
     >
       {children}
