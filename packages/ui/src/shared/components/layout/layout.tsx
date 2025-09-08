@@ -50,7 +50,7 @@ export function Layout({ children, showSidebar = false }: LayoutProps) {
           onSidebarToggle={handleSidebarToggle}
           showSidebarToggle={showSidebar}
         />
-        <main className="flex-1 p-4 lg:p-6 ">{children || <Outlet />}</main>
+        <main className="flex-1 py-6">{children || <Outlet />}</main>
         <Footer />
       </div>
       

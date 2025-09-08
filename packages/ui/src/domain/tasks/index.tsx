@@ -54,34 +54,38 @@ export function TasksListPage() {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Tasks</h1>
-      </div>
+    <section className="container mx-auto space-y-6">
+      <div className="card bg-base-100 shadow-xl mb-6">
+        <div className="card-body">
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold">DAO Transparency Dashboard </h1>
+          </div>
 
-      <TasksFilters filters={filters} onFiltersChange={updateFilters} isPublic={true} />
+          <TasksFilters filters={filters} onFiltersChange={updateFilters} isPublic={true} />
 
-      <div className="text-sm text-base-content/70">
-        {isLoading ? (
-          <span>{isSearching ? "Searching..." : "Loading tasks..."}</span>
-        ) : (
-          <span>
-            Found {totalTasks} task{totalTasks !== 1 ? "s" : ""}
-          </span>
-        )}
+          <div className="text-sm text-base-content/70">
+            {isLoading ? (
+              <span>{isSearching ? "Searching..." : "Loading tasks..."}</span>
+            ) : (
+              <span>
+                Found {totalTasks} task{totalTasks !== 1 ? "s" : ""}
+              </span>
+            )}
+          </div>
+          <TasksTable tasks={tasks} isLoading={isLoading} onViewTask={handleViewTask} />
+          <PaginationActions
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={totalTasks}
+            hasNext={hasNext}
+            hasPrev={hasPrev}
+            onPageChange={goToPage}
+            onNextPage={nextPage}
+            onPrevPage={prevPage}
+          />
+        </div>
       </div>
-      <TasksTable tasks={tasks} isLoading={isLoading} onViewTask={handleViewTask} />
-      <PaginationActions
-        currentPage={currentPage}
-        totalPages={totalPages}
-        totalItems={totalTasks}
-        hasNext={hasNext}
-        hasPrev={hasPrev}
-        onPageChange={goToPage}
-        onNextPage={nextPage}
-        onPrevPage={prevPage}
-      />
       <TaskDetailsModal task={selectedTask} isOpen={isModalOpen} onClose={handleCloseModal} />
-    </div>
+    </section>
   );
 }
