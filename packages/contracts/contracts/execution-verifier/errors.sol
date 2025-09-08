@@ -16,4 +16,7 @@ interface IExecutionVerifierErrors {
     
     ///@notice Error thrown when batch size exceeds maximum limit
     error BatchSizeTooLarge(uint256 size, uint256 maxSize);
+
+    ///@notice Error thrown when invalid user address is provided
+    error InvalidUserAddress(address userAddress);
 }

@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { FaChevronDown, FaChevronRight, FaPlay, FaEye } from "react-icons/fa";
 import { clsx } from "clsx";
-import { useTaskTypeColors } from "@/hooks/use-task-type-colors";
 import { ProofUploadArea } from "./proof-upload-area";
 import type { Task } from "@the-sandbox-sev/api";
 import { useTaskPriority } from "@/hooks/use-task-priority";
@@ -21,9 +20,8 @@ interface TaskExecutionCardProps {
 export function TaskExecutionCard({ task, onProofReady, onProofsChange, onViewTask, clearInputsRef, taskProofs }: TaskExecutionCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [hasProof, setHasProof] = useState(false);
-  const { getTaskTypeBadgeClasses } = useTaskTypeColors();
   const { getTaskStateBadgeClasses } = useTaskStateColors();
-  const { getPriorityIcon, getPriorityIconClass, getPriorityBadgeClasses } = useTaskPriority();
+  const { getPriorityIcon, getPriorityIconClass } = useTaskPriority();
   const { executeTask, isExecuting } = useTaskExecution();
   
   const proofUploadClearRef = useRef<(() => void) | null>(null);
@@ -77,11 +75,11 @@ export function TaskExecutionCard({ task, onProofReady, onProofsChange, onViewTa
   const canExecute = task.state === TaskStateEnum.STORED;
 
   return (
-    <div className="card bg-base-100 shadow-xl">
-      <div className="card-body p-4">
+    <div className=" border border-gray-700/30 rounded-lg hover:bg-gray-800/70 transition-colors duration-200">
+      <div className="p-4">
         {/* Header - Always visible */}
         <div
-          className="cursor-pointer hover:bg-base-200/50 rounded-lg p-2 -m-2"
+          className="cursor-pointer hover:bg-gray-700/30 rounded-lg p-2 -m-2 transition-colors duration-200"
           onClick={() => setIsExpanded(!isExpanded)}
         >
           <div className="grid grid-cols-12 items-center gap-4">
@@ -99,34 +97,31 @@ export function TaskExecutionCard({ task, onProofReady, onProofsChange, onViewTa
               <span className="font-mono text-sm font-semibold">{task.transactionId}</span>
             </div>
 
-            {/* Task Type Badge */}
+            {/* Task Type - Clean text with color indicator */}
             <div className="col-span-2">
-              <span
-                className={clsx("badge text-xs", getTaskTypeBadgeClasses(task.taskType as any))}
-              >
-                {task.taskType}
-              </span>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-gray-500"></div>
+                <span className="text-sm text-base-content/80 font-medium">{task.taskType}</span>
+              </div>
             </div>
 
-            {/* State Badge */}
-            <div className="col-span-2">
-              <span className={clsx("badge", getTaskStateBadgeClasses(task.state as any))}>
-                {task.state}
-              </span>
-            </div>
-
-            {/* Priority Badge */}
+            {/* Priority - Icon + text only */}
             <div className="col-span-2">
               {task.priority && (
                 <div className="flex items-center gap-1">
                   {IconComponent ? (
-                    <IconComponent className={getPriorityIconClass(task.priority)} />
+                    <IconComponent className={clsx("h-4 w-4", getPriorityIconClass(task.priority))} />
                   ) : null}
-                  <span className={clsx("badge", getPriorityBadgeClasses(task.priority))}>
-                    {task.priority}
-                  </span>
+                  <span className="text-sm text-base-content/80">{task.priority}</span>
                 </div>
               )}
+            </div>
+
+            {/* State Badge - Only badge we keep */}
+            <div className="col-span-2">
+              <span className={clsx("badge text-xs", getTaskStateBadgeClasses(task.state as any))}>
+                {task.state}
+              </span>
             </div>
 
             {/* View Details Button */}
@@ -151,7 +146,7 @@ export function TaskExecutionCard({ task, onProofReady, onProofsChange, onViewTa
             isExpanded ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
           }`}
         >
-          <div className="mt-4 pt-4 border-t border-base-300 space-y-4">
+          <div className="mt-4 pt-4 border-t border-gray-700/30 space-y-4">
             {/* Task Details */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>

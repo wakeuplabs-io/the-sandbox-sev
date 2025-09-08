@@ -15,7 +15,7 @@ const config: Config = {
         200: "#99CCFF",
         300: "#66B2FF",
         400: "#3399FF",
-        500: "#0084FF", // Color principal
+        500: "#00aeff", // Color principal
         600: "#006ACC",
         700: "#005299",
         800: "#003D66",

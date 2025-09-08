@@ -134,8 +134,14 @@ export const GetPublicTasksQuerySchema = z.object({
   search: z.string().optional(),
 })
 
+// Schema for batch creating multiple tasks
+export const BatchCreateTasksSchema = z.object({
+  tasks: z.array(CreateTaskSchema).min(1, 'At least one task is required').max(20, 'Maximum 20 tasks per batch')
+})
+
 // Types
 export type ProofData = z.infer<typeof ProofDataSchema>
 export type ExecuteTaskInput = z.infer<typeof ExecuteTaskSchema>
 export type BatchExecuteTasksInput = z.infer<typeof BatchExecuteTasksSchema>
+export type BatchCreateTasksInput = z.infer<typeof BatchCreateTasksSchema>
 export type GetPublicTasksQuery = z.infer<typeof GetPublicTasksQuerySchema>

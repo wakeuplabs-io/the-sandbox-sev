@@ -2,6 +2,7 @@ import { FaUser } from "react-icons/fa";
 import { NicknameForm } from "./nickname-form";
 import { NicknameSetupModalProps } from "./types";
 import { CopyToClipboard } from "../copy-to-clipboard";
+import { truncateHash } from "@/shared/lib/utils";
 
 export function NicknameSetupModal({
   isOpen,
@@ -14,14 +15,12 @@ export function NicknameSetupModal({
     await onSave(nickname);
   };
 
-  const formatAddress = (address: string) => {
-    return `${address.slice(0, 6)}...${address.slice(-4)}`;
-  };
+ const formattedAddress = truncateHash(user?.address || "");
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center">
       <div className="absolute inset-0 bg-black/50" />
 
       <div className="relative bg-base-100 rounded-xl shadow-2xl max-w-md w-full mx-4">
@@ -45,7 +44,7 @@ export function NicknameSetupModal({
 
               <div className="flex-1">
                 <div className="font-mono text-sm text-base-content">
-                  {user?.address ? formatAddress(user.address) : "Loading..."}
+                  {user?.address ? formattedAddress : "Loading..."}
                 </div>
               </div>
               <CopyToClipboard text={user?.address || ""} />

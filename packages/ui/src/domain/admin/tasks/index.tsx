@@ -1,13 +1,15 @@
 import { useState, useRef } from "react";
-import { FaPlay, FaTrash, FaFilter } from "react-icons/fa";
 import { useTaskExecution } from "./hooks/use-task-execution";
-import { TaskExecutionCard } from "./components/task-execution-card";
 import { TasksFilters } from "../../tasks/components/tasks-filters";
 import { TaskStateEnum } from "@/shared/constants";
 import { useAdminTasksList } from "./hooks/use-admin-tasks-list";
 import { TaskDetailsModal } from "@/shared/components/task-details-modal";
 import type { Task } from "@the-sandbox-sev/api";
-import { PaginationActions } from "@/shared/components/pagination-actions";
+import { TaskExecutionHeader } from "./components/task-execution-header";
+import { BatchActionsPanel } from "./components/batch-actions-panel";
+import { LoadingState } from "./components/loading-state";
+import { EmptyState } from "./components/empty-state";
+import { TaskExecutionList } from "./components/task-execution-list";
 
 export function TaskExecutionPage() {
   const {
@@ -126,132 +128,65 @@ export function TaskExecutionPage() {
     setSelectedTask(null);
   };
 
-  return (
-    <div className="container mx-auto px-4 py-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-base-content mb-2">
-          <FaPlay className="inline-block mr-3" />
-          Task Execution & History
-        </h1>
-        <p className="text-base-content/70">
-          View all tasks, upload execution proofs, and execute stored tasks in batch
-        </p>
-      </div>
+  // Extract conditions for better readability
+  const hasTasksWithProofs = tasksWithProofs.size > 0;
+  const hasStoredTasksWithProofs = allTasks.some(
+    task => task.state === TaskStateEnum.STORED && tasksWithProofs.has(task.id)
+  );
+  const shouldShowBatchActions = hasTasksWithProofs && hasStoredTasksWithProofs;
 
-      {/* Filters */}
+  const readyTasks = allTasks.filter(
+    task => task.state === TaskStateEnum.STORED && tasksWithProofs.has(task.id)
+  );
+  const readyTasksCount = readyTasks.length;
+
+  const hasTasks = allTasks.length > 0;
+  const shouldShowLoading = isLoading;
+  const shouldShowEmptyState = !isLoading && !hasTasks;
+
+  return (
+    <section className="section">
+      <TaskExecutionHeader />
+      
       <TasksFilters filters={filters} onFiltersChange={updateFilters} />
 
       {/* Batch Actions - Show when there are STORED tasks with proofs */}
-      {tasksWithProofs.size > 0 &&
-        allTasks.some(
-          task => task.state === TaskStateEnum.STORED && tasksWithProofs.has(task.id)
-        ) && (
-          <div className="card bg-base-100 shadow-xl mb-6">
-            <div className="card-body">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <FaFilter className="h-5 w-5 text-primary" />
-                  <span className="text-lg font-semibold">
-                    {
-                      allTasks.filter(
-                        task => task.state === TaskStateEnum.STORED && tasksWithProofs.has(task.id)
-                      ).length
-                    }{" "}
-                    stored task
-                    {allTasks.filter(
-                      task => task.state === TaskStateEnum.STORED && tasksWithProofs.has(task.id)
-                    ).length !== 1
-                      ? "s"
-                      : ""}{" "}
-                    ready for execution
-                  </span>
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={handleClearAllProofs}
-                    className="btn btn-outline btn-sm"
-                    disabled={isExecuting}
-                  >
-                    <FaTrash className="h-4 w-4 mr-2" />
-                    Clear All Proofs
-                  </button>
-                  <button
-                    onClick={handleExecuteAll}
-                    className="btn btn-primary btn-sm"
-                    disabled={isExecuting}
-                  >
-                    <FaPlay className="h-4 w-4 mr-2" />
-                    {isExecuting ? "Executing..." : "Execute All Ready Tasks"}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+      {shouldShowBatchActions && (
+        <BatchActionsPanel
+          readyTasksCount={readyTasksCount}
+          isExecuting={isExecuting}
+          onExecuteAll={handleExecuteAll}
+          onClearAllProofs={handleClearAllProofs}
+        />
+      )}
 
       {/* Tasks List */}
       <div className="space-y-4">
-        {isLoading ? (
-          <div className="card bg-base-100 shadow-xl">
-            <div className="card-body">
-              <div className="space-y-4">
-                {[...Array(3)].map((_, i) => (
-                  <div key={i} className="flex items-center space-x-4 animate-pulse">
-                    <div className="h-4 bg-base-300 rounded w-1/4"></div>
-                    <div className="h-4 bg-base-300 rounded w-1/6"></div>
-                    <div className="h-4 bg-base-300 rounded w-1/6"></div>
-                    <div className="h-4 bg-base-300 rounded w-1/4"></div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        ) : allTasks.length === 0 ? (
-          <div className="card bg-base-100 shadow-xl">
-            <div className="card-body text-center">
-              <h3 className="text-lg font-semibold text-base-content/70">No tasks found</h3>
-              <p className="text-base-content/50">No tasks match your current filters.</p>
-            </div>
-          </div>
+        {shouldShowLoading ? (
+          <LoadingState />
+        ) : shouldShowEmptyState ? (
+          <EmptyState />
         ) : (
-          <>
-            {/* Task Cards */}
-            <div className="space-y-4">
-              {allTasks.map(task => {
-                // Create ref for this task if it doesn't exist
-                if (!clearInputsRefs.current[task.id]) {
-                  clearInputsRefs.current[task.id] = { current: null };
-                }
-
-                return (
-                  <TaskExecutionCard
-                    key={task.id}
-                    task={task}
-                    onProofReady={hasProof => handleTaskProofReady(task.id, hasProof)}
-                    onProofsChange={proofs => handleTaskProofsChange(task.id, proofs)}
-                    onViewTask={handleViewTask}
-                    clearInputsRef={clearInputsRefs.current[task.id]}
-                    taskProofs={taskProofs[task.id] || []}
-                  />
-                );
-              })}
-            </div>
-            <PaginationActions
-              currentPage={currentPage}
-              totalPages={totalPages}
-              totalItems={totalTasks}
-              hasNext={hasNext}
-              hasPrev={hasPrev}
-              onPageChange={goToPage}
-              onNextPage={nextPage}
-              onPrevPage={prevPage}
-            />
-          </>
+          <TaskExecutionList
+            tasks={allTasks}
+            taskProofs={taskProofs}
+            onTaskProofReady={handleTaskProofReady}
+            onTaskProofsChange={handleTaskProofsChange}
+            onViewTask={handleViewTask}
+            clearInputsRefs={clearInputsRefs.current}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalTasks={totalTasks}
+            hasNext={hasNext}
+            hasPrev={hasPrev}
+            onPageChange={goToPage}
+            onNextPage={nextPage}
+            onPrevPage={prevPage}
+          />
         )}
       </div>
 
-      {/* Task Details Modal */}
       <TaskDetailsModal task={selectedTask} isOpen={isModalOpen} onClose={handleCloseModal} />
-    </div>
+    </section>
   );
 }

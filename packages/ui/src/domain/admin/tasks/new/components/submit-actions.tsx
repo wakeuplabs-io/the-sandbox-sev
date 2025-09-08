@@ -6,9 +6,21 @@ interface SubmitActionsProps {
   validTasksCount: number
   totalTasksCount: number
   isLoading?: boolean
+  canSubmit?: boolean
+  exceedsBatchLimit?: boolean
+  maxBatchSize?: number
 }
 
-export function SubmitActions({ onSubmit, hasErrors, validTasksCount, totalTasksCount, isLoading = false }: SubmitActionsProps) {
+export function SubmitActions({ 
+  onSubmit, 
+  hasErrors, 
+  validTasksCount, 
+  totalTasksCount, 
+  isLoading = false,
+  canSubmit = true,
+  exceedsBatchLimit = false,
+  maxBatchSize = 20
+}: SubmitActionsProps) {
   return (
     <div className="space-y-4">
       {/* Summary */}
@@ -18,11 +30,22 @@ export function SubmitActions({ onSubmit, hasErrors, validTasksCount, totalTasks
           <span className="ml-2 badge badge-success">
             {validTasksCount} of {totalTasksCount} tasks
           </span>
+          {validTasksCount > 0 && (
+            <span className="ml-2 badge badge-info">
+              {validTasksCount === 1 ? 'Individual' : 'Batch'} method
+            </span>
+          )}
         </div>
         
         {hasErrors && (
           <div className="text-sm text-error">
             Please fix validation errors before submitting
+          </div>
+        )}
+        
+        {exceedsBatchLimit && (
+          <div className="text-sm text-error">
+            Too many tasks! Maximum {maxBatchSize} tasks per batch
           </div>
         )}
       </div>
@@ -31,16 +54,16 @@ export function SubmitActions({ onSubmit, hasErrors, validTasksCount, totalTasks
       <div className="flex gap-4">
         <button
           onClick={onSubmit}
-          disabled={hasErrors || validTasksCount === 0 || isLoading}
+          disabled={!canSubmit || isLoading}
           className={`
             btn btn-primary
-            ${hasErrors || validTasksCount === 0 || isLoading ? 'btn-disabled' : ''}
+            ${!canSubmit || isLoading ? 'btn-disabled' : ''}
           `}
         >
           {isLoading ? (
             <>
               <span className="loading loading-spinner loading-sm"></span>
-              Creating Tasks...
+              {validTasksCount === 1 ? 'Creating Task...' : `Creating ${validTasksCount} Tasks in Batch...`}
             </>
           ) : (
             <>
@@ -61,6 +84,19 @@ export function SubmitActions({ onSubmit, hasErrors, validTasksCount, totalTasks
             </div>
           </div>
         )}
+
+        {exceedsBatchLimit && (
+          <div className="alert alert-error">
+            <FaExclamationTriangle className="stroke-current shrink-0 h-6 w-6" />
+            <div>
+              <h3 className="font-bold">Too Many Tasks</h3>
+              <div className="text-xs">
+                You have {validTasksCount} valid tasks, but the maximum batch size is {maxBatchSize}. 
+                Please reduce the number of valid tasks or split them into multiple batches.
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Info */}
@@ -69,9 +105,20 @@ export function SubmitActions({ onSubmit, hasErrors, validTasksCount, totalTasks
         <div>
           <h3 className="font-bold">What happens next?</h3>
           <div className="text-xs">
-            <p>1. Tasks will be created in the database</p>
-            <p>2. Each task will be hashed and stored on the blockchain</p>
-            <p>3. You'll receive confirmation for each successful task creation</p>
+            {validTasksCount === 1 ? (
+              <>
+                <p>1. Task will be created in the database</p>
+                <p>2. Task will be hashed and stored on the blockchain</p>
+                <p>3. You'll receive confirmation for successful task creation</p>
+              </>
+            ) : (
+              <>
+                <p>1. All tasks will be created in a single batch operation</p>
+                <p>2. All task hashes will be stored on blockchain in one transaction</p>
+                <p>3. You'll receive confirmation for the entire batch</p>
+                <p className="text-warning">⚠️ Maximum {maxBatchSize} tasks per batch</p>
+              </>
+            )}
           </div>
         </div>
       </div>

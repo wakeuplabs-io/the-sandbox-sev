@@ -1,6 +1,8 @@
 import { useWeb3Auth } from "@/context/web3auth";
 import { useState } from "react";
 import { Avatar } from "./avatar";
+import { useGetUser } from "@/hooks/use-get-user";
+import { useLayout } from "@/context/layout-context";
 
 function SkeletonButton() {
   return (
@@ -16,9 +18,12 @@ export const LoginButton = ({ isLoading: isLoadingUser }: { isLoading: boolean }
     isInitialized,
     isAuthenticated,
     login,
-    user
+    user: web3AuthUser,
+    account,
   } = useWeb3Auth();
   const [error, setError] = useState<string | null>(null);
+  const { setIsProfileModalOpen } = useLayout();
+  const { user: apiUser } = useGetUser(account || "", web3AuthUser?.email || "");
 
   const isLoading = isLoadingUser || isLoadingWeb3Auth;
   const handleLogin = async () => {
@@ -36,22 +41,33 @@ export const LoginButton = ({ isLoading: isLoadingUser }: { isLoading: boolean }
     }
   };
 
+  const handleProfileClick = () => {
+    setIsProfileModalOpen(true);
+  };
+
   if (!isInitialized) {
     return <SkeletonButton />;
   }
 
+  if (isLoading) {
+    return <SkeletonButton />;
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <button onClick={handleLogin} disabled={isLoading} className="btn btn-outline">
+        {"Login"}
+      </button>
+    );
+  }
+
+  if (error) {
+    return <div className="text-red-500 text-sm mt-2">{error}</div>;
+  }
+
   return (
     <>
-      {isAuthenticated ? (
-        <Avatar name={user?.name || ""} />
-      ) : isLoading ? (
-        <SkeletonButton />
-      ) : (
-        <button onClick={handleLogin} disabled={isLoading} className="btn btn-outline">
-          {"Login"}
-        </button>
-      )}
-      {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
+      <Avatar name={apiUser?.nickname || apiUser?.email || ""} onClick={handleProfileClick} />
     </>
   );
 };

@@ -38,7 +38,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         <select
           ref={ref}
           className={clsx(
-            'select select-bordered',
+            'select select-bordered bg-transparent',
             {
               'w-full': fullWidth,
               'select-error': error,

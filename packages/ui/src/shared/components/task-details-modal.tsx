@@ -6,7 +6,6 @@ import { truncateHash } from "@/shared/lib/utils";
 import { CopyToClipboard } from "@/shared/components/copy-to-clipboard";
 import { Image } from "./image";
 
-
 interface TaskDetailsModalProps {
   task: Task | null;
   isOpen: boolean;
@@ -23,7 +22,7 @@ function ProofCard({ proof }: ProofCardProps) {
       <div className="card-body p-4">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            {proof.proofType === 'IMAGE' ? (
+            {proof.proofType === "IMAGE" ? (
               <FaImage className="h-4 w-4 text-primary" />
             ) : (
               <FaFileAlt className="h-4 w-4 text-secondary" />
@@ -35,16 +34,16 @@ function ProofCard({ proof }: ProofCardProps) {
             {new Date(proof.createdAt).toLocaleString()}
           </div>
         </div>
-        
-        {proof.proofType === 'IMAGE' ? (
+
+        {proof.proofType === "IMAGE" ? (
           <div>
             <div className="w-full h-32 rounded-lg overflow-hidden border border-base-300 cursor-pointer hover:shadow-md transition-shadow duration-200">
               <Image
                 image={proof.proofValue}
-                alt={proof.fileName || 'Proof image'}
+                alt={proof.fileName || "Proof image"}
                 aspectRatio="video"
                 className="rounded-lg hover:scale-105 transition-transform duration-200"
-                onClick={() => window.open(proof.proofValue, '_blank')}
+                onClick={() => window.open(proof.proofValue, "_blank")}
               />
             </div>
             {proof.fileName && (
@@ -61,7 +60,7 @@ function ProofCard({ proof }: ProofCardProps) {
             <p className="text-sm font-mono break-words whitespace-pre-wrap">{proof.proofValue}</p>
           </div>
         )}
-        
+
         {proof.uploadedByUser && (
           <div className="flex items-center gap-2 mt-3 pt-3 border-t border-base-300">
             <FaUser className="h-3 w-3 text-base-content/60" />
@@ -76,16 +75,13 @@ function ProofCard({ proof }: ProofCardProps) {
 }
 
 export function TaskDetailsModal({ task, isOpen, onClose }: TaskDetailsModalProps) {
-  const { getTaskTypeBadgeClasses } = useTaskTypeColors()
-  
+  const { getTaskTypeBadgeClasses } = useTaskTypeColors();
+
   if (!isOpen || !task) return null;
-
-
 
   return (
     <div className="modal modal-open">
       <div className="modal-box w-11/12 max-w-4xl">
-      
         <div className="flex items-center justify-between mb-6">
           <h3 className="font-bold text-lg">Task Details</h3>
           <button onClick={onClose} className="btn btn-ghost btn-sm">
@@ -101,7 +97,6 @@ export function TaskDetailsModal({ task, isOpen, onClose }: TaskDetailsModalProp
         </div>
 
         <div className="space-y-6">
-      
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="form-control">
               <label className="label">
@@ -115,11 +110,8 @@ export function TaskDetailsModal({ task, isOpen, onClose }: TaskDetailsModalProp
                 <span className="label-text font-semibold">Task Type</span>
               </label>
               <div className="input input-bordered bg-base-200 w-full">
-                <span 
-                  className={clsx(
-                    "badge text-xs",
-                    getTaskTypeBadgeClasses(task.taskType as any)
-                  )}
+                <span
+                  className={clsx("badge text-xs", getTaskTypeBadgeClasses(task.taskType as any))}
                 >
                   {task.taskType}
                 </span>
@@ -145,7 +137,6 @@ export function TaskDetailsModal({ task, isOpen, onClose }: TaskDetailsModalProp
             </div>
           </div>
 
-      
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="form-control">
               <label className="label">
@@ -168,7 +159,6 @@ export function TaskDetailsModal({ task, isOpen, onClose }: TaskDetailsModalProp
             </div>
           </div>
 
-          
           <div className="form-control">
             <label className="label">
               <span className="label-text font-semibold">Task Data</span>
@@ -197,7 +187,6 @@ export function TaskDetailsModal({ task, isOpen, onClose }: TaskDetailsModalProp
         </div>
       </div>
 
-      
       <div className="modal-backdrop" onClick={onClose}></div>
     </div>
   );

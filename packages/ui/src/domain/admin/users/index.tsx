@@ -18,7 +18,7 @@ export function AdminUsersPage() {
 
   if (error) {
     return (
-      <div className="container mx-auto p-6">
+      <div className="section">
         <div className="alert alert-error">
           <span>Error loading users: {error.message}</span>
         </div>
@@ -26,15 +26,14 @@ export function AdminUsersPage() {
     );
   }
 
-  console.log("pagination", pagination);
   const handlePageChange = (page: number) => {
     loadUsers(page, pagination.limit);
   };
 
   return (
-    <section className="container mx-auto p-6 min-h-screen">
+    <section className="section">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">User Role Management</h1>
+        <h1 className="heading-1">User Role Management</h1>
         <p className="text-base-content/70 mt-2">
           Manage user roles and permissions across the platform
         </p>

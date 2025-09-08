@@ -12,9 +12,9 @@ interface IExecutionVerifier {
     /**
      * @dev Stores multiple hashes in a single transaction.
      * @param hashes Array of hashes to store (max 20).
-     * @param userAddresses Array of user addresses corresponding to each hash (max 20).
+     * @param userAddress The address of the user who executed the transaction.
      */
-    function storeHashBatch(bytes32[] calldata hashes, address[] calldata userAddresses) external;
+    function storeHashBatch(bytes32[] calldata hashes, address userAddress) external;
 
     /**
      * @dev Grants STORE_ROLE to multiple addresses in a single transaction.
@@ -24,7 +24,7 @@ interface IExecutionVerifier {
 
     /**
      * @dev Revokes STORE_ROLE from multiple addresses in a single transaction.
-     * @param addresses Array of addresses to revoke STORE_ROLE from (max 20).
+     * @param addresses Array of addresses to revoke STORE_ROLE from.
      */
     function revokeStoreRoleBatch(address[] calldata addresses) external;
 
