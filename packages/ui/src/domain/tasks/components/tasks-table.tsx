@@ -1,4 +1,3 @@
-import { FaEye } from "react-icons/fa";
 import { clsx } from "clsx";
 import type { Task } from "@the-sandbox-sev/api";
 import { truncateHash } from "@/shared/lib/utils";

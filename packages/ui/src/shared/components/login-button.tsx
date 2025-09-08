@@ -18,7 +18,6 @@ export const LoginButton = ({ isLoading: isLoadingUser }: { isLoading: boolean }
     isInitialized,
     isAuthenticated,
     login,
-    logout,
     user: web3AuthUser,
     account,
   } = useWeb3Auth();
