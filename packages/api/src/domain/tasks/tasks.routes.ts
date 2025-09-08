@@ -11,8 +11,9 @@ import {
   uploadProofImageController,
   generateImageUploadUrlController,
   getPublicTasksController,
+  batchCreateTasksController,
 } from "./tasks.controller";
-import { CreateTaskSchema, GetTasksQuerySchema, GetPublicTasksQuerySchema, ExecuteTaskSchema, BatchExecuteTasksSchema } from "./tasks.schema";
+import { CreateTaskSchema, GetTasksQuerySchema, GetPublicTasksQuerySchema, ExecuteTaskSchema, BatchExecuteTasksSchema, BatchCreateTasksSchema } from "./tasks.schema";
 import { requireRole } from "@/middlewares/require-role";
 import { Role } from "@/generated/prisma";
 
@@ -39,6 +40,12 @@ const tasks = new Hono()
     requireRole([Role.ADMIN, Role.CONSULTANT]),
     zValidator("json", CreateTaskSchema),
     createTaskController
+  )
+  .post(
+    "/batch-create",
+    requireRole([Role.ADMIN, Role.CONSULTANT]),
+    zValidator("json", BatchCreateTasksSchema),
+    batchCreateTasksController
   )
   .post(
     "/execute",

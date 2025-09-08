@@ -1,6 +1,6 @@
 import { Context } from 'hono'
-import { getTasks, getTaskByTransactionId, createTask, executeTask, batchExecuteTasks, getPublicTasks } from './tasks.service'
-import { CreateTaskSchema, GetTasksQuerySchema, GetPublicTasksQuerySchema, ExecuteTaskSchema, BatchExecuteTasksSchema } from './tasks.schema'
+import { getTasks, getTaskByTransactionId, createTask, executeTask, batchExecuteTasks, getPublicTasks, batchCreateTasks } from './tasks.service'
+import { CreateTaskSchema, GetTasksQuerySchema, GetPublicTasksQuerySchema, ExecuteTaskSchema, BatchExecuteTasksSchema, BatchCreateTasksSchema } from './tasks.schema'
 import { uploadFileToS3, generatePresignedUploadUrl, isS3Configured } from '@/services/s3-service'
 import { z } from 'zod'
 
@@ -56,6 +56,28 @@ export const createTaskController = async (c: Context) => {
     const task = await createTask(taskData, user)
     
     return c.json(task, 201)
+  } catch (error: any) {
+    return c.json({ error: error.message }, 500)
+  }
+}
+
+export const batchCreateTasksController = async (c: Context) => {
+  try {
+    const tasksData = await c.req.json() as z.infer<typeof BatchCreateTasksSchema>
+    const user = c.get("user")
+    
+    if (!user) {
+      return c.json({ error: "User not authenticated" }, 401)
+    }
+    
+    // Validar que sea un array
+    if (!Array.isArray(tasksData.tasks)) {
+      return c.json({ error: "Request body must contain an array of tasks" }, 400)
+    }
+    
+    const result = await batchCreateTasks(tasksData.tasks, user)
+    
+    return c.json(result, 201)
   } catch (error: any) {
     return c.json({ error: error.message }, 500)
   }
