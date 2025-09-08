@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { FaPlay, FaTrash, FaFilter } from "react-icons/fa";
+import { FaPlay, FaTrash, FaFilter, FaPlus } from "react-icons/fa";
 import { useTaskExecution } from "./hooks/use-task-execution";
 import { TaskExecutionCard } from "./components/task-execution-card";
 import { TasksFilters } from "../../tasks/components/tasks-filters";
@@ -8,6 +8,7 @@ import { useAdminTasksList } from "./hooks/use-admin-tasks-list";
 import { TaskDetailsModal } from "@/shared/components/task-details-modal";
 import type { Task } from "@the-sandbox-sev/api";
 import { PaginationActions } from "@/shared/components/pagination-actions";
+import { Link } from "@tanstack/react-router";
 
 export function TaskExecutionPage() {
   const {
@@ -128,14 +129,21 @@ export function TaskExecutionPage() {
 
   return (
     <div className="container mx-auto px-4 py-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-base-content mb-2">
-          <FaPlay className="inline-block mr-3" />
-          Task Execution & History
-        </h1>
-        <p className="text-base-content/70">
-          View all tasks, upload execution proofs, and execute stored tasks in batch
-        </p>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-base-content mb-2">
+            <FaPlay className="inline-block mr-3" />
+            Task Execution & History
+          </h1>
+          <p className="text-base-content/70">
+            View all tasks, upload execution proofs, and execute stored tasks in batch
+          </p>
+        </div>
+
+        <Link to="/admin/tasks/new" className="btn btn-primary">
+          <FaPlus className="h-4 w-4" />
+          Create New Task
+        </Link>
       </div>
 
       {/* Filters */}
