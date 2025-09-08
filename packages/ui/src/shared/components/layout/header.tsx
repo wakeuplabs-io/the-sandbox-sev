@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { MobileMenu } from "./mobile-menu";
 import { DesktopNav } from "./desktop-nav";
 import { FaHamburger } from "react-icons/fa";
@@ -13,6 +13,11 @@ interface HeaderProps {
 
 export function Header({ links, onSidebarToggle, showSidebarToggle }: HeaderProps) {
   const { isLoading, isMobileMenuOpen, setIsMobileMenuOpen } = useLayout();
+  const routerState = useRouterState();
+  
+  // Check if current pathname starts with /admin
+  const isAdminRoute = routerState.location.pathname.startsWith('/admin');
+  
   const handleMobileMenuToggle = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
@@ -40,7 +45,7 @@ export function Header({ links, onSidebarToggle, showSidebarToggle }: HeaderProp
       </div>
 
       <div className="navbar-end">
-        <LoginButton isLoading={isLoading} />
+        {isAdminRoute && <LoginButton isLoading={isLoading} />}
       </div>
 
       <div className="navbar-end lg:hidden">
