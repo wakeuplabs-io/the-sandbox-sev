@@ -53,7 +53,6 @@ export function TasksTable({ tasks, isLoading, onViewTask }: TasksTableProps) {
             <tr>
               <th>Transaction ID</th>
               <th>Task Type</th>
-              <th>State</th>
               <th>Task Hash</th>
               <th>Transaction Hash</th>
               <th>Created At</th>
@@ -66,19 +65,15 @@ export function TasksTable({ tasks, isLoading, onViewTask }: TasksTableProps) {
                 <td className="font-mono text-sm">{task.transactionId}</td>
                 <td>
                   <span
-                    className={clsx("badge text-xs", getTaskTypeBadgeClasses(task.taskType as any))}
+                    className={clsx("text-xs font-mono font-semibold")}
                   >
                     {task.taskType}
                   </span>
                 </td>
-                <td>
-                  <span className={clsx("badge", getTaskStateBadgeClasses(task.state as any))}>
-                    {task.state}
-                  </span>
-                </td>
+
                 <td className="font-mono text-xs">
                   <div className="flex items-center gap-2">
-                    <span className="tooltip" data-tip={task.taskHash}>
+                    <span className="">
                       {truncateHash(task.taskHash)}
                     </span>
                     <CopyToClipboard text={task.taskHash} />
@@ -90,7 +85,13 @@ export function TasksTable({ tasks, isLoading, onViewTask }: TasksTableProps) {
                     <CopyToClipboard text={task.transactionHash} />
                   </div>
                 </td>
-                <td className="text-sm">{new Date(task.createdAt).toLocaleDateString()}</td>
+                <td className="text-sm">
+                  {new Date(task.createdAt).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                </td>
                 <td>
                   <button
                     onClick={() => onViewTask(task)}

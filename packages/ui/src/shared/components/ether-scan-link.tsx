@@ -7,7 +7,7 @@ export const EtherScanLink = ({ txHash }: { txHash: string }) => {
   const etherscanUrl = ETHERSCAN_BY_CHAIN_ID[chain.id];
   return (
     <a href={`${etherscanUrl}/tx/${txHash}`} target="_blank" rel="noopener noreferrer" >
-      <span className="tooltip underline tooltip-info" data-tip={txHash}>
+      <span className="underline">
         {truncateHash(txHash)}
       </span>
     </a>

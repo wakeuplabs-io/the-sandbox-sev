@@ -40,6 +40,6 @@ body {
     @apply text-2xl font-bold text-base-content;
   }
   .section {
-    @apply container mx-auto px-4 py-6 card bg-base-100;
+    @apply container mx-auto px-4 py-6 card bg-base-100 min-h-[calc(100vh-250px)];
   }
 }
