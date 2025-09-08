@@ -43,19 +43,12 @@ export function TasksFilters({ filters, onFiltersChange, isPublic }: TasksFilter
             <input
               type="text"
               placeholder="Enter Transaction ID..."
-              className="input input-bordered w-full pl-10"
+              className="base-input w-full pl-10"
               value={filters.search || ""}
               onChange={e => onFiltersChange({ search: e.target.value })}
             />
             <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-base-content/50 h-4 w-4" />
           </div>
-          {filters.search && (
-            <label className="label">
-              <span className="label-text-alt text-base-content/60">
-                Search will trigger after 500ms of no typing
-              </span>
-            </label>
-          )}
         </div>
 
         {/* Task State Filter */}
@@ -76,7 +69,7 @@ export function TasksFilters({ filters, onFiltersChange, isPublic }: TasksFilter
           </label>
           <input
             type="date"
-            className="input input-bordered w-full"
+            className="base-input w-full"
             value={filters.dateFrom || ""}
             onChange={e => onFiltersChange({ dateFrom: e.target.value || undefined })}
           />
@@ -89,7 +82,7 @@ export function TasksFilters({ filters, onFiltersChange, isPublic }: TasksFilter
           </label>
           <input
             type="date"
-            className="input input-bordered w-full"
+            className="base-input w-full"
             value={filters.dateTo || ""}
             onChange={e => onFiltersChange({ dateTo: e.target.value || undefined })}
           />
@@ -103,9 +96,7 @@ export function TasksFilters({ filters, onFiltersChange, isPublic }: TasksFilter
         </label>
         <div className="flex flex-wrap gap-2">
           <button
-            className={`btn btn-sm ${
-              !filters.taskType ? "btn-primary" : "btn-outline"
-            }`}
+            className={`btn btn-sm ${!filters.taskType ? "btn-primary" : "btn-outline"}`}
             onClick={() => onFiltersChange({ taskType: undefined })}
           >
             All Types

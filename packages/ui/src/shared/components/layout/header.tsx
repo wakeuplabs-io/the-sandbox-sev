@@ -4,6 +4,8 @@ import { DesktopNav } from "./desktop-nav";
 import { FaHamburger } from "react-icons/fa";
 import { LoginButton } from "../login-button";
 import { useLayout } from "@/context/layout-context";
+import classNames from "classnames";
+import Logo from "@/shared/assets/sandbox-logo.png"
 interface HeaderProps {
   links: Array<{ to: string; label: string; icon?: React.ReactNode }>;
   onSidebarToggle?: () => void;
@@ -48,18 +50,19 @@ export function Header({ links, onSidebarToggle, showSidebarToggle }: HeaderProp
   }, [lastScrollY]);
 
   return (
-    <>
+    <header className="">
       <div
-        className={`
-          fixed top-0 left-0 right-0 z-50 navbar px-4 transition-all duration-300 ease-in-out
-          ${isVisible ? "translate-y-0" : "-translate-y-full"}
-          ${
-            isScrolled
-              ? "bg-base-100/95 backdrop-blur-md border-b border-base-300 shadow-lg"
-              : "bg-base-100 border-b border-base-300"
+        className={classNames(
+          "header",
+          {
+            "translate-y-0": isVisible,
+            "-translate-y-full": !isVisible,
+            "backdrop-blur-md": isScrolled,
+            "": !isScrolled,
           }
-        `}
+        )}
       >
+        
         <div className="navbar-start">
           {showSidebarToggle && (
             <button
@@ -72,7 +75,7 @@ export function Header({ links, onSidebarToggle, showSidebarToggle }: HeaderProp
           )}
 
           <Link to="/" className="text-xl">
-            <span className="hidden sm:block font-bold">Sandbox</span>
+            <img src={Logo} alt="Sandbox Logo" className="w-50" />
           </Link>
         </div>
 
@@ -81,6 +84,9 @@ export function Header({ links, onSidebarToggle, showSidebarToggle }: HeaderProp
         </div>
 
         <div className="navbar-end">{isAdminRoute && <LoginButton isLoading={isLoading} />}</div>
+        {/* Subtle top border */}
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-400 to-transparent"></div>
+
       </div>
 
       {/* Scroll Progress Indicator */}
@@ -94,6 +100,7 @@ export function Header({ links, onSidebarToggle, showSidebarToggle }: HeaderProp
       >
         <div className="h-full bg-gradient-to-r from-primary to-secondary transition-all duration-300" />
       </div>
-    </>
+      
+    </header>
   );
 }

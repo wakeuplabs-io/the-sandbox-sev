@@ -39,6 +39,12 @@ body {
     @apply text-2xl font-bold text-base-content;
   }
   .section {
-    @apply container mx-auto px-4 py-6 card bg-base-100 min-h-[calc(100vh-250px)];
+    @apply container mx-auto px-4 py-6 card min-h-[calc(100vh-250px)] border border-[#ffffff1a] rounded-[8px];
+  }
+  .header {
+    @apply fixed top-0 left-0 right-0 z-50 navbar px-4 transition-all duration-300 ease-in-out border-b border-b-[#ffffff1a];
+  }
+  .base-input {
+    @apply input bg-transparent ring-0 focus:ring-0 focus:outline-none focus:ring-offset-0;
   }
 }

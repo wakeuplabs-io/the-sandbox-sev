@@ -1,80 +1,88 @@
-import { FaGithub, FaTwitter, FaDiscord, FaLinkedin, FaHeart } from 'react-icons/fa'
-import { Link } from '@tanstack/react-router'
-
+import { FaYoutube, FaComments } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
+import { Link } from "@tanstack/react-router";
+import Logo from "@/shared/assets/sandbox-logo.png";
 export function Footer() {
-	const currentYear = new Date().getFullYear()
+  const currentYear = new Date().getFullYear();
 
-	return (
-		<footer className="footer footer-center text-base-content border-t border-base-300 bg-gradient-to-br from-base-200 via-base-200 to-base-300/50">
-			{/* Main Footer Content */}
-			<div className="w-full max-w-4xl mx-auto px-4 py-12">
-				<div className="flex flex-col items-center space-y-6">
-					{/* Brand Section */}
-					<div className="text-center space-y-4">
-						<Link to="/" className="text-3xl font-bold text-primary hover:text-primary-focus transition-colors">
-							Sandbox
-						</Link>
-						<p className="text-base text-base-content/70 max-w-md">
-							Plataforma de verificación de tareas descentralizada construida sobre blockchain.
-						</p>
-						<div className="flex justify-center space-x-4">
-							<a 
-								href="https://github.com" 
-								target="_blank" 
-								rel="noopener noreferrer"
-								className="group btn btn-ghost btn-sm btn-circle hover:bg-primary hover:text-primary-content transition-all duration-300 hover:scale-110 hover:shadow-lg"
-								aria-label="GitHub"
-							>
-								<FaGithub className="w-5 h-5 group-hover:animate-pulse" />
-							</a>
-							<a 
-								href="https://twitter.com" 
-								target="_blank" 
-								rel="noopener noreferrer"
-								className="group btn btn-ghost btn-sm btn-circle hover:bg-primary hover:text-primary-content transition-all duration-300 hover:scale-110 hover:shadow-lg"
-								aria-label="Twitter"
-							>
-								<FaTwitter className="w-5 h-5 group-hover:animate-pulse" />
-							</a>
-							<a 
-								href="https://discord.com" 
-								target="_blank" 
-								rel="noopener noreferrer"
-								className="group btn btn-ghost btn-sm btn-circle hover:bg-primary hover:text-primary-content transition-all duration-300 hover:scale-110 hover:shadow-lg"
-								aria-label="Discord"
-							>
-								<FaDiscord className="w-5 h-5 group-hover:animate-pulse" />
-							</a>
-							<a 
-								href="https://linkedin.com" 
-								target="_blank" 
-								rel="noopener noreferrer"
-								className="group btn btn-ghost btn-sm btn-circle hover:bg-primary hover:text-primary-content transition-all duration-300 hover:scale-110 hover:shadow-lg"
-								aria-label="LinkedIn"
-							>
-								<FaLinkedin className="w-5 h-5 group-hover:animate-pulse" />
-							</a>
-						</div>
-					</div>
-				</div>
-			</div>
+  return (
+    <footer className="text-white relative overflow-hidden">
+      {/* Subtle top border */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-400 to-transparent"></div>
 
-			{/* Divider */}
-			<div className="divider my-0"></div>
+      {/* Additional gradient overlay for depth */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/20"></div>
+      {/* Main Footer Content */}
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-4 py-12">
+        <div className="flex flex-col items-center space-y-8">
+          {/* Logo Section */}
+          <div className="text-center">
+            <div className="flex items-center justify-center space-x-2 mb-2"></div>
+            <div className="flex items-center justify-center space-x-3">
+              <img src={Logo} alt="Sandbox Logo" className="w-50" />
+            </div>
+          </div>
 
-			{/* Bottom Section */}
-			<div className="w-full max-w-7xl mx-auto px-4 py-6">
-				<div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-					<div className="flex items-center space-x-2 text-sm text-base-content/70">
-						<span>© {currentYear} Sandbox. Todos los derechos reservados.</span>
-					</div>
-					<div className="flex items-center space-x-2 text-sm text-base-content/70">
-						<span>{" Hecho con"}</span>
-						<FaHeart className="w-4 h-4 text-red-500 animate-pulse" />
-						<span>por wakeuplabs</span>
-					</div>
-				</div>
-			</div>
-		</footer>
-	)
+          {/* Navigation Links */}
+          <div className="flex flex-wrap justify-center items-center gap-8 text-sm">
+            <Link to="/" className="text-gray-300 hover:text-blue-400 transition-colors">
+              Vision
+            </Link>
+            <Link to="/admin/tasks" className="text-gray-300 hover:text-blue-400 transition-colors">
+              Proposals
+            </Link>
+            <Link to="/admin/users" className="text-gray-300 hover:text-blue-400 transition-colors">
+              Dashboard
+            </Link>
+            <a
+              href="https://youtube.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center space-x-2 text-gray-300 hover:text-blue-400 transition-colors"
+            >
+              <FaYoutube className="w-4 h-4" />
+              <span>Youtube</span>
+            </a>
+            <a
+              href="#"
+              className="flex items-center space-x-2 text-gray-300 hover:text-blue-400 transition-colors"
+            >
+              <FaComments className="w-4 h-4" />
+              <span>Forum</span>
+            </a>
+            <a
+              href="https://twitter.com/TheSandboxDAO"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center space-x-2 text-gray-300 hover:text-blue-400 transition-colors"
+            >
+              <FaXTwitter className="w-4 h-4" />
+              <span>@TheSandboxDAO</span>
+            </a>
+          </div>
+
+          {/* Separator Line */}
+          <div className="w-full max-w-4xl h-px bg-gray-500"></div>
+
+          {/* Legal Links */}
+          <div className="flex flex-wrap justify-center items-center gap-8 text-sm">
+            <a href="#" className="text-gray-300 hover:text-blue-400 transition-colors">
+              Terms of Use
+            </a>
+            <a href="#" className="text-gray-300 hover:text-blue-400 transition-colors">
+              Privacy Policy
+            </a>
+            <a href="#" className="text-gray-300 hover:text-blue-400 transition-colors">
+              Code of Conduct
+            </a>
+          </div>
+
+          {/* Copyright */}
+          <div className="text-center text-gray-400 text-sm">
+            © {currentYear} The Sandbox DAO. All rights reserved.
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
 }

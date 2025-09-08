@@ -1,7 +1,5 @@
 import { FaEye } from "react-icons/fa";
 import { clsx } from "clsx";
-import { useTaskTypeColors } from "@/hooks/use-task-type-colors";
-import { useTaskStateColors } from "@/hooks/use-task-state-colors";
 import type { Task } from "@the-sandbox-sev/api";
 import { truncateHash } from "@/shared/lib/utils";
 import { EtherScanLink } from "@/shared/components/ether-scan-link";
@@ -14,19 +12,17 @@ interface TasksTableProps {
 }
 
 export function TasksTable({ tasks, isLoading, onViewTask }: TasksTableProps) {
-  const { getTaskTypeBadgeClasses } = useTaskTypeColors();
-  const { getTaskStateBadgeClasses } = useTaskStateColors();
   if (isLoading) {
     return (
-      <div className="bg-base-100">
+      <div className="">
         <div className="space-y-4">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="flex items-center space-x-4 animate-pulse">
-              <div className="h-4 bg-base-300 rounded w-1/6"></div>
-              <div className="h-4 bg-base-300 rounded w-1/6"></div>
-              <div className="h-4 bg-base-300 rounded w-1/4"></div>
-              <div className="h-4 bg-base-300 rounded w-1/6"></div>
-              <div className="h-4 bg-base-300 rounded w-1/6"></div>
+              <div className="h-4 bg-base-300 rounded w-1/6 skeleton"></div>
+              <div className="h-4 bg-base-300 rounded w-1/6 skeleton"></div>
+              <div className="h-4 bg-base-300 rounded w-1/4 skeleton"></div>
+              <div className="h-4 bg-base-300 rounded w-1/6 skeleton"></div>
+              <div className="h-4 bg-base-300 rounded w-1/6 skeleton"></div>
             </div>
           ))}
         </div>
@@ -36,7 +32,7 @@ export function TasksTable({ tasks, isLoading, onViewTask }: TasksTableProps) {
 
   if (tasks.length === 0) {
     return (
-      <div className="bg-base-100">
+      <div className="">
         <div className="text-center">
           <h3 className="text-lg font-semibold text-base-content/70">No tasks found</h3>
           <p className="text-base-content/50">Try adjusting your filters or create a new task.</p>
@@ -46,7 +42,7 @@ export function TasksTable({ tasks, isLoading, onViewTask }: TasksTableProps) {
   }
 
   return (
-    <div className="bg-base-100">
+    <div className="">
       <div className="overflow-x-auto">
         <table className="table table-zebra w-full">
           <thead>
@@ -56,7 +52,7 @@ export function TasksTable({ tasks, isLoading, onViewTask }: TasksTableProps) {
               <th>Task Hash</th>
               <th>Transaction Hash</th>
               <th>Created At</th>
-              <th className="w-20">Actions</th>
+              <th className="w-20"></th>
             </tr>
           </thead>
           <tbody>
@@ -64,16 +60,17 @@ export function TasksTable({ tasks, isLoading, onViewTask }: TasksTableProps) {
               <tr key={task.id} className="hover">
                 <td className="font-mono text-sm">{task.transactionId}</td>
                 <td>
-                  <span
-                    className={clsx("text-xs font-mono font-semibold")}
-                  >
-                    {task.taskType}
-                  </span>
+                  <span className={clsx("text-xs font-mono font-semibold")}>{task.taskType}</span>
                 </td>
 
                 <td className="font-mono text-xs">
                   <div className="flex items-center gap-2">
-                    <span className="">
+                    <span
+                      className="tooltip tooltip-left"
+                      data-tip={
+                        "Unique ID of the instruction file. Ensures the approved plan hasn’t been altered."
+                      }
+                    >
                       {truncateHash(task.taskHash)}
                     </span>
                     <CopyToClipboard text={task.taskHash} />
@@ -95,10 +92,10 @@ export function TasksTable({ tasks, isLoading, onViewTask }: TasksTableProps) {
                 <td>
                   <button
                     onClick={() => onViewTask(task)}
-                    className="btn btn-ghost btn-sm"
+                    className="w-[200px] px-2 cursor-pointer font-semibold"
                     title="View Details"
                   >
-                    <FaEye className="h-4 w-4" />
+                    View More
                   </button>
                 </td>
               </tr>

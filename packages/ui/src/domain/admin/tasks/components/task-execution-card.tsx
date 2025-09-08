@@ -75,7 +75,7 @@ export function TaskExecutionCard({ task, onProofReady, onProofsChange, onViewTa
   const canExecute = task.state === TaskStateEnum.STORED;
 
   return (
-    <div className="bg-gray-800/50 border border-gray-700/30 rounded-lg hover:bg-gray-800/70 transition-colors duration-200">
+    <div className=" border border-gray-700/30 rounded-lg hover:bg-gray-800/70 transition-colors duration-200">
       <div className="p-4">
         {/* Header - Always visible */}
         <div
