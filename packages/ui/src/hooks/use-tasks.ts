@@ -21,6 +21,21 @@ const { isAuthenticated, isInitialized } = useWeb3Auth();
     },
   });
 
+  const createTasksBatch = useMutation({
+    mutationFn: async (tasksData: any[]) => {
+      const response = await client.api.tasks['batch-create'].$post({
+        json: { tasks: tasksData },
+      });
+
+      if (!response.ok) {
+        const error: any = await response.json();
+        throw new Error(error?.error || "Failed to create tasks batch");
+      }
+
+      return response.json();
+    },
+  });
+
   const getAllTasks = (filters: TasksListFilters) => {
     return useQuery({
       queryKey: ["tasks", filters],
@@ -102,6 +117,7 @@ const { isAuthenticated, isInitialized } = useWeb3Auth();
 
   return {
     createTask,
+    createTasksBatch,
     getAllTasks,
     getTaskByTransactionId,
     getPublicTasks,

@@ -4,7 +4,7 @@ import { NormalizedTask } from '../tasks.service'
 import { TaskType } from '@/generated/prisma'
 
 export class LiquidationTaskNormalizer extends BaseTaskNormalizer {
-	normalize(data: CreateTaskInput, userId: string): NormalizedTask {
+	normalize(data: CreateTaskInput, userId: number): NormalizedTask {
 		this.validateTransactionId(data.transactionId)
 		
 		// Type assertion para liquidation task

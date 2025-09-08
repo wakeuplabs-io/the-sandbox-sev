@@ -12,9 +12,11 @@ import { useTasks } from "@/hooks/use-tasks";
 import { toast } from "react-toastify";
 import { useRouter } from "@tanstack/react-router";
 
+const MAX_BATCH_SIZE = 20;
+
 export function TasksNewPage() {
   const { setIsLoading } = useLayout();
-  const { createTask } = useTasks();
+  const { createTask, createTasksBatch } = useTasks();
   const [selectedTaskType, setSelectedTaskType] = useState<TaskType | null>(null);
   const [rawExcelData, setRawExcelData] = useState("");
   const [parsedData, setParsedData] = useState<ParsedRow[]>([]);
@@ -74,23 +76,50 @@ export function TasksNewPage() {
       return;
     }
 
+    const validTasks = parsedData.filter(row => row.isValid);
+    
+    // Validar límite de batch
+    if (validTasks.length > MAX_BATCH_SIZE) {
+      toast.error(`Cannot create more than ${MAX_BATCH_SIZE} tasks at once. Please reduce the number of valid tasks.`);
+      return;
+    }
+
     setIsLoading(true);
     try {
-      const validTasks = parsedData.filter(row => row.isValid);
+      // Preparar datos
+      const tasksData = validTasks.map(row => ({
+        taskType: selectedTaskType,
+        ...row.data,
+      }));
 
-      const createdTasks = [];
-      for (const row of validTasks) {
-        const taskData = {
-          taskType: selectedTaskType,
-          ...row.data,
+      let result;
+      
+      if (validTasks.length === 1) {
+        // Una sola task: usar endpoint individual (más simple)
+        const createdTask = await createTask.mutateAsync(tasksData[0]);
+        result = {
+          successful: [createdTask],
+          failed: [],
+          summary: {
+            total: 1,
+            successful: 1,
+            failed: 0
+          }
         };
-
-        const createdTask = await createTask.mutateAsync(taskData);
-        createdTasks.push(createdTask);
+      } else {
+        // Múltiples tasks: usar endpoint batch (más eficiente)
+        result = await createTasksBatch.mutateAsync(tasksData);
+      }
+      
+      // Mostrar resultados
+      const method = validTasks.length === 1 ? 'individual' : 'batch';
+      toast.success(`Successfully created ${result.summary.successful} tasks using ${method} method!`);
+      
+      if (result.summary.failed > 0) {
+        toast.warning(`${result.summary.failed} tasks failed to create`);
       }
 
-      toast.success(`Successfully created ${createdTasks.length} tasks!`);
-
+      // Reset form
       setRawExcelData("");
       setParsedData([]);
       setValidationStatus("idle");
@@ -106,6 +135,8 @@ export function TasksNewPage() {
 
   const hasErrors = validationStatus === "invalid" || errors.length > 0;
   const validTasks = parsedData.filter(row => row.isValid);
+  const exceedsBatchLimit = validTasks.length > MAX_BATCH_SIZE;
+  const canSubmit = validationStatus === "valid" && validTasks.length > 0 && !exceedsBatchLimit;
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -153,7 +184,10 @@ export function TasksNewPage() {
                 validTasksCount={validTasks.length}
                 totalTasksCount={parsedData.length}
                 onSubmit={handleSubmit}
-                isLoading={createTask.isPending}
+                isLoading={createTask.isPending || createTasksBatch.isPending}
+                canSubmit={canSubmit}
+                exceedsBatchLimit={exceedsBatchLimit}
+                maxBatchSize={MAX_BATCH_SIZE}
               />
             </div>
           </div>

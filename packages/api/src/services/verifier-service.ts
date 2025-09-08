@@ -15,7 +15,7 @@ interface StoreHashParams {
 
 interface StoreHashBatchParams {
   hashes: Hash[];
-  userAddresses: Address[];
+  userAddress: Address;
 }
 
 interface RoleManagementParams {
@@ -63,15 +63,16 @@ export class VerifierService {
       if (params.hashes.length > 20) {
         throw new Error("Batch size cannot exceed 20 elements");
       }
-      if (params.hashes.length !== params.userAddresses.length) {
-        throw new Error("Hashes and user addresses arrays must have the same length");
+     
+      if(!params.userAddress) {
+        throw new Error("User address is required");
       }
 
       const hash = await (this.walletClient.writeContract as any)({
         address: this.contractAddress,
         abi: EXECUTION_VERIFIER_ABI,
         functionName: "storeHashBatch",
-        args: [params.hashes, params.userAddresses],
+        args: [params.hashes, params.userAddress],
       });
       return hash;
     } catch (error) {

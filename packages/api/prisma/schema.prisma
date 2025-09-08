@@ -67,7 +67,7 @@ model Task {
     
     // Hashes de seguridad
     taskHash              String   @unique // Hash de la task (keccak256)
-    transactionHash       String   @unique // Hash de la tx en chain
+    transactionHash       String            // Hash de la tx en chain (puede ser compartido en batch)
     
     // Campos comunes a todos los tipos
     tokenType             String?

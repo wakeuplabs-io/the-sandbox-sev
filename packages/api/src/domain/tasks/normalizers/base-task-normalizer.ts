@@ -4,7 +4,7 @@ import { TaskType } from '@/generated/prisma'
 import { keccak256, stringToHex } from 'viem'
 
 export abstract class BaseTaskNormalizer {
-	abstract normalize(data: CreateTaskInput, userId: string): NormalizedTask
+	abstract normalize(data: CreateTaskInput, userId: number): NormalizedTask
 	
 	protected hashTaskData(taskData: any): string {
 		const jsonString = JSON.stringify(taskData, Object.keys(taskData).sort())

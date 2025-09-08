@@ -49,7 +49,7 @@ export interface NormalizedTask {
   typeOfTx: string
   details: string
   priority: string
-  userId: string
+  userId: number
   [key: string]: any
 }
 
@@ -77,7 +77,7 @@ class TaskFactory {
     this.normalizers.set(TaskType.ARBITRAGE, new ArbitrageTaskNormalizer())
   }
   
-  normalizeTask(data: CreateTaskInput, userId: string): NormalizedTask {
+  normalizeTask(data: CreateTaskInput, userId: number): NormalizedTask {
     const normalizer = this.normalizers.get(data.taskType)
     if (!normalizer) {
       throw new Error(`No normalizer found for task type: ${data.taskType}`)
@@ -86,7 +86,7 @@ class TaskFactory {
     return normalizer.normalize(data, userId)
   }
   
-  normalizeTasksBatch(tasksData: CreateTaskInput[], userId: string): NormalizedTask[] {
+  normalizeTasksBatch(tasksData: CreateTaskInput[], userId: number): NormalizedTask[] {
     return tasksData.map(data => this.normalizeTask(data, userId))
   }
 }
@@ -113,7 +113,7 @@ class TaskRepository {
     })
   }
   
-  async createTasksBatch(tasks: NormalizedTask[], transactionHash: string): Promise<any[]> {
+  async createTasksBatch(tasks: NormalizedTask[], blockchainTransactionHash: string): Promise<any[]> {
     return prisma.$transaction(
       tasks.map(task => 
         prisma.task.create({
@@ -122,7 +122,7 @@ class TaskRepository {
             taskType: task.taskType,
             taskData: task.taskData,
             taskHash: task.taskHash,
-            transactionHash,
+            transactionHash: blockchainTransactionHash, // Hash de la transacción blockchain
             tokenType: task.tokenType,
             chain: task.chain,
             platform: task.platform,
@@ -693,7 +693,7 @@ export const batchCreateTasks = async (
   }
   
   // Normalizar todas las tasks
-  const normalizedTasks = taskFactory.normalizeTasksBatch(tasksData, user.id.toString())
+  const normalizedTasks = taskFactory.normalizeTasksBatch(tasksData, user.id)
   
   // Verificar que no existan tasks duplicadas
   const transactionIds = normalizedTasks.map(t => t.transactionId)
@@ -708,7 +708,7 @@ export const batchCreateTasks = async (
     const hashes = normalizedTasks.map(task => task.taskHash as any)
     const transactionHash = await verifierService.storeHashBatch({
       hashes,
-      userAddresses: [user.address as any],
+      userAddress: user.address as any,
     })
     
     // Una sola operación de batch en DB
