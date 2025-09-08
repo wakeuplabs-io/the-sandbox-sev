@@ -3,7 +3,7 @@ import { Outlet } from "@tanstack/react-router";
 import { useGetUser } from "@/hooks/use-get-user";
 import { useWeb3Auth } from "@/context/web3auth";
 import { useNicknameSetup } from "@/hooks/use-nickname-setup";
-import { FaHome, FaUser, FaUserShield } from "react-icons/fa";
+import { FaUser, FaUserShield } from "react-icons/fa";
 import { Header } from "@/shared/components/layout/header";
 import { Footer } from "@/shared/components/layout/footer";
 import { NicknameSetupModal } from "@/shared/components/nickname-setup-modal";
@@ -15,12 +15,6 @@ interface LayoutProps {
 }
 
 const nlinks = [
-  {
-    to: "/",
-    label: "Home",
-    icon: <FaHome />,
-    roles: [],
-  },
   {
     to: "/admin/tasks",
     label: "Tasks",
