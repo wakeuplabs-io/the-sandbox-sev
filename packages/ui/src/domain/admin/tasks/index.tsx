@@ -136,14 +136,6 @@ export function TaskExecutionPage() {
   const shouldShowLoading = isLoading;
   const shouldShowEmptyState = !isLoading && !hasTasks;
 
-  console.log("shouldShowBatchActions", shouldShowBatchActions);  
-  console.log("readyTasksCount", readyTasksCount);
-  console.log("isExecuting", isExecuting);
-  console.log("hasTasksWithProofs", hasTasksWithProofs);
-  console.log("hasStoredTasksWithProofs", hasStoredTasksWithProofs);
-  console.log("allTasks", allTasks);
-  console.log("tasksWithProofs", tasksWithProofs);
-  console.log("taskProofs", taskProofs);
   return (
     <section className="section">
       <TaskExecutionHeader />

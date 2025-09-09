@@ -1,25 +1,23 @@
-import { FaPlus, FaExclamationTriangle, FaInfoCircle } from 'react-icons/fa'
+import { FaPlus, FaExclamationTriangle, FaInfoCircle } from "react-icons/fa";
 
 interface SubmitActionsProps {
-  onSubmit: () => void
-  hasErrors: boolean
-  validTasksCount: number
-  totalTasksCount: number
-  isLoading?: boolean
-  canSubmit?: boolean
-  exceedsBatchLimit?: boolean
-  maxBatchSize?: number
+  onSubmit: () => void;
+  validTasksCount: number;
+  totalTasksCount: number;
+  isLoading?: boolean;
+  canSubmit?: boolean;
+  exceedsBatchLimit?: boolean;
+  maxBatchSize?: number;
 }
 
-export function SubmitActions({ 
-  onSubmit, 
-  hasErrors, 
-  validTasksCount, 
-  totalTasksCount, 
+export function SubmitActions({
+  onSubmit,
+  validTasksCount,
+  totalTasksCount,
   isLoading = false,
   canSubmit = true,
   exceedsBatchLimit = false,
-  maxBatchSize = 20
+  maxBatchSize = 20,
 }: SubmitActionsProps) {
   return (
     <div className="space-y-4">
@@ -32,17 +30,11 @@ export function SubmitActions({
           </span>
           {validTasksCount > 0 && (
             <span className="ml-2 badge badge-info">
-              {validTasksCount === 1 ? 'Individual' : 'Batch'} method
+              {validTasksCount === 1 ? "Individual" : "Batch"} method
             </span>
           )}
         </div>
-        
-        {hasErrors && (
-          <div className="text-sm text-error">
-            Please fix validation errors before submitting
-          </div>
-        )}
-        
+
         {exceedsBatchLimit && (
           <div className="text-sm text-error">
             Too many tasks! Maximum {maxBatchSize} tasks per batch
@@ -57,33 +49,23 @@ export function SubmitActions({
           disabled={!canSubmit || isLoading}
           className={`
             btn btn-primary
-            ${!canSubmit || isLoading ? 'btn-disabled' : ''}
+            ${!canSubmit || isLoading ? "btn-disabled" : ""}
           `}
         >
           {isLoading ? (
             <>
               <span className="loading loading-spinner loading-sm"></span>
-              {validTasksCount === 1 ? 'Creating Task...' : `Creating ${validTasksCount} Tasks in Batch...`}
+              {validTasksCount === 1
+                ? "Creating Task..."
+                : `Creating ${validTasksCount} Tasks in Batch...`}
             </>
           ) : (
             <>
               <FaPlus className="h-5 w-5" />
-              Create {validTasksCount} Task{validTasksCount !== 1 ? 's' : ''}
+              Create {validTasksCount} Task{validTasksCount !== 1 ? "s" : ""}
             </>
           )}
         </button>
-
-        {hasErrors && (
-          <div className="alert alert-warning">
-            <FaExclamationTriangle className="stroke-current shrink-0 h-6 w-6" />
-            <div>
-              <h3 className="font-bold">Cannot Submit</h3>
-              <div className="text-xs">
-                There are validation errors that need to be fixed before you can create tasks.
-              </div>
-            </div>
-          </div>
-        )}
 
         {exceedsBatchLimit && (
           <div className="alert alert-error">
@@ -91,8 +73,8 @@ export function SubmitActions({
             <div>
               <h3 className="font-bold">Too Many Tasks</h3>
               <div className="text-xs">
-                You have {validTasksCount} valid tasks, but the maximum batch size is {maxBatchSize}. 
-                Please reduce the number of valid tasks or split them into multiple batches.
+                You have {validTasksCount} valid tasks, but the maximum batch size is {maxBatchSize}
+                . Please reduce the number of valid tasks or split them into multiple batches.
               </div>
             </div>
           </div>
@@ -123,5 +105,5 @@ export function SubmitActions({
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -11,7 +11,6 @@ export function TasksNewPage() {
     parsedData,
     validationStatus,
     errors,
-    hasErrors,
     validTasks,
     exceedsBatchLimit,
     canSubmit,
@@ -61,7 +60,6 @@ export function TasksNewPage() {
           <div className="">
             <div className="card-body">
               <SubmitActions
-                hasErrors={hasErrors}
                 validTasksCount={validTasks.length}
                 totalTasksCount={parsedData.length}
                 onSubmit={handleSubmit}
