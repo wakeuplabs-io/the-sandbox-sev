@@ -1,5 +1,8 @@
 import { TaskTypeButtons } from "./components/task-type-buttons";
 import { ExcelInput } from "./components/excel-input";
+import { TaskTypeInfo } from "./components/task-type-info";
+import { InstructionsAlert } from "./components/instructions-alert";
+import { RowCountDisplay } from "./components/row-count-display";
 import { DataPreviewTable } from "./components/data-preview-table";
 import { SubmitActions } from "./components/submit-actions";
 import { useNewTask } from "./hooks/use-new-task";
@@ -11,7 +14,6 @@ export function TasksNewPage() {
     parsedData,
     validationStatus,
     errors,
-    hasErrors,
     validTasks,
     exceedsBatchLimit,
     canSubmit,
@@ -35,15 +37,15 @@ export function TasksNewPage() {
 
         {selectedTaskType && (
           <div className="">
-            <div className="card-body">
-              <h2 className="card-title">Paste Excel Data</h2>
+            <div className="card-body space-y-4">
+              <TaskTypeInfo taskType={selectedTaskType} />
+              <InstructionsAlert maxBatchSize={maxBatchSize} />
               <ExcelInput
                 value={rawExcelData}
                 onChange={handleExcelDataChange}
-                taskType={selectedTaskType}
                 validationStatus={validationStatus}
-                parsedRowCount={parsedData.length}
               />
+              <RowCountDisplay rowCount={parsedData.length} />
             </div>
           </div>
         )}
@@ -61,7 +63,6 @@ export function TasksNewPage() {
           <div className="">
             <div className="card-body">
               <SubmitActions
-                hasErrors={hasErrors}
                 validTasksCount={validTasks.length}
                 totalTasksCount={parsedData.length}
                 onSubmit={handleSubmit}

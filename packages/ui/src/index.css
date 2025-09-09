@@ -6,11 +6,18 @@
 @plugin "daisyui/theme" {
   name: "dark";
   default: true;
-  --color-primary: #0084FF;
+  --color-primary: #00aeff;
   --color-secondary: #E5C64A;
-  --color-neutral: #20212B;
+  --color-accent: #E5C64A;
+  --color-neutral: #1b1921;
+  --color-base-100: #1b1921;
+  --color-base-200: #20212B;
+  --color-base-300: #40414A;
+  --color-base-content: #FFFFFF;
   --color-success: #04C940;
   --color-error: #DD4656;
+  --color-warning: #FFD700;
+  --color-info: #00aeff;
 }
 :root {
   font-family: DM Sans, sans-serif;
@@ -39,12 +46,15 @@ body {
     @apply text-2xl font-bold text-base-content;
   }
   .section {
-    @apply container mx-auto px-4 py-6 card min-h-[calc(100vh-250px)] border border-[#ffffff1a] rounded-[8px];
+    @apply container mx-auto px-4 py-6 card min-h-[calc(100vh-250px)] border border-[#ffffff1a] rounded-[8px] flex flex-col;
   }
   .header {
     @apply fixed top-0 left-0 right-0 z-50 navbar px-4 transition-all duration-300 ease-in-out border-b border-b-[#ffffff1a];
   }
   .base-input {
     @apply input bg-transparent ring-0 focus:ring-0 focus:outline-none focus:ring-offset-0;
+  }
+  .modal-background {
+    @apply modal-backdrop bg-black/50 backdrop-blur-sm;
   }
 }

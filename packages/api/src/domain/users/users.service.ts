@@ -3,16 +3,16 @@ import prisma from "@/lib/prisma";
 
 export const getUsers = async (page: number = 1, limit: number = 10) => {
   const skip = (page - 1) * limit;
-  
+
   const [users, total] = await Promise.all([
     prisma.user.findMany({
       skip,
       take: limit,
       orderBy: {
-        createdAt: 'desc'
-      }
+        createdAt: "desc",
+      },
     }),
-    prisma.user.count()
+    prisma.user.count(),
   ]);
 
   return {
@@ -23,18 +23,15 @@ export const getUsers = async (page: number = 1, limit: number = 10) => {
       total,
       totalPages: Math.ceil(total / limit),
       hasNext: page < Math.ceil(total / limit),
-      hasPrev: page > 1
-    }
+      hasPrev: page > 1,
+    },
   };
 };
 
 export const getOrCreateUser = async (address: string, email?: string) => {
-  console.log("getUser", address);
   let user = await prisma.user.findFirst({ where: { address } });
-
   if (!user) {
     user = await prisma.user.create({ data: { address, email } });
-
   }
 
   if (!user) user = await prisma.user.create({ data: { address, email } });

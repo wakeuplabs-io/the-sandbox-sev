@@ -76,7 +76,7 @@ export function ProfileModal({
           </button>
         </div>
       </div>
-      <div className="modal-backdrop" onClick={onClose}></div>
+      <div className="modal-background" onClick={onClose}></div>
     </div>
   );
 }

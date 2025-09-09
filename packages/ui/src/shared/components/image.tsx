@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FaImage, FaExclamationTriangle } from "react-icons/fa";
+import { FaImage, FaExclamationTriangle, FaSpinner } from "react-icons/fa";
 import clsx from "clsx";
 
 interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
@@ -35,7 +35,7 @@ function Image({
   const defaultFallback = (
     <div className="w-full h-full flex items-center justify-center bg-base-200 rounded-lg">
       {showLoadingSpinner ? (
-        <div className="loading loading-spinner loading-sm"></div>
+        <FaSpinner className="loading loading-spinner loading-sm animate-spin" />
       ) : (
         <FaImage className="h-8 w-8 text-base-content/40" />
       )}

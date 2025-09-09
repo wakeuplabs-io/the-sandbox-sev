@@ -2,6 +2,7 @@ import { UserRoleRow } from "./user-role-row";
 import type { UserWithChanges } from "../types";
 import { UserRoleEnum } from "@/shared/constants";
 import { PaginationActions } from "@/shared/components/pagination-actions";
+import { FaSpinner } from "react-icons/fa";
 
 interface UserRoleTableProps {
   users: UserWithChanges[];
@@ -30,7 +31,7 @@ export function UserRoleTable({
   if (isLoading) {
     return (
       <div className="flex justify-center items-center py-12">
-        <span className="loading loading-spinner loading-lg"></span>
+        <FaSpinner className="animate-spin" />
       </div>
     );
   }

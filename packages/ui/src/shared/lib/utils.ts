@@ -134,7 +134,7 @@ export function formatDateWithTime(
  * @param isoString - String ISO de la fecha
  * @returns String formateado (ej: "15/01/2024")
  */
-export function formatDateOnly(isoString: string): string {
+export function formatDate(isoString: string): string {
   try {
     const date = new Date(isoString);
 
@@ -143,10 +143,10 @@ export function formatDateOnly(isoString: string): string {
       return isoString;
     }
 
-    return date.toLocaleDateString("es-AR", {
+    return date.toLocaleDateString("en-US", {
       year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
+      month: "short",
+      day: "numeric",
     });
   } catch (error) {
     console.error("Error formatting date:", error);
