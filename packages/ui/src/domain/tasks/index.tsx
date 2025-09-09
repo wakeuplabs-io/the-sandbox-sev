@@ -55,7 +55,7 @@ export function TasksListPage() {
 
   return (
     <section className="section mb-6">
-      <div className="card-body">
+      <div className="card-body space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="heading-1">DAO Transparency Dashboard </h1>
         </div>

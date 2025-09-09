@@ -41,67 +41,65 @@ export function TasksTable({ tasks, isLoading, onViewTask }: TasksTableProps) {
   }
 
   return (
-    
-      <div className="overflow-x-auto">
-        <table className="table table-zebra w-full">
-          <thead>
-            <tr>
-              <th>Transaction ID</th>
-              <th>Task Type</th>
-              <th>Task Hash</th>
-              <th>Transaction Hash</th>
-              <th>Created At</th>
-              <th className="w-20"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {tasks.map(task => (
-              <tr key={task.id} className="hover">
-                <td className="font-mono text-sm">{task.transactionId}</td>
-                <td>
-                  <span className={clsx("text-xs font-mono font-semibold")}>{task.taskType}</span>
-                </td>
+    <div className="h-full">
+      <table className="table table-zebra table-fixed w-full">
+        <thead>
+          <tr>
+            <th className="w-1/6">Transaction ID</th>
+            <th className="w-1/6">Task Type</th>
+            <th className="w-1/6">Task Hash</th>
+            <th className="w-1/6">Transaction Hash</th>
+            <th className="w-1/6">Created At</th>
+            <th className="w-1/6"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {tasks.map(task => (
+            <tr key={task.id} className="hover">
+              <td className="font-mono text-sm">{task.transactionId}</td>
+              <td>
+                <span className={clsx("text-xs font-mono font-semibold")}>{task.taskType}</span>
+              </td>
 
-                <td className="font-mono text-xs">
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="tooltip tooltip-left"
-                      data-tip={
-                        "Unique ID of the instruction file. Ensures the approved plan hasn’t been altered."
-                      }
-                    >
-                      {truncateHash(task.taskHash)}
-                    </span>
-                    <CopyToClipboard text={task.taskHash} />
-                  </div>
-                </td>
-                <td className="font-mono text-xs">
-                  <div className="flex items-center gap-2">
-                    <EtherScanLink txHash={task.transactionHash} />
-                    <CopyToClipboard text={task.transactionHash} />
-                  </div>
-                </td>
-                <td className="text-sm">
-                  {new Date(task.createdAt).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
-                </td>
-                <td>
-                  <button
-                    onClick={() => onViewTask(task)}
-                    className="w-[200px] px-2 cursor-pointer font-semibold"
-                    title="View Details"
+              <td className="font-mono text-xs">
+                <div className="flex items-center gap-2">
+                  <span
+                    className="tooltip tooltip-left"
+                    data-tip={
+                      "Unique ID of the instruction file. Ensures the approved plan hasn't been altered."
+                    }
                   >
-                    View More
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    
+                    {truncateHash(task.taskHash)}
+                  </span>
+                  <CopyToClipboard text={task.taskHash} />
+                </div>
+              </td>
+              <td className="font-mono text-xs">
+                <div className="flex items-center gap-2">
+                  <EtherScanLink txHash={task.transactionHash} />
+                  <CopyToClipboard text={task.transactionHash} />
+                </div>
+              </td>
+              <td className="text-sm">
+                {new Date(task.createdAt).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </td>
+              <td>
+                <button
+                  onClick={() => onViewTask(task)}
+                  className="w-[200px] px-2 cursor-pointer font-semibold"
+                  title="View Details"
+                >
+                  View More
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }

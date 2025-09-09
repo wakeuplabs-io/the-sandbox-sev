@@ -45,8 +45,8 @@ export function TaskExecutionList({
   }, [tasks, clearInputsRefs]);
 
   return (
-    <>
-      <div className="space-y-4">
+    <div className="flex flex-col h-full">
+      <div className="flex-1 space-y-4 overflow-y-auto">
         {tasks.map(task => (
           <TaskExecutionCard
             key={task.id}
@@ -59,7 +59,7 @@ export function TaskExecutionList({
           />
         ))}
       </div>
-      
+
       <PaginationActions
         currentPage={currentPage}
         totalPages={totalPages}
@@ -70,6 +70,6 @@ export function TaskExecutionList({
         onNextPage={onNextPage}
         onPrevPage={onPrevPage}
       />
-    </>
+    </div>
   );
 }

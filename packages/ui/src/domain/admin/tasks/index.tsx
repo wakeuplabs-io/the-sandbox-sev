@@ -137,40 +137,42 @@ export function TaskExecutionPage() {
   const shouldShowEmptyState = !isLoading && !hasTasks;
 
   return (
-    <section className="section">
-      <TaskExecutionHeader />
-      <TasksFilters filters={filters} onFiltersChange={updateFilters} />
-      {shouldShowBatchActions && (
-        <BatchActionsPanel
-          readyTasksCount={readyTasksCount}
-          isExecuting={isExecuting}
-          onExecuteAll={handleExecuteAll}
-          onClearAllProofs={handleClearAllProofs}
-        />
-      )}
-      <div className="space-y-4">
-        {shouldShowLoading ? (
-          <LoadingState />
-        ) : shouldShowEmptyState ? (
-          <EmptyState />
-        ) : (
-          <TaskExecutionList
-            tasks={allTasks}
-            taskProofs={taskProofs}
-            onTaskProofReady={handleTaskProofReady}
-            onTaskProofsChange={handleTaskProofsChange}
-            onViewTask={handleViewTask}
-            clearInputsRefs={clearInputsRefs.current}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            totalTasks={totalTasks}
-            hasNext={hasNext}
-            hasPrev={hasPrev}
-            onPageChange={goToPage}
-            onNextPage={nextPage}
-            onPrevPage={prevPage}
+    <section className="section space-y-4">
+      <div className="flex flex-col h-full space-y-4">
+        <TaskExecutionHeader />
+        <TasksFilters filters={filters} onFiltersChange={updateFilters} />
+        {shouldShowBatchActions && (
+          <BatchActionsPanel
+            readyTasksCount={readyTasksCount}
+            isExecuting={isExecuting}
+            onExecuteAll={handleExecuteAll}
+            onClearAllProofs={handleClearAllProofs}
           />
         )}
+        <div className="flex-1 flex flex-col min-h-0">
+          {shouldShowLoading ? (
+            <LoadingState />
+          ) : shouldShowEmptyState ? (
+            <EmptyState />
+          ) : (
+            <TaskExecutionList
+              tasks={allTasks}
+              taskProofs={taskProofs}
+              onTaskProofReady={handleTaskProofReady}
+              onTaskProofsChange={handleTaskProofsChange}
+              onViewTask={handleViewTask}
+              clearInputsRefs={clearInputsRefs.current}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalTasks={totalTasks}
+              hasNext={hasNext}
+              hasPrev={hasPrev}
+              onPageChange={goToPage}
+              onNextPage={nextPage}
+              onPrevPage={prevPage}
+            />
+          )}
+        </div>
       </div>
 
       <TaskDetailsModal task={selectedTask} isOpen={isModalOpen} onClose={handleCloseModal} />
