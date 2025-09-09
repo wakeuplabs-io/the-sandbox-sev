@@ -1,4 +1,4 @@
-import { FaSearch, FaFilter } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
 import type { TasksListFilters } from "../types/tasks-list.types";
 import { TaskTypeEnum, TaskStateEnum, TaskStateLabelEnum } from "@/shared/constants";
 import type { SelectOption } from "@/shared/components";
