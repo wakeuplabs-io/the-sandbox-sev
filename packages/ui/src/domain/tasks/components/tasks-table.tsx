@@ -41,7 +41,7 @@ export function TasksTable({ tasks, isLoading, onViewTask }: TasksTableProps) {
   }
 
   return (
-    <div className="">
+    
       <div className="overflow-x-auto">
         <table className="table table-zebra w-full">
           <thead>
@@ -102,6 +102,6 @@ export function TasksTable({ tasks, isLoading, onViewTask }: TasksTableProps) {
           </tbody>
         </table>
       </div>
-    </div>
+    
   );
 }

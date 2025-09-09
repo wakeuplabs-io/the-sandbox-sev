@@ -20,6 +20,13 @@ export enum TaskStateEnum {
   CANCELLED = "CANCELLED",
 }
 
+export enum TaskStateLabelEnum {
+  STORED = "Pending",
+  EXECUTED = "Executed",
+  BLOCKED = "Blocked",
+  CANCELLED = "Cancelled",
+}
+
 
 export const ETHERSCAN_BY_CHAIN_ID: Record<number, string> = {
   //arbitrum mainnet

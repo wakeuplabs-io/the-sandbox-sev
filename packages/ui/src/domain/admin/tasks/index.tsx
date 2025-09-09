@@ -136,13 +136,18 @@ export function TaskExecutionPage() {
   const shouldShowLoading = isLoading;
   const shouldShowEmptyState = !isLoading && !hasTasks;
 
+  console.log("shouldShowBatchActions", shouldShowBatchActions);  
+  console.log("readyTasksCount", readyTasksCount);
+  console.log("isExecuting", isExecuting);
+  console.log("hasTasksWithProofs", hasTasksWithProofs);
+  console.log("hasStoredTasksWithProofs", hasStoredTasksWithProofs);
+  console.log("allTasks", allTasks);
+  console.log("tasksWithProofs", tasksWithProofs);
+  console.log("taskProofs", taskProofs);
   return (
     <section className="section">
       <TaskExecutionHeader />
-      
       <TasksFilters filters={filters} onFiltersChange={updateFilters} />
-
-      {/* Batch Actions - Show when there are STORED tasks with proofs */}
       {shouldShowBatchActions && (
         <BatchActionsPanel
           readyTasksCount={readyTasksCount}
@@ -151,8 +156,6 @@ export function TaskExecutionPage() {
           onClearAllProofs={handleClearAllProofs}
         />
       )}
-
-      {/* Tasks List */}
       <div className="space-y-4">
         {shouldShowLoading ? (
           <LoadingState />

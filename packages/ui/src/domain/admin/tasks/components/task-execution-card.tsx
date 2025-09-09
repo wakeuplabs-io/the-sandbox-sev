@@ -7,6 +7,7 @@ import type { Task } from "@the-sandbox-sev/api";
 import { useTaskPriority } from "@/hooks/use-task-priority";
 import { useTaskExecution } from "../hooks/use-task-execution";
 import { formatDate } from "@/shared/lib/utils";
+import { TaskStateLabelEnum } from "@/shared/constants";
 
 interface TaskExecutionCardProps {
   task: Task;
@@ -106,7 +107,7 @@ export function TaskExecutionCard({
             {/* State Badge - Only badge we keep */}
             <div className="col-span-2">
               <span className={clsx("badge text-xs badge-outline")}>
-                {task.state}
+                {TaskStateLabelEnum[task.state as keyof typeof TaskStateLabelEnum]}
               </span>
             </div>
 

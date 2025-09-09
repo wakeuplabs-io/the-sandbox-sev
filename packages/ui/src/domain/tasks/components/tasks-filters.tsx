@@ -1,6 +1,6 @@
 import { FaSearch, FaFilter } from "react-icons/fa";
 import type { TasksListFilters } from "../types/tasks-list.types";
-import { TaskTypeEnum, TaskStateEnum } from "@/shared/constants";
+import { TaskTypeEnum, TaskStateEnum, TaskStateLabelEnum } from "@/shared/constants";
 import type { SelectOption } from "@/shared/components";
 
 interface TasksFiltersProps {
@@ -19,8 +19,8 @@ const taskTypeOptions: SelectOption[] = [
 
 const taskStateOptions: SelectOption[] = [
   { value: "", label: "All States" },
-  { value: TaskStateEnum.STORED, label: "Pending" },
-  { value: TaskStateEnum.EXECUTED, label: "Executed" },
+  { value: TaskStateEnum.STORED, label: TaskStateLabelEnum.STORED },
+  { value: TaskStateEnum.EXECUTED, label: TaskStateLabelEnum.EXECUTED },
 ];
 
 export function TasksFilters({ filters, onFiltersChange, isPublic }: TasksFiltersProps) {
@@ -32,7 +32,6 @@ export function TasksFilters({ filters, onFiltersChange, isPublic }: TasksFilter
       </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Search by Transaction ID */}
         <div className="form-control">
           <label className="label">
             <span className="label-text">Search Transaction ID</span>
@@ -50,7 +49,6 @@ export function TasksFilters({ filters, onFiltersChange, isPublic }: TasksFilter
         </div>
       </div>
 
-      {/* Task Type Filter - Button List */}
       <div className="mt-6">
         <label className="label">
           <span className="label-text font-medium">Task Type</span>
@@ -70,7 +68,6 @@ export function TasksFilters({ filters, onFiltersChange, isPublic }: TasksFilter
         </div>
       </div>
 
-      {/* Task State Filter - Button List */}
       {!isPublic && (
         <div className="mt-6">
           <label className="label">
@@ -92,7 +89,6 @@ export function TasksFilters({ filters, onFiltersChange, isPublic }: TasksFilter
         </div>
       )}
 
-      {/* Clear Filters Button */}
       <div className="flex justify-end my-4">
         <button
           className="btn btn-outline btn-sm"
