@@ -1,4 +1,4 @@
-import { FaPlus, FaExclamationTriangle, FaInfoCircle } from "react-icons/fa";
+import { FaPlus, FaExclamationTriangle } from "react-icons/fa";
 
 interface SubmitActionsProps {
   onSubmit: () => void;
@@ -74,30 +74,6 @@ export function SubmitActions({
             </div>
           </div>
         )}
-      </div>
-
-      {/* Info */}
-      <div className="alert alert-info">
-        <FaInfoCircle className="stroke-current shrink-0 w-6 h-6" />
-        <div>
-          <h3 className="font-bold">What happens next?</h3>
-          <div className="text-xs">
-            {validTasksCount === 1 ? (
-              <>
-                <p>1. Task will be created in the database</p>
-                <p>2. Task will be hashed and stored on the blockchain</p>
-                <p>3. You'll receive confirmation for successful task creation</p>
-              </>
-            ) : (
-              <>
-                <p>1. All tasks will be created in a single batch operation</p>
-                <p>2. All task hashes will be stored on blockchain in one transaction</p>
-                <p>3. You'll receive confirmation for the entire batch</p>
-                
-              </>
-            )}
-          </div>
-        </div>
       </div>
     </div>
   );
