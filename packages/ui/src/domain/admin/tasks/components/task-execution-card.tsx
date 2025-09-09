@@ -5,9 +5,7 @@ import { ProofUploadArea } from "./proof-upload-area";
 import { TaskActionButtons } from "./task-action-buttons";
 import type { Task } from "@the-sandbox-sev/api";
 import { useTaskPriority } from "@/hooks/use-task-priority";
-import { useTaskStateColors } from "@/hooks/use-task-state-colors";
 import { useTaskExecution } from "../hooks/use-task-execution";
-import { TaskStateEnum } from "@/shared/constants";
 
 interface TaskExecutionCardProps {
   task: Task;
@@ -28,7 +26,6 @@ export function TaskExecutionCard({
 }: TaskExecutionCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [hasProof, setHasProof] = useState(false);
-  const { getTaskStateBadgeClasses } = useTaskStateColors();
   const { getPriorityBadgeClasses } = useTaskPriority();
   const { executeTask, isExecuting } = useTaskExecution();
 
@@ -55,12 +52,9 @@ export function TaskExecutionCard({
   };
 
   const handleExecuteTask = async () => {
-    
     const currentProofs = taskProofs || [];
     if (currentProofs.length === 0) return;
-    
     const result = await executeTask(task.id, currentProofs);
-    
     if (result) {
       // Clear the proofs from the input area
       if (proofUploadClearRef.current) {
@@ -69,11 +63,8 @@ export function TaskExecutionCard({
     }
   };
 
-  // Constants for better readability
-  const canExecute = task.state === TaskStateEnum.STORED;
-
   return (
-    <div className=" border border-gray-700/30 rounded-lg hover:bg-gray-800/70 transition-colors duration-200">
+    <div className="border border-[#ffffff1a] rounded-[8px] hover:bg-gray-800/70 transition-colors duration-200">
       <div className="p-4">
         {/* Header - Always visible */}
         <div
@@ -113,7 +104,7 @@ export function TaskExecutionCard({
 
             {/* State Badge - Only badge we keep */}
             <div className="col-span-2">
-              <span className={clsx("badge text-xs", getTaskStateBadgeClasses(task.state as any))}>
+              <span className={clsx("badge text-xs badge-outline")}>
                 {task.state}
               </span>
             </div>

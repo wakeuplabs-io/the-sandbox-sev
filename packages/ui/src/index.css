@@ -8,9 +8,16 @@
   default: true;
   --color-primary: #00aeff;
   --color-secondary: #E5C64A;
+  --color-accent: #E5C64A;
   --color-neutral: #1b1921;
+  --color-base-100: #1b1921;
+  --color-base-200: #20212B;
+  --color-base-300: #40414A;
+  --color-base-content: #FFFFFF;
   --color-success: #04C940;
   --color-error: #DD4656;
+  --color-warning: #FFD700;
+  --color-info: #00FFFF;
 }
 :root {
   font-family: DM Sans, sans-serif;
