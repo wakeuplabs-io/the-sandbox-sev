@@ -6,9 +6,9 @@
 @plugin "daisyui/theme" {
   name: "dark";
   default: true;
-  --color-primary: #0084FF;
+  --color-primary: #00aeff;
   --color-secondary: #E5C64A;
-  --color-neutral: #20212B;
+  --color-neutral: #1b1921;
   --color-success: #04C940;
   --color-error: #DD4656;
 }

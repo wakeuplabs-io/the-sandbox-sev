@@ -8,26 +8,16 @@ const config: Config = {
   ],
   theme: {
     colors: {
-      // Colores personalizados que sobrescriben DaisyUI
-      primary: {
-        50: "#E6F2FF",
-        100: "#CCE5FF", 
-        200: "#99CCFF",
-        300: "#66B2FF",
-        400: "#3399FF",
-        500: "#00aeff", // Color principal
-        600: "#006ACC",
-        700: "#005299",
-        800: "#003D66",
-        900: "#002933",
-      },
+      black: "#1b1921",
+      primary: "#00aeff",
+      
       secondary: {
         50: "#FDF9E6",
         100: "#FBF3CC",
         200: "#F7E799",
         300: "#F3DB66",
         400: "#EFCF33",
-        500: "#E5C64A", // Color secundario
+        500: "#ffffff1a", // Color secundario
         600: "#B89E3B",
         700: "#8B762C",
         800: "#5E4F1D",
