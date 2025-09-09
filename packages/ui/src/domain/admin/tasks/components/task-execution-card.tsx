@@ -14,7 +14,7 @@ interface TaskExecutionCardProps {
   onProofReady: (hasProof: boolean) => void;
   onProofsChange?: (proofs: any[]) => void;
   onViewTask: (task: Task) => void;
-  clearInputsRef?: React.MutableRefObject<(() => void) | null>;
+  clearInputsRef?: any | null;
   taskProofs?: any[];
 }
 
@@ -31,7 +31,7 @@ export function TaskExecutionCard({
   const { getPriorityBadgeClasses } = useTaskPriority();
   const { executeTask, isExecuting } = useTaskExecution();
 
-  const proofUploadClearRef = useRef<(() => void) | null>(null);
+  const proofUploadClearRef = useRef<any | null>(null);
 
   useEffect(() => {
     if (clearInputsRef) {

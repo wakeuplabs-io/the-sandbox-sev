@@ -189,11 +189,11 @@ export function ProofUploadArea({ taskId, onProofChange, onProofsChange, clearIn
         {activeTab === 'text' && (
           <div className="space-y-3">
             <div className="form-control">
-              <label className="label">
+              <label className="label w-full">
                 <span className="label-text">Description</span>
               </label>
               <textarea
-                className="textarea textarea-bordered"
+                className="textarea textarea-bordered w-full"
                 placeholder="Describe the execution proof..."
                 rows={3}
                 value={textDescription}
