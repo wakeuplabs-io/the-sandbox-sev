@@ -1,7 +1,7 @@
 import { UserRoleEnum } from "@/shared/constants";
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import { FaChevronDown, FaTimes } from "react-icons/fa";
+import { FaChevronDown, FaTrash } from "react-icons/fa";
 
 interface RoleSelectorProps {
   currentRole: UserRoleEnum;
@@ -28,8 +28,6 @@ export function RoleSelector({ currentRole, onChange, onRemoveRole }: RoleSelect
   };
 
   const handleRoleChange = (newRole: UserRoleEnum) => {
-    console.log("RoleSelector - handleRoleChange called with:", newRole);
-    console.log("RoleSelector - current role was:", currentRole);
     onChange(newRole);
     setIsOpen(false);
   };
@@ -114,7 +112,7 @@ export function RoleSelector({ currentRole, onChange, onRemoveRole }: RoleSelect
           className="btn btn-sm btn-ghost text-error hover:bg-error hover:text-error-content min-h-8 h-8 px-2"
           title="Remove Role"
         >
-          <FaTimes className="w-3 h-3" />
+          <FaTrash className="w-3 h-3" />
         </button>
       )}
     </div>

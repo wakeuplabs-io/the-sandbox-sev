@@ -6,6 +6,7 @@ import { TaskActionButtons } from "./task-action-buttons";
 import type { Task } from "@the-sandbox-sev/api";
 import { useTaskPriority } from "@/hooks/use-task-priority";
 import { useTaskExecution } from "../hooks/use-task-execution";
+import { formatDate } from "@/shared/lib/utils";
 
 interface TaskExecutionCardProps {
   task: Task;
@@ -140,7 +141,7 @@ export function TaskExecutionCard({
               </div>
               <div>
                 <span className="font-semibold text-base-content/70">Created:</span>
-                <span className="ml-2">{new Date(task.createdAt).toLocaleString()}</span>
+                <span className="ml-2">{formatDate(task.createdAt)}</span>
               </div>
               {task.chain && (
                 <div>

@@ -1,6 +1,8 @@
 import { UserRoleEnum } from "@/shared/constants";
 import { RoleSelector } from "./role-selector";
 import type { User } from "../types";
+import { CopyToClipboard } from "@/shared/components/copy-to-clipboard";
+import { formatDate, truncateHash } from "@/shared/lib/utils";
 
 interface UserRoleRowProps {
   user: User;
@@ -9,18 +11,11 @@ interface UserRoleRowProps {
 }
 
 export function UserRoleRow({ user, onRoleChange, isCurrentUser }: UserRoleRowProps) {
-  const formatAddress = (address: string) => {
-    return `${address.slice(0, 6)}...${address.slice(-4)}`;
-  };
-
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString();
-  };
-
-  const getDisplayName = (user: User) => {
+  
+    const getDisplayName = (user: User) => {
     if (user.nickname) return user.nickname;
     if (user.email) return user.email;
-    return formatAddress(user.address);
+    return truncateHash(user.address);
   };
 
   const handleRemoveRole = () => {
@@ -45,12 +40,14 @@ export function UserRoleRow({ user, onRoleChange, isCurrentUser }: UserRoleRowPr
       </td>
 
       <td>
-        <div className="font-mono text-sm">{formatAddress(user.address)}</div>
+        <div className="flex items-center gap-2">
+          <div className="font-mono text-sm">{truncateHash(user.address)}</div>
+          <CopyToClipboard text={user.address} />
+        </div>
       </td>
 
       <td className="z-10">
         {isCurrentUser ? (
-          // Usuario actual: mostrar rol sin poder editarlo
           <div className="flex items-center gap-2">
             <span className="badge badge-neutral">
               {user.role === UserRoleEnum.MEMBER ? "No Role" : user.role}
@@ -58,7 +55,6 @@ export function UserRoleRow({ user, onRoleChange, isCurrentUser }: UserRoleRowPr
             <span className="text-xs text-base-content/50">(You)</span>
           </div>
         ) : (
-          // Otros usuarios: selector editable
           <RoleSelector
             currentRole={user.role}
             onChange={(newRole: UserRoleEnum) => onRoleChange(user.id, newRole)}
