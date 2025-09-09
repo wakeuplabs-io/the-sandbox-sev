@@ -28,11 +28,6 @@ export function SubmitActions({
           <span className="ml-2 badge badge-success">
             {validTasksCount} of {totalTasksCount} tasks
           </span>
-          {validTasksCount > 0 && (
-            <span className="ml-2 badge badge-info">
-              {validTasksCount === 1 ? "Individual" : "Batch"} method
-            </span>
-          )}
         </div>
 
         {exceedsBatchLimit && (
@@ -98,7 +93,7 @@ export function SubmitActions({
                 <p>1. All tasks will be created in a single batch operation</p>
                 <p>2. All task hashes will be stored on blockchain in one transaction</p>
                 <p>3. You'll receive confirmation for the entire batch</p>
-                <p className="text-warning">⚠️ Maximum {maxBatchSize} tasks per batch</p>
+                
               </>
             )}
           </div>
