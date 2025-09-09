@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { TaskExecutionCard } from "./task-execution-card";
 import { PaginationActions } from "@/shared/components/pagination-actions";
 import type { Task } from "@the-sandbox-sev/api";
@@ -8,7 +9,7 @@ interface TaskExecutionListProps {
   onTaskProofReady: (taskId: string, hasProof: boolean) => void;
   onTaskProofsChange: (taskId: string, proofs: any[]) => void;
   onViewTask: (task: Task) => void;
-  clearInputsRefs: Record<string, React.MutableRefObject<(() => void) | null>>;
+  clearInputsRefs: Record<string, any>;
   currentPage: number;
   totalPages: number;
   totalTasks: number;
@@ -35,28 +36,28 @@ export function TaskExecutionList({
   onNextPage,
   onPrevPage,
 }: TaskExecutionListProps) {
+  const taskRefsMap = useMemo(() => {
+    const map = new Map();
+    tasks.forEach(task => {
+      map.set(task.id, clearInputsRefs[task.id] || { current: null });
+    });
+    return map;
+  }, [tasks, clearInputsRefs]);
+
   return (
     <>
-      {/* Task Cards */}
       <div className="space-y-4">
-        {tasks.map(task => {
-          // Create ref for this task if it doesn't exist
-          if (!clearInputsRefs[task.id]) {
-            clearInputsRefs[task.id] = { current: null };
-          }
-
-          return (
-            <TaskExecutionCard
-              key={task.id}
-              task={task}
-              onProofReady={hasProof => onTaskProofReady(task.id, hasProof)}
-              onProofsChange={proofs => onTaskProofsChange(task.id, proofs)}
-              onViewTask={onViewTask}
-              clearInputsRef={clearInputsRefs[task.id]}
-              taskProofs={taskProofs[task.id] || []}
-            />
-          );
-        })}
+        {tasks.map(task => (
+          <TaskExecutionCard
+            key={task.id}
+            task={task}
+            onProofReady={hasProof => onTaskProofReady(task.id, hasProof)}
+            onProofsChange={proofs => onTaskProofsChange(task.id, proofs)}
+            onViewTask={onViewTask}
+            clearInputsRef={taskRefsMap.get(task.id)}
+            taskProofs={taskProofs[task.id] || []}
+          />
+        ))}
       </div>
       
       <PaginationActions

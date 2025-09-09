@@ -55,7 +55,7 @@ function ProofCard({ proof }: ProofCardProps) {
           <div className="flex items-center gap-2 mt-3 pt-3 border-t border-base-content/30">
             <FaUser className="h-3 w-3 text-base-content/60" />
             <span className="text-xs text-base-content/60">
-              Uploaded by: {proof.uploadedByUser.nickname || proof.uploadedByUser.email}
+              Uploaded by: {proof.uploadedByUser.nickname || proof.uploadedByUser.address}
             </span>
           </div>
         )}
@@ -80,7 +80,7 @@ export function TaskDetailsModal({ task, isOpen, onClose }: TaskDetailsModalProp
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             <span className="font-semibold">Created by:</span>
-            <span className="font-mono">{task.user.nickname || task.user.email}</span>
+            <span className="font-mono">{task.user.nickname || task.user.address}</span>
           </div>
         </div>
 
@@ -90,9 +90,7 @@ export function TaskDetailsModal({ task, isOpen, onClose }: TaskDetailsModalProp
               <label className="label">
                 <span className="label-text font-semibold">Transaction ID</span>
               </label>
-              <div className="input bg-transparent font-mono w-full">
-                {task.transactionId}
-              </div>
+              <div className="input bg-transparent font-mono w-full">{task.transactionId}</div>
             </div>
             <div className="form-control">
               <label className="label">
@@ -106,11 +104,7 @@ export function TaskDetailsModal({ task, isOpen, onClose }: TaskDetailsModalProp
                 <span className="label-text font-semibold">Task Type</span>
               </label>
               <div className="input bg-transparent w-full">
-                <span
-                  className={clsx("badge badge-outline text-xs")}
-                >
-                  {task.taskType}
-                </span>
+                <span className={clsx("badge badge-outline text-xs")}>{task.taskType}</span>
               </div>
             </div>
 
@@ -118,9 +112,7 @@ export function TaskDetailsModal({ task, isOpen, onClose }: TaskDetailsModalProp
               <label className="label">
                 <span className="label-text font-semibold">Created At</span>
               </label>
-              <div className="input bg-transparent w-full">
-                {formatDate(task.createdAt)}
-              </div>
+              <div className="input bg-transparent w-full">{formatDate(task.createdAt)}</div>
             </div>
           </div>
 
@@ -162,7 +154,6 @@ export function TaskDetailsModal({ task, isOpen, onClose }: TaskDetailsModalProp
             <div className="form-control">
               <label className="label">
                 <span className="label-text font-semibold">Execution Proofs</span>
-                <span className="badge badge-outline">{task.executionProofs.length}</span>
               </label>
               <div className="space-y-3 max-h-96 overflow-y-auto mt-4">
                 {task.executionProofs.map((proof: TaskExecutionProof, index: number) => (
@@ -174,7 +165,7 @@ export function TaskDetailsModal({ task, isOpen, onClose }: TaskDetailsModalProp
         </div>
       </div>
 
-      <div className="modal-backdrop" onClick={onClose}></div>
+      <div className="modal-background" onClick={onClose}></div>
     </div>
   );
 }

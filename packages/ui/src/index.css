@@ -47,4 +47,7 @@ body {
   .base-input {
     @apply input bg-transparent ring-0 focus:ring-0 focus:outline-none focus:ring-offset-0;
   }
+  .modal-background {
+    @apply modal-backdrop bg-black/50 backdrop-blur-sm;
+  }
 }

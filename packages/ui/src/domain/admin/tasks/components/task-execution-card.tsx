@@ -1,12 +1,13 @@
 import { useState, useRef, useEffect } from "react";
-import { FaChevronDown, FaChevronRight, FaPlay, FaEye } from "react-icons/fa";
+import { FaChevronDown, FaChevronRight } from "react-icons/fa";
 import { clsx } from "clsx";
 import { ProofUploadArea } from "./proof-upload-area";
+import { TaskActionButtons } from "./task-action-buttons";
 import type { Task } from "@the-sandbox-sev/api";
 import { useTaskPriority } from "@/hooks/use-task-priority";
-import { TaskStateEnum } from "@/shared/constants";
 import { useTaskStateColors } from "@/hooks/use-task-state-colors";
 import { useTaskExecution } from "../hooks/use-task-execution";
+import { TaskStateEnum } from "@/shared/constants";
 
 interface TaskExecutionCardProps {
   task: Task;
@@ -17,26 +18,31 @@ interface TaskExecutionCardProps {
   taskProofs?: any[];
 }
 
-export function TaskExecutionCard({ task, onProofReady, onProofsChange, onViewTask, clearInputsRef, taskProofs }: TaskExecutionCardProps) {
+export function TaskExecutionCard({
+  task,
+  onProofReady,
+  onProofsChange,
+  onViewTask,
+  clearInputsRef,
+  taskProofs,
+}: TaskExecutionCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [hasProof, setHasProof] = useState(false);
   const { getTaskStateBadgeClasses } = useTaskStateColors();
-  const { getPriorityIcon, getPriorityIconClass } = useTaskPriority();
+  const { getPriorityBadgeClasses } = useTaskPriority();
   const { executeTask, isExecuting } = useTaskExecution();
-  
+
   const proofUploadClearRef = useRef<(() => void) | null>(null);
 
-  // Expose clear function to parent
   useEffect(() => {
     if (clearInputsRef) {
       clearInputsRef.current = () => {
-        // Clear the proof upload area inputs
         if (proofUploadClearRef.current) {
-          proofUploadClearRef.current()
+          proofUploadClearRef.current();
         }
-      }
+      };
     }
-  }, [clearInputsRef])
+  }, [clearInputsRef]);
 
   const handleProofChange = (hasProofData: boolean) => {
     setHasProof(hasProofData);
@@ -48,13 +54,7 @@ export function TaskExecutionCard({ task, onProofReady, onProofsChange, onViewTa
     onProofsChange?.(newProofs);
   };
 
-  const handleExecuteTask = () => {
-    console.log("Executing task:", task.id);
-    // TODO: Implement individual task execution
-  };
-
-  const handleAddProofToExecuted = async () => {
-    if (!hasProof) return;
+  const handleExecuteTask = async () => {
     
     const currentProofs = taskProofs || [];
     if (currentProofs.length === 0) return;
@@ -69,9 +69,7 @@ export function TaskExecutionCard({ task, onProofReady, onProofsChange, onViewTa
     }
   };
 
-  const IconComponent = getPriorityIcon(task.priority);
-
-  // Determine if task can be executed
+  // Constants for better readability
   const canExecute = task.state === TaskStateEnum.STORED;
 
   return (
@@ -100,7 +98,6 @@ export function TaskExecutionCard({ task, onProofReady, onProofsChange, onViewTa
             {/* Task Type - Clean text with color indicator */}
             <div className="col-span-2">
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-gray-500"></div>
                 <span className="text-sm text-base-content/80 font-medium">{task.taskType}</span>
               </div>
             </div>
@@ -109,10 +106,7 @@ export function TaskExecutionCard({ task, onProofReady, onProofsChange, onViewTa
             <div className="col-span-2">
               {task.priority && (
                 <div className="flex items-center gap-1">
-                  {IconComponent ? (
-                    <IconComponent className={clsx("h-4 w-4", getPriorityIconClass(task.priority))} />
-                  ) : null}
-                  <span className="text-sm text-base-content/80">{task.priority}</span>
+                  <span className={clsx("badge text-xs", getPriorityBadgeClasses(task.priority))}>{task.priority}</span>
                 </div>
               )}
             </div>
@@ -127,14 +121,14 @@ export function TaskExecutionCard({ task, onProofReady, onProofsChange, onViewTa
             {/* View Details Button */}
             <div className="col-span-2 flex justify-end">
               <button
-                onClick={(e) => {
-                  e.stopPropagation()
-                  onViewTask(task)
+                onClick={e => {
+                  e.stopPropagation();
+                  onViewTask(task);
                 }}
                 className="btn btn-ghost btn-sm"
                 title="View Task Details"
               >
-                <FaEye className="h-4 w-4" />
+                View More
               </button>
             </div>
           </div>
@@ -180,25 +174,12 @@ export function TaskExecutionCard({ task, onProofReady, onProofsChange, onViewTa
             />
 
             {/* Action Buttons - Different based on task state */}
-            {hasProof && (
-              <div className="flex justify-end pt-2">
-                {canExecute ? (
-                  <button onClick={handleExecuteTask} className="btn btn-primary btn-sm">
-                    <FaPlay className="h-4 w-4 mr-2" />
-                    Execute This Task
-                  </button>
-                ) : task.state === TaskStateEnum.EXECUTED ? (
-                  <button 
-                    onClick={handleAddProofToExecuted} 
-                    className="btn btn-secondary btn-sm"
-                    disabled={isExecuting}
-                  >
-                    <FaPlay className="h-4 w-4 mr-2" />
-                    {isExecuting ? 'Adding Proof...' : 'Add Proof to Executed Task'}
-                  </button>
-                ) : null}
-              </div>
-            )}
+            <TaskActionButtons
+              task={task}
+              hasProof={hasProof}
+              isExecuting={isExecuting}
+              onExecute={handleExecuteTask}
+            />
           </div>
         </div>
       </div>

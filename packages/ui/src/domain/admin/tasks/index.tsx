@@ -27,20 +27,12 @@ export function TaskExecutionPage() {
     totalTasks,
   } = useAdminTasksList();
   const { batchExecuteTasks, isExecuting } = useTaskExecution();
-
-  // Show all tasks (no filtering by state)
-  const allTasks = tasks;
-
-  // Track tasks with proofs ready for execution
   const [tasksWithProofs, setTasksWithProofs] = useState<Set<string>>(new Set());
-  // Track proofs for each task
   const [taskProofs, setTaskProofs] = useState<Record<string, any[]>>({});
-
-  // Modal state
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // Refs to clear inputs after execution
+  
+  const allTasks = tasks;
   const clearInputsRefs = useRef<Record<string, React.MutableRefObject<(() => void) | null>>>({});
 
   const handleTaskProofReady = (taskId: string, hasProof: boolean) => {
