@@ -29,6 +29,7 @@ jobs:
   Deploy:
     needs: Validate
     runs-on: ubuntu-latest
+    environment: production
     env:
       VITE_WEB3AUTH_CLIENT_ID: ${{ secrets.VITE_WEB3AUTH_CLIENT_ID }}
     steps:
