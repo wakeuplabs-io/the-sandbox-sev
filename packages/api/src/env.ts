@@ -14,6 +14,15 @@ const EnvSchema = z.object({
   PORT: z.coerce.number().default(9999),
   LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]).optional(),
   CORS_ORIGINS: z.string().default("http://localhost:3000"),
+  PRIVATE_KEY: z.string(),
+  RPC_URL: z.string(),
+  DATABASE_URL: z.string(),
+  EXECUTION_VERIFIER_ADDRESS: z.string(),
+  // S3 Configuration
+  // AWS credentials are automatically provided by Lambda execution role
+  AWS_REGION: z.string().default("sa-east-1"),
+  ASSETS_URL: z.string().optional(),
+  ASSETS_BUCKET_NAME: z.string().optional(),
 });
 
 export type env = z.infer<typeof EnvSchema>;

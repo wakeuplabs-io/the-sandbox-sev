@@ -40,11 +40,31 @@ const optimism = {
   },
 };
 
+const polygon_amoy = {
+  url: "https://rpc-amoy.polygon.technology",
+  chainId: 80002,
+  urls: {
+    apiURL: "https://api-amoy.polygonscan.com/api",
+    browserURL: "https://polygon-amoy.etherscan.io",
+  },
+};
+
+const polygon = {
+  url: "https://polygon-rpc.com",
+  chainId: 137,
+  urls: {
+    apiURL: "https://api.polygonscan.com/api",
+    browserURL: "https://polygonscan.com",
+  },
+};
+
 const networks = {
   sepolia,
   ["optimism-sepolia"]: optimism_sepolia,
   ["base-sepolia"]: base_sepolia,
   optimism,
+  ["polygon-amoy"]: polygon_amoy,
+  ["polygon"]: polygon,
 } as const;
 
 export type Networks = keyof typeof networks;

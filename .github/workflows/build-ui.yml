@@ -16,15 +16,45 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: 'npm'
 
-      - name: Install UI dependencies
-        working-directory: packages/ui
+      - name: Install dependencies (root)
         run: npm install
+
+      - name: Verify workspace structure
+        run: |
+          echo "=== Workspace Structure ==="
+          npm list --depth=0
+          echo "=== API Package Dependencies ==="
+          npm list --workspace=packages/api --depth=0
+          echo "=== UI Package Dependencies ==="
+          npm list --workspace=packages/ui --depth=0
+
+      - name: Build API types first
+        run: npm run build:api
+
+      - name: Verify API build output
+        run: |
+          echo "=== API Build Output ==="
+          ls -la packages/api/dist/
+          echo "=== API Types ==="
+          cat packages/api/dist/index.d.ts || echo "No index.d.ts found"
 
       - name: Generate TanStack router tree
         working-directory: packages/ui
         run: npx @tanstack/router-cli generate-routefiles --routesDirectory src/routes
 
-      - name: Build UI only
-        working-directory: packages/ui
-        run: npm run build
+      - name: Build UI
+        run: npm run build:ui
+
+      - name: Show stage info
+        run: |
+          if [[ "${{ github.ref_name }}" == "main" ]]; then
+            STAGE_NAME="production"
+          elif [[ "${{ github.ref_name }}" == "develop" ]]; then
+            STAGE_NAME="staging"
+          else
+            STAGE_NAME=$(echo "${{ github.ref_name }}" | sed 's/[^a-zA-Z0-9]//g' | tr '[:upper:]' '[:lower:]' | cut -c1-10)
+            STAGE_NAME="dev-${STAGE_NAME}"
+          fi
+          echo "Build completed for stage: $STAGE_NAME"

@@ -1,0 +1,93 @@
+name: Deploy Staging
+
+on:
+  push:
+    branches:
+      - develop
+
+# Concurrency group name ensures concurrent workflow runs wait for any in-progress job to finish
+concurrency:
+   group: merge-${{ github.ref }}
+
+jobs:
+  Validate:
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Validate Configuration
+        run: |
+          if grep -q 'const PROJECT_NAME: string = "";' sst.config.ts || grep -q 'const CUSTOMER: string = "";' sst.config.ts; then
+            echo "::error::Project configuration is not set. Please set PROJECT_NAME and CUSTOMER in sst.config.ts"
+            echo "Example configuration:"
+            echo "const PROJECT_NAME = \"testing-monorepo-1\";"
+            echo "const CUSTOMER = \"testing\";"
+            exit 1
+          fi
+
+  Deploy:
+    needs: Validate
+    runs-on: ubuntu-latest
+    environment: staging
+    env:
+      VITE_WEB3AUTH_CLIENT_ID: ${{ secrets.VITE_WEB3AUTH_CLIENT_ID }}
+    steps:
+      - name: Git clone the repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies (root)
+        run: npm install
+
+      - name: Build shared packages
+        run: npm run build:api
+
+      - name: Migrate database
+        working-directory: ./packages/api
+        run: npm run prisma:migrate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Deploy (API + UI)
+        run: |
+          # Set detailed log level
+          export SST_LOG_LEVEL=debug
+          
+          # Debug environment variables
+          echo "=== Environment Variables Debug ==="
+          echo "VITE_WEB3AUTH_CLIENT_ID: ${{ secrets.VITE_WEB3AUTH_CLIENT_ID }}"
+          echo "DATABASE_URL: ${{ secrets.DATABASE_URL }}"
+          echo "NODE_ENV: $NODE_ENV"
+          echo "AWS_REGION: $AWS_REGION"
+          
+          # Use staging stage for develop branch
+          STAGE_NAME="staging"
+          
+          echo "Using stage: $STAGE_NAME"
+          
+          # Run with --verbose for more details
+          if ! npx sst deploy --stage $STAGE_NAME --verbose; then
+            echo "::group::Deployment Error"
+            echo "Deployment failed. Error details:"
+            cat .sst/log/sst.log || echo "No log file found"
+            echo "::endgroup::"
+            exit 1
+          fi
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: sa-east-1
+          ASSETS_BUCKET_NAME: ${{ secrets.ASSETS_BUCKET_NAME }}
+          ASSETS_URL: ${{ secrets.ASSETS_URL }}
+          VITE_WEB3AUTH_CLIENT_ID: ${{ secrets.VITE_WEB3AUTH_CLIENT_ID }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          EXECUTION_VERIFIER_ADDRESS: ${{ secrets.EXECUTION_VERIFIER_ADDRESS }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          RPC_URL: ${{ secrets.RPC_URL }}
+          CORS_ORIGINS: ${{ secrets.CORS_ORIGINS }}

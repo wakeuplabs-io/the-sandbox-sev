@@ -10,43 +10,84 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AboutIndexRouteImport } from './routes/about/index'
+import { Route as TasksIndexRouteImport } from './routes/tasks.index'
+import { Route as AdminUsersRouteImport } from './routes/admin/users'
+import { Route as AdminTasksIndexRouteImport } from './routes/admin/tasks.index'
+import { Route as AdminTasksNewRouteImport } from './routes/admin/tasks.new'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AboutIndexRoute = AboutIndexRouteImport.update({
-  id: '/about/',
-  path: '/about/',
+const TasksIndexRoute = TasksIndexRouteImport.update({
+  id: '/tasks/',
+  path: '/tasks/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/admin/users',
+  path: '/admin/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminTasksIndexRoute = AdminTasksIndexRouteImport.update({
+  id: '/admin/tasks/',
+  path: '/admin/tasks/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminTasksNewRoute = AdminTasksNewRouteImport.update({
+  id: '/admin/tasks/new',
+  path: '/admin/tasks/new',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutIndexRoute
+  '/admin/users': typeof AdminUsersRoute
+  '/tasks': typeof TasksIndexRoute
+  '/admin/tasks/new': typeof AdminTasksNewRoute
+  '/admin/tasks': typeof AdminTasksIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutIndexRoute
+  '/admin/users': typeof AdminUsersRoute
+  '/tasks': typeof TasksIndexRoute
+  '/admin/tasks/new': typeof AdminTasksNewRoute
+  '/admin/tasks': typeof AdminTasksIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/about/': typeof AboutIndexRoute
+  '/admin/users': typeof AdminUsersRoute
+  '/tasks/': typeof TasksIndexRoute
+  '/admin/tasks/new': typeof AdminTasksNewRoute
+  '/admin/tasks/': typeof AdminTasksIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about'
+  fullPaths:
+    | '/'
+    | '/admin/users'
+    | '/tasks'
+    | '/admin/tasks/new'
+    | '/admin/tasks'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about'
-  id: '__root__' | '/' | '/about/'
+  to: '/' | '/admin/users' | '/tasks' | '/admin/tasks/new' | '/admin/tasks'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin/users'
+    | '/tasks/'
+    | '/admin/tasks/new'
+    | '/admin/tasks/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AboutIndexRoute: typeof AboutIndexRoute
+  AdminUsersRoute: typeof AdminUsersRoute
+  TasksIndexRoute: typeof TasksIndexRoute
+  AdminTasksNewRoute: typeof AdminTasksNewRoute
+  AdminTasksIndexRoute: typeof AdminTasksIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -58,11 +99,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/about/': {
-      id: '/about/'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutIndexRouteImport
+    '/tasks/': {
+      id: '/tasks/'
+      path: '/tasks'
+      fullPath: '/tasks'
+      preLoaderRoute: typeof TasksIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/admin/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/tasks/': {
+      id: '/admin/tasks/'
+      path: '/admin/tasks'
+      fullPath: '/admin/tasks'
+      preLoaderRoute: typeof AdminTasksIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/tasks/new': {
+      id: '/admin/tasks/new'
+      path: '/admin/tasks/new'
+      fullPath: '/admin/tasks/new'
+      preLoaderRoute: typeof AdminTasksNewRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -70,7 +132,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AboutIndexRoute: AboutIndexRoute,
+  AdminUsersRoute: AdminUsersRoute,
+  TasksIndexRoute: TasksIndexRoute,
+  AdminTasksNewRoute: AdminTasksNewRoute,
+  AdminTasksIndexRoute: AdminTasksIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,13 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
-  component: Index,
+  beforeLoad: () => {
+    throw redirect({
+      to: "/tasks",
+    });
+  },
 });
-
-function Index() {
-  return (
-    <div className="flex flex-1 items-center justify-center">
-      <h3>Home Page</h3>
-    </div>
-  );
-}

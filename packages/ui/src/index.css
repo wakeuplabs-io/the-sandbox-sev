@@ -1,15 +1,32 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@plugin "daisyui" { 
+  themes: dark --default
+}; 
 
+@plugin "daisyui/theme" {
+  name: "dark";
+  default: true;
+  --color-primary: #00aeff;
+  --color-secondary: #E5C64A;
+  --color-accent: #E5C64A;
+  --color-neutral: #1b1921;
+  --color-base-100: #1b1921;
+  --color-base-200: #20212B;
+  --color-base-300: #40414A;
+  --color-base-content: #FFFFFF;
+  --color-success: #04C940;
+  --color-error: #DD4656;
+  --color-warning: #FFD700;
+  --color-info: #00aeff;
+}
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: DM Sans, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color-scheme: dark light;
+  color: #FFFFFF;
+  background-color: #1b1921;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -17,56 +34,27 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+@layer components {
+  .heading-1 {
+    @apply text-2xl font-bold text-base-content;
   }
-  a:hover {
-    color: #747bff;
+  .section {
+    @apply container mx-auto px-4 py-6 card min-h-[calc(100vh-250px)] border border-[#ffffff1a] rounded-[8px] flex flex-col;
   }
-  button {
-    background-color: #f9f9f9;
+  .header {
+    @apply fixed top-0 left-0 right-0 z-50 navbar px-4 transition-all duration-300 ease-in-out border-b border-b-[#ffffff1a];
+  }
+  .base-input {
+    @apply input bg-transparent ring-0 focus:ring-0 focus:outline-none focus:ring-offset-0;
+  }
+  .modal-background {
+    @apply modal-backdrop bg-black/50 backdrop-blur-sm;
   }
 }
