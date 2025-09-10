@@ -50,12 +50,24 @@ export default $config({
     const stageSuffix =
       $app.stage === "production" ? "" : $app.stage === "staging" ? "-staging" : "-dev";
     
-    const API_DOMAIN_URL = `api.${PROJECT_NAME}${stageSuffix}.wakeuplabs.link`;
+    // Different base domains for different environments
+    const BASE_DOMAIN = $app.stage === "production" ? "sandbox-sev.com" : "wakeuplabs.link";
+    
+    const API_DOMAIN_URL = `api.${PROJECT_NAME}${stageSuffix}.${BASE_DOMAIN}`;
     const API_URL = `https://${API_DOMAIN_URL}`;
-    const UI_DOMAIN_URL = `${PROJECT_NAME}${stageSuffix}.wakeuplabs.link`;
+    const UI_DOMAIN_URL = `${PROJECT_NAME}${stageSuffix}.${BASE_DOMAIN}`;
     const UI_URL = `https://${UI_DOMAIN_URL}`;
     const ASSETS_DOMAIN_URL = `assets.${UI_DOMAIN_URL}`;
     const ASSETS_URL = `https://${ASSETS_DOMAIN_URL}`;
+
+    // Debug domain configuration
+    console.log("=== Domain Configuration ===");
+    console.log(`Stage: ${$app.stage}`);
+    console.log(`Base Domain: ${BASE_DOMAIN}`);
+    console.log(`API Domain: ${API_DOMAIN_URL}`);
+    console.log(`UI Domain: ${UI_DOMAIN_URL}`);
+    console.log(`Assets Domain: ${ASSETS_DOMAIN_URL}`);
+    console.log("============================");
 
     validateConfig();
 
