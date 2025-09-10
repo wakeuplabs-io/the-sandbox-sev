@@ -50,11 +50,11 @@ const polygon_amoy = {
 };
 
 const polygon = {
-  url: "https://polygon.io",
+  url: "https://polygon-rpc.com",
   chainId: 137,
   urls: {
-    apiURL: "https://api-polygon.etherscan.io/api",
-    browserURL: "https://polygon.etherscan.io",
+    apiURL: "https://api.polygonscan.com/api",
+    browserURL: "https://polygonscan.com",
   },
 };
 

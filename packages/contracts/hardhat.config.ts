@@ -22,8 +22,14 @@ const config: HardhatUserConfig = {
   },
 
   etherscan: {
-    apiKey: networkTestnet ? networkTestnet.apiKeys : undefined,
-    customChains: networkTestnet ? networkTestnet.customChains : undefined,
+    apiKey: {
+      ...(networkTestnet ? networkTestnet.apiKeys : {}),
+      ...(networkMainnet ? networkMainnet.apiKeys : {}),
+    },
+    customChains: [
+      ...(networkTestnet ? networkTestnet.customChains : []),
+      ...(networkMainnet ? networkMainnet.customChains : []),
+    ],
   },
   sourcify: {
     enabled: false,

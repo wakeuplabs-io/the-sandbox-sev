@@ -39,55 +39,55 @@ const verifierService = new VerifierService({
 
 // Tipos para batch operations
 export interface NormalizedTask {
-  transactionId: string
-  taskType: TaskType
-  taskData: any
-  taskHash: string
-  tokenType: string
-  chain: string
-  platform: string
-  typeOfTx: string
-  details: string
-  priority: string
-  userId: number
-  [key: string]: any
+  transactionId: string;
+  taskType: TaskType;
+  taskData: any;
+  taskHash: string;
+  tokenType: string;
+  chain: string;
+  platform: string;
+  typeOfTx: string;
+  details: string;
+  priority: string;
+  userId: number;
+  [key: string]: any;
 }
 
 export interface BatchTaskResult {
-  successful: any[]
+  successful: any[];
   failed: Array<{
-    taskData: any
-    error: string
-  }>
+    taskData: any;
+    error: string;
+  }>;
   summary: {
-    total: number
-    successful: number
-    failed: number
-  }
+    total: number;
+    successful: number;
+    failed: number;
+  };
 }
 
 // Task Factory
 class TaskFactory {
-  private normalizers: Map<TaskType, BaseTaskNormalizer> = new Map()
-  
+  private normalizers: Map<TaskType, BaseTaskNormalizer> = new Map();
+
   constructor() {
-    this.normalizers.set(TaskType.LIQUIDATION, new LiquidationTaskNormalizer())
-    this.normalizers.set(TaskType.ACQUISITION, new AcquisitionTaskNormalizer())
-    this.normalizers.set(TaskType.AUTHORIZATION, new AuthorizationTaskNormalizer())
-    this.normalizers.set(TaskType.ARBITRAGE, new ArbitrageTaskNormalizer())
+    this.normalizers.set(TaskType.LIQUIDATION, new LiquidationTaskNormalizer());
+    this.normalizers.set(TaskType.ACQUISITION, new AcquisitionTaskNormalizer());
+    this.normalizers.set(TaskType.AUTHORIZATION, new AuthorizationTaskNormalizer());
+    this.normalizers.set(TaskType.ARBITRAGE, new ArbitrageTaskNormalizer());
   }
-  
+
   normalizeTask(data: CreateTaskInput, userId: number): NormalizedTask {
-    const normalizer = this.normalizers.get(data.taskType)
+    const normalizer = this.normalizers.get(data.taskType);
     if (!normalizer) {
-      throw new Error(`No normalizer found for task type: ${data.taskType}`)
+      throw new Error(`No normalizer found for task type: ${data.taskType}`);
     }
-    
-    return normalizer.normalize(data, userId)
+
+    return normalizer.normalize(data, userId);
   }
-  
+
   normalizeTasksBatch(tasksData: CreateTaskInput[], userId: number): NormalizedTask[] {
-    return tasksData.map(data => this.normalizeTask(data, userId))
+    return tasksData.map(data => this.normalizeTask(data, userId));
   }
 }
 
@@ -110,12 +110,15 @@ class TaskRepository {
         userId: task.userId,
         ...this.getSpecificFields(task),
       },
-    })
+    });
   }
-  
-  async createTasksBatch(tasks: NormalizedTask[], blockchainTransactionHash: string): Promise<any[]> {
+
+  async createTasksBatch(
+    tasks: NormalizedTask[],
+    blockchainTransactionHash: string
+  ): Promise<any[]> {
     return prisma.$transaction(
-      tasks.map(task => 
+      tasks.map(task =>
         prisma.task.create({
           data: {
             transactionId: task.transactionId,
@@ -134,24 +137,24 @@ class TaskRepository {
           },
         })
       )
-    )
+    );
   }
-  
+
   async checkTaskExists(transactionId: string): Promise<boolean> {
     const task = await prisma.task.findUnique({
       where: { transactionId },
-    })
-    return !!task
+    });
+    return !!task;
   }
-  
+
   async checkTasksExist(transactionIds: string[]): Promise<string[]> {
     const existingTasks = await prisma.task.findMany({
       where: { transactionId: { in: transactionIds } },
       select: { transactionId: true },
-    })
-    return existingTasks.map(t => t.transactionId)
+    });
+    return existingTasks.map(t => t.transactionId);
   }
-  
+
   private getSpecificFields(task: NormalizedTask): any {
     switch (task.taskType) {
       case TaskType.LIQUIDATION:
@@ -162,7 +165,7 @@ class TaskRepository {
           targetPriceEth: task.targetPriceEth,
           dateDeadline: task.dateDeadline,
           technicalVerification: task.technicalVerification,
-        }
+        };
       case TaskType.ACQUISITION:
         return {
           nftName: task.nftName,
@@ -171,14 +174,14 @@ class TaskRepository {
           targetPriceBudget: task.targetPriceBudget,
           transactionExecutionDate: task.transactionExecutionDate,
           priorityDeadline: task.priorityDeadline,
-        }
+        };
       case TaskType.AUTHORIZATION:
         return {
           collectionName: task.collectionName,
           tokenId: task.tokenId,
           targetPriceBudget: task.targetPriceBudget,
           dateDeadline: task.dateDeadline,
-        }
+        };
       case TaskType.ARBITRAGE:
         return {
           targetPricePerToken: task.targetPricePerToken,
@@ -187,19 +190,19 @@ class TaskRepository {
           proportion: task.proportion,
           duration: task.duration,
           deadline: task.deadline,
-        }
+        };
       default:
-        return {}
+        return {};
     }
   }
 }
 
 // Instancias
-const taskFactory = new TaskFactory()
-const taskRepository = new TaskRepository()
+const taskFactory = new TaskFactory();
+const taskRepository = new TaskRepository();
 
 // Constantes
-const MAX_BATCH_SIZE = 20
+const MAX_BATCH_SIZE = 20;
 
 /**
  * Creates a liquidation task
@@ -432,8 +435,6 @@ export const getAllTasks = async (): Promise<any[]> => {
  */
 export const getTasks = async (query: z.infer<typeof GetTasksQuerySchema>) => {
   const { page, limit, taskType, search, dateFrom, dateTo, status, state } = query;
-
-  // Build where clause for filters
   const where: any = {};
 
   if (taskType) {
@@ -466,15 +467,12 @@ export const getTasks = async (query: z.infer<typeof GetTasksQuerySchema>) => {
     where.state = state;
   }
 
-  // Get total count for pagination
   const total = await prisma.task.count({ where });
 
-  // Calculate pagination
   const totalPages = Math.ceil(total / limit);
   const hasNext = page < totalPages;
   const hasPrev = page > 1;
 
-  // Get tasks with pagination
   const tasks = await prisma.task.findMany({
     where,
     orderBy: { createdAt: "desc" },
@@ -521,7 +519,6 @@ export const getTasks = async (query: z.infer<typeof GetTasksQuerySchema>) => {
  * Executes a single task by creating proofs and updating state
  */
 export const executeTask = async (data: ExecuteTaskInput, user: User): Promise<any> => {
-  // Verify task exists and is in STORED state
   const task = await prisma.task.findUnique({
     where: { id: data.taskId },
   });
@@ -530,7 +527,6 @@ export const executeTask = async (data: ExecuteTaskInput, user: User): Promise<a
     throw new Error(`Task with ID ${data.taskId} not found`);
   }
 
-  // Create proofs
   const createdProofs = await Promise.all(
     data.proofs.map(async (proofData: ProofData) => {
       return prisma.taskExecutionProof.create({
@@ -550,7 +546,6 @@ export const executeTask = async (data: ExecuteTaskInput, user: User): Promise<a
   let updatedTask = task;
 
   if (task.state === TaskState.STORED) {
-    // Update task state to EXECUTED
     updatedTask = await prisma.task.update({
       where: { id: data.taskId },
       data: { state: TaskState.EXECUTED },
@@ -680,62 +675,41 @@ export const getPublicTasks = async (query: GetPublicTasksQuery) => {
  * Creates multiple tasks in batch
  */
 export const batchCreateTasks = async (
-  tasksData: CreateTaskInput[], 
+  tasksData: CreateTaskInput[],
   user: User
 ): Promise<BatchTaskResult> => {
-  // Validar tamaño del batch
   if (tasksData.length > MAX_BATCH_SIZE) {
-    throw new Error(`Batch size cannot exceed ${MAX_BATCH_SIZE} tasks`)
+    throw new Error(`Batch size cannot exceed ${MAX_BATCH_SIZE} tasks`);
   }
-  
+
   if (tasksData.length === 0) {
-    throw new Error('At least one task is required')
+    throw new Error("At least one task is required");
   }
-  
-  // Normalizar todas las tasks
-  const normalizedTasks = taskFactory.normalizeTasksBatch(tasksData, user.id)
-  
-  // Verificar que no existan tasks duplicadas
-  const transactionIds = normalizedTasks.map(t => t.transactionId)
-  const existingIds = await taskRepository.checkTasksExist(transactionIds)
-  
+
+  const normalizedTasks = taskFactory.normalizeTasksBatch(tasksData, user.id);
+
+  const transactionIds = normalizedTasks.map(t => t.transactionId);
+  const existingIds = await taskRepository.checkTasksExist(transactionIds);
+
   if (existingIds.length > 0) {
-    throw new Error(`Tasks with transaction IDs already exist: ${existingIds.join(', ')}`)
+    throw new Error(`Tasks with transaction IDs already exist: ${existingIds.join(", ")}`);
   }
-  
-  try {
-    // Una sola transacción blockchain
-    const hashes = normalizedTasks.map(task => task.taskHash as any)
-    const transactionHash = await verifierService.storeHashBatch({
-      hashes,
-      userAddress: user.address as any,
-    })
-    
-    // Una sola operación de batch en DB
-    const createdTasks = await taskRepository.createTasksBatch(normalizedTasks, transactionHash)
-    
-    return {
-      successful: createdTasks,
-      failed: [],
-      summary: {
-        total: tasksData.length,
-        successful: createdTasks.length,
-        failed: 0,
-      },
-    }
-  } catch (error) {
-    // En caso de error, retornar todas como fallidas
-    return {
-      successful: [],
-      failed: tasksData.map((taskData, index) => ({
-        taskData,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      })),
-      summary: {
-        total: tasksData.length,
-        successful: 0,
-        failed: tasksData.length,
-      },
-    }
-  }
-}
+
+  const hashes = normalizedTasks.map(task => task.taskHash as any);
+  const transactionHash = await verifierService.storeHashBatch({
+    hashes,
+    userAddress: user.address as any,
+  });
+
+  const createdTasks = await taskRepository.createTasksBatch(normalizedTasks, transactionHash);
+
+  return {
+    successful: createdTasks,
+    failed: [],
+    summary: {
+      total: tasksData.length,
+      successful: createdTasks.length,
+      failed: 0,
+    },
+  };
+};

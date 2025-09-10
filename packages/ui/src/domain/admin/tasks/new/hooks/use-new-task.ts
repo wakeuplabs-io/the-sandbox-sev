@@ -114,57 +114,36 @@ export function useNewTask() {
           },
         };
       } else {
-        // Múltiples tasks: usar endpoint batch (más eficiente)
         result = await createTasksBatch.mutateAsync(tasksData);
       }
-
-      // Mostrar resultados
-      const method = validTasks.length === 1 ? "individual" : "batch";
-      toast.success(
-        `Successfully created ${result.summary.successful} tasks using ${method} method!`
-      );
-
-      if (result.summary.failed > 0) {
-        toast.warning(`${result.summary.failed} tasks failed to create`);
-      }
-
-      // Reset form
+      toast.success(`Successfully created ${result.summary.successful}`);
       setRawExcelData("");
       setParsedData([]);
       setValidationStatus("idle");
       setErrors([]);
       router.navigate({ to: "/admin/tasks" });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating tasks:", error);
-      toast.error("Error creating tasks. Please try again.");
+      toast.error(error?.message || "Error creating tasks. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return {
-    // State
     selectedTaskType,
     rawExcelData,
     parsedData,
     validationStatus,
     errors,
-    
-    // Computed values
     hasErrors,
     validTasks,
     exceedsBatchLimit,
     canSubmit,
-    
-    // Handlers
     handleTaskTypeChange,
     handleExcelDataChange,
     handleSubmit,
-    
-    // Constants
     maxBatchSize: MAX_BATCH_SIZE,
-    
-    // Loading states
     isCreating: createTask.isPending || createTasksBatch.isPending,
   };
 }

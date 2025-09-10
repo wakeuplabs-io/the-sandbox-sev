@@ -1,6 +1,107 @@
-import { type PublicClient, type WalletClient, type Address, type Hash } from "viem";
+import {
+  type PublicClient,
+  type WalletClient,
+  type Address,
+  type Hash,
+  decodeErrorResult,
+} from "viem";
 import { CHAIN_BY_ENV, EXECUTION_VERIFIER_ABI } from "../constants";
 import env from "@/env";
+
+/**
+ * Parses contract errors using Viem's decodeErrorResult
+ */
+function parseContractError(error: unknown): string {
+  try {
+    // Check if error has cause property with ContractFunctionRevertedError
+    if (error && typeof error === "object" && "cause" in error && error.cause) {
+      const cause = error.cause as any;
+
+      // Check if cause has raw property (the raw error data)
+      if (cause && typeof cause === "object" && "raw" in cause && cause.raw) {
+        try {
+          // Use Viem's decodeErrorResult with the raw data
+          const decodedError = decodeErrorResult({
+            abi: EXECUTION_VERIFIER_ABI,
+            data: cause.raw as `0x${string}`,
+          });
+
+          switch (decodedError.errorName) {
+            case "AccessControlUnauthorizedAccount":
+              const account = decodedError.args?.[0] as Address;
+              const neededRole = decodedError.args?.[1] as string;
+              return `Access denied: The account ${account} does not have the required role`;
+
+            case "AccessControlBadConfirmation":
+              return "Access denied: Invalid confirmation for role management.";
+
+            case "ArraysLengthMismatch":
+              return "Transaction failed: Array length mismatch. Please ensure all arrays have the same length.";
+
+            case "BatchSizeTooLarge":
+              const size = decodedError.args?.[0] as bigint;
+              const maxSize = decodedError.args?.[1] as bigint;
+              return `Transaction failed: Batch size ${size} exceeds maximum allowed size of ${maxSize}.`;
+
+            case "CannotRevokeFromAdmin":
+              return "Access denied: Cannot revoke role from admin account.";
+
+            case "CannotRevokeFromSelf":
+              return "Access denied: Cannot revoke role from self.";
+
+            case "HashAlreadyStored":
+              const hash = decodedError.args?.[0] as string;
+              return `Transaction failed: Hash has already been stored.`;
+
+            case "InvalidUserAddress":
+              const userAddress = decodedError.args?.[0] as Address;
+              return `Transaction failed: Invalid user address ${userAddress}.`;
+
+            default:
+              return `Transaction failed: ${decodedError.errorName} - ${decodedError.args ? JSON.stringify(decodedError.args) : "Unknown error"}`;
+          }
+        } catch (decodeError) {
+          // If ABI decoding fails, fall back to string parsing
+          console.warn("Failed to decode error with ABI:", decodeError);
+        }
+      }
+    }
+
+    // Fallback to string parsing for non-contract errors
+    const errorString = String(error);
+
+    // Gas estimation errors
+    if (errorString.includes("gas") || errorString.includes("Gas")) {
+      return "Transaction failed: Gas estimation error. The transaction may fail or require more gas than estimated.";
+    }
+
+    // Network errors
+    if (errorString.includes("network") || errorString.includes("Network")) {
+      return "Network error: Unable to connect to the blockchain network. Please check your connection and try again.";
+    }
+
+    // Insufficient funds
+    if (errorString.includes("insufficient") || errorString.includes("Insufficient")) {
+      return "Transaction failed: Insufficient funds to complete the transaction.";
+    }
+
+    // Nonce errors
+    if (errorString.includes("nonce") || errorString.includes("Nonce")) {
+      return "Transaction failed: Nonce error. Please try again in a moment.";
+    }
+
+    // Contract function reverted (fallback)
+    if (errorString.includes("reverted")) {
+      return "Transaction failed: The contract function reverted. This could be due to insufficient permissions, invalid parameters, or contract state issues.";
+    }
+
+    // Default fallback
+    return `Transaction failed: ${errorString}`;
+  } catch (parseError) {
+    // If all parsing fails, return the original error
+    return `Transaction failed: ${String(error)}`;
+  }
+}
 
 interface VerifierServiceConfig {
   contractAddress: Address;
@@ -50,7 +151,8 @@ export class VerifierService {
       });
       return hash;
     } catch (error) {
-      throw new Error(`Failed to store hash: ${error}`);
+      const parsedError = parseContractError(error);
+      throw new Error(`Failed to store hash: ${parsedError}`);
     }
   }
 
@@ -63,8 +165,8 @@ export class VerifierService {
       if (params.hashes.length > 20) {
         throw new Error("Batch size cannot exceed 20 elements");
       }
-     
-      if(!params.userAddress) {
+
+      if (!params.userAddress) {
         throw new Error("User address is required");
       }
 
@@ -76,7 +178,8 @@ export class VerifierService {
       });
       return hash;
     } catch (error) {
-      throw new Error(`Failed to store hash batch: ${error}`);
+      const parsedError = parseContractError(error);
+      throw new Error(`${parsedError}`);
     }
   }
 
@@ -93,7 +196,8 @@ export class VerifierService {
       });
       return result as Address;
     } catch (error) {
-      throw new Error(`Failed to check if hash is stored: ${error}`);
+      const parsedError = parseContractError(error);
+      throw new Error(`Failed to check if hash is stored: ${parsedError}`);
     }
   }
 
@@ -116,7 +220,8 @@ export class VerifierService {
       });
       return hash;
     } catch (error) {
-      throw new Error(`Failed to grant store roles: ${error}`);
+      const parsedError = parseContractError(error);
+      throw new Error(`Failed to grant store roles: ${parsedError}`);
     }
   }
 
@@ -139,7 +244,8 @@ export class VerifierService {
       });
       return hash;
     } catch (error) {
-      throw new Error(`Failed to revoke store roles: ${error}`);
+      const parsedError = parseContractError(error);
+      throw new Error(`Failed to revoke store roles: ${parsedError}`);
     }
   }
 
@@ -160,7 +266,8 @@ export class VerifierService {
       });
       return result as boolean[];
     } catch (error) {
-      throw new Error(`Failed to check store roles: ${error}`);
+      const parsedError = parseContractError(error);
+      throw new Error(`Failed to check store roles: ${parsedError}`);
     }
   }
 
@@ -189,7 +296,8 @@ export class VerifierService {
         maxBatchSize: maxBatchSize as bigint,
       };
     } catch (error) {
-      throw new Error(`Failed to get constants: ${error}`);
+      const parsedError = parseContractError(error);
+      throw new Error(`Failed to get constants: ${parsedError}`);
     }
   }
 
