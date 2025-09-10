@@ -91,7 +91,7 @@ function parseAcquisitionData(
   let rowIndex = 0;
   const expectedTabs = config.columns.length - 1; // Number of tabs needed for a complete row
 
-  lines.forEach((line, index) => {
+  lines.forEach((line) => {
     const tabCount = (line.match(/\t/g) || []).length;
 
     // If we have accumulated lines and this line has enough tabs for a complete row,
@@ -274,6 +274,7 @@ function processRow(
   taskType: TaskType
 ) {
   try {
+    console.log('processRow', rowData, rowIndex, config, parsedRows, taskType)
     // Split by tabs and clean values
     const values = rowData.split("\t").map(val => val.trim());
 
