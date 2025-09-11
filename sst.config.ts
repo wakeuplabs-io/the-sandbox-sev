@@ -180,7 +180,7 @@ export default $config({
         aliases: domainAlias !== domainRoot ? [domainAlias] : [],
       },
       build: {
-        command: "npm run build",
+        command: "npm run build:prod",
         output: "dist",
       },
       // Invalidate CloudFront cache after each deploy
