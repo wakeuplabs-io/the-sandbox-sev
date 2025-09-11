@@ -1,6 +1,6 @@
 # Functional README — *Sandbox DAO Transparency Dashboard*
 
-**Purpose:** Describe the app’s functional flows with step‑by‑step instructions and annotated screenshots so Product, QA, and onboarding share a single source of truth.
+**Purpose:** Provide end‑to‑end transparency and auditability for DAO operations. The app exposes a public, read‑only dashboard of executed on‑chain tasks (with hashes and proofs) and a private, role‑gated workspace where Admins/Consultants can batch‑create tasks, track their state, and upload execution proofs, while Admins manage user roles and access.
 
 ---
 
@@ -32,11 +32,11 @@
 ---
 
 ## Overview
-**Short summary:** _What problem the webapp solves in one or two sentences._
+**Short summary:** Sandbox DAO Transparency Dashboard centralizes the lifecycle of DAO operational tasks linked to on‑chain transactions. Community members can browse executed tasks publicly; Admins/Consultants work in a secured area to create tasks in batch, monitor status, and attach verifiable execution proofs.
 
-**Scope:** _Which modules/features are covered in this README (in scope / out of scope)._ 
+**Scope:** This README covers the Public Dashboard, Task Details modal, Task Execution & History (admins/consultants), Create New Tasks (batch), Authentication, and Users — Role Management (admins).
 
-**High‑level architecture:** _Frontend / Backend / External services (brief)._ 
+**High‑level architecture:** React (Vite) UI with Web3Auth; Node.js Lambdas (Hono) API; S3 for uploads; Neon Postgres DB; contracts on Polygon.
 
 ---
 
