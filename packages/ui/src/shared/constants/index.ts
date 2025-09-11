@@ -44,3 +44,9 @@ export const CHAIN_BY_ENV: Record<string, Chain> = {
   production: polygon,
   staging: polygonAmoy,
 };
+
+export const W3A_CHAINS_BY_ENV: Record<string, string> = {
+  development: "sapphire_devnet",
+  production: "sapphire_mainnet",
+  staging: "sapphire_devnet",
+};

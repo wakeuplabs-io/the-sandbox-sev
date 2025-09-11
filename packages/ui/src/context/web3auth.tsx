@@ -1,7 +1,7 @@
 import envParsed from "@/env-parsed";
-import { CHAIN_BY_ENV, ETHERSCAN_BY_CHAIN_ID } from "@/shared/constants";
+import { CHAIN_BY_ENV, W3A_CHAINS_BY_ENV, ETHERSCAN_BY_CHAIN_ID } from "@/shared/constants";
 import { retry } from "@/shared/lib/utils";
-import { Web3Auth } from "@web3auth/modal";
+import { Web3Auth, WEB3AUTH_NETWORK_TYPE } from "@web3auth/modal";
 import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from "react";
 import {
   Chain,
@@ -12,8 +12,9 @@ import {
   WalletClient,
 } from "viem";
 
-
 const chain = CHAIN_BY_ENV[envParsed.NODE_ENV];
+const w3aChain = W3A_CHAINS_BY_ENV[envParsed.NODE_ENV];
+
 
 type UserInfo = {
   email: string;
@@ -122,7 +123,7 @@ export const Web3AuthProvider = ({ children }: { children: ReactNode }) => {
             },
           },
           clientId,
-          web3AuthNetwork: "sapphire_devnet" as const,
+          web3AuthNetwork: w3aChain as WEB3AUTH_NETWORK_TYPE,
           defaultChainId: `0x${chain.id.toString(16)}`,
           chains: [
             {
@@ -142,8 +143,8 @@ export const Web3AuthProvider = ({ children }: { children: ReactNode }) => {
           ...baseConfig,
           uiConfig: {
             appName: "The Sandbox",
-            logoLight: "/logo-light.png",
-            logoDark: "/logo-dark.png",
+            logoLight: "/logo.png",
+            logoDark: "/logo.png",
           },
         });
 
