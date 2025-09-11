@@ -3,7 +3,7 @@ import React from "react";
 import { Layout } from "../shared/components/layout";
 
 const TanStackRouterDevtools =
-  process.env.NODE_ENV === "production"
+  import.meta.env.MODE === "production"
     ? () => null // Render nothing in production
     : React.lazy(() =>
         import("@tanstack/router-devtools").then((res) => ({
