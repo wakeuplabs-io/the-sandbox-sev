@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "npx tsc && vite build",
+    "build:prod": "npx tsc && vite build --mode production",
     "preview": "vite preview",
     "routes": "@tanstack/router-vite-plugin generate",
     "lint": "eslint . --ext .ts,.tsx --max-warnings 0",
