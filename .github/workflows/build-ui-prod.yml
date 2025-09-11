@@ -45,7 +45,7 @@ jobs:
         run: npx @tanstack/router-cli generate-routefiles --routesDirectory src/routes
 
       - name: Build UI
-        run: npm run build:prod
+        run: npm run build:ui:prod
 
       - name: Show stage info
         run: |
