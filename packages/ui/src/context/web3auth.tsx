@@ -12,11 +12,11 @@ import {
   WalletClient,
 } from "viem";
 
-const chain = CHAIN_BY_ENV[envParsed.NODE_ENV];
-const w3aChain = W3A_CHAINS_BY_ENV[envParsed.NODE_ENV];
+const chain = CHAIN_BY_ENV[import.meta.env.MODE];
+const w3aChain = W3A_CHAINS_BY_ENV[import.meta.env.MODE];
 console.log("w3aChain", w3aChain);
 console.log("chain", chain);
-console.log("envParsed.NODE_ENV", envParsed.NODE_ENV);
+console.log("import.meta.env.MODE", import.meta.env.MODE);
 
 type UserInfo = {
   email: string;
