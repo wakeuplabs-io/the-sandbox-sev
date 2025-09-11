@@ -2,7 +2,7 @@ name: Build and Generate Routes
 
 on:
   pull_request:
-    branches: [develop]
+    branches: [main]
 
 jobs:
   build:
@@ -45,7 +45,7 @@ jobs:
         run: npx @tanstack/router-cli generate-routefiles --routesDirectory src/routes
 
       - name: Build UI
-        run: npm run build:ui
+        run: npm run build:ui:prod
 
       - name: Show stage info
         run: |
