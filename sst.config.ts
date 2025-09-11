@@ -180,7 +180,11 @@ export default $config({
         aliases: domainAlias !== domainRoot ? [domainAlias] : [],
       },
       build: {
-        command: $app.stage === "production" ? "npm run build:prod" : "npm run build",
+        command: $app.stage === "production" 
+          ? "npm run build:prod" 
+          : $app.stage === "staging" 
+            ? "npm run build:staging"
+            : "npm run build",
         output: "dist",
       },
       // Invalidate CloudFront cache after each deploy

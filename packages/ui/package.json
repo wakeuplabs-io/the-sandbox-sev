@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npx tsc && vite build",
+    "build": "npx tsc && vite build --mode development",
+    "build:staging": "npx tsc && vite build --mode staging",
     "build:prod": "npx tsc && vite build --mode production",
     "preview": "vite preview",
     "routes": "@tanstack/router-vite-plugin generate",
