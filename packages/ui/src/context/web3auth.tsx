@@ -14,7 +14,9 @@ import {
 
 const chain = CHAIN_BY_ENV[envParsed.NODE_ENV];
 const w3aChain = W3A_CHAINS_BY_ENV[envParsed.NODE_ENV];
-
+console.log("w3aChain", w3aChain);
+console.log("chain", chain);
+console.log("envParsed.NODE_ENV", envParsed.NODE_ENV);
 
 type UserInfo = {
   email: string;
