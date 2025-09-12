@@ -71,7 +71,7 @@ function hasRequiredPermissions(
  */
 export function withAuth<P extends object>(
   Component: React.ComponentType<P>,
-  options?: WithAuthOptions
+  { roles, showStatus = true }: WithAuthOptions
 ) {
   return function AuthenticatedComponent(props: P) {
     const { isAuthenticated, account, email, isLoading: isAuthLoading } = useWeb3Auth();
@@ -79,8 +79,8 @@ export function withAuth<P extends object>(
 
     // Memoizar el cálculo de permisos para evitar re-renders innecesarios
     const isAllowed = useMemo(() => 
-      hasRequiredPermissions(isAuthenticated, user, options?.roles),
-      [isAuthenticated, user, options?.roles]
+      hasRequiredPermissions(isAuthenticated, user, roles),
+      [isAuthenticated, user, roles]
     );
 
     // Memoizar el estado de loading
@@ -97,12 +97,12 @@ export function withAuth<P extends object>(
 
     // Guard clause: si el contexto no está listo, mostrar loading
     if (isLoading) {
-      return <LoadingState showStatus={options?.showStatus ?? false} />;
+      return <LoadingState showStatus={showStatus} />;
     }
 
     // Guard clause: si no está autenticado o no tiene permisos
     if (!isAllowed) {
-      if (options?.showStatus) {
+      if (showStatus) {
         return <ErrorState message={getErrorMessage()} />;
       }
       return null;
