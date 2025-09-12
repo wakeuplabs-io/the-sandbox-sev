@@ -57,6 +57,8 @@ function ProofCard({ proof }: ProofCardProps) {
             <span className="text-xs text-base-content/60">
               Uploaded by: {proof.uploadedByUser.nickname || proof.uploadedByUser.address}
             </span>
+            <span className="text-xs text-base-content/60">{truncateHash(proof.uploadedByUser.address)}</span>
+            <CopyToClipboard text={proof.uploadedByUser.address} />
           </div>
         )}
       </div>
@@ -80,7 +82,9 @@ export function TaskDetailsModal({ task, isOpen, onClose }: TaskDetailsModalProp
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             <span className="font-semibold">Created by:</span>
-            <span className="font-mono">{task.user.nickname || task.user.address}</span>
+            <span className="font-mono">{task.user.nickname}</span>
+            <span className="font-mono">{truncateHash(task.user.address)}</span>
+            <CopyToClipboard text={task.user.address} />
           </div>
         </div>
 

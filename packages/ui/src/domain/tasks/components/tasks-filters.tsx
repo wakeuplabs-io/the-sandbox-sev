@@ -26,8 +26,8 @@ const taskStateOptions: SelectOption[] = [
 export function TasksFilters({ filters, onFiltersChange, isPublic }: TasksFiltersProps) {
   return (
     <div className="w-full">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="form-control">
+      <div className="flex flex-wrap justify-between gap-4 xl:gap-6">
+        <div className="form-control col-span-1">
           <label className="label">
             <span className="label-text">Search Transaction ID</span>
           </label>
@@ -43,11 +43,11 @@ export function TasksFilters({ filters, onFiltersChange, isPublic }: TasksFilter
           </div>
         </div>
 
-        <div className="form-control">
+        <div className="form-control col-span-2 xl:col-span-1">
           <label className="label">
             <span className="label-text font-medium">Task Type</span>
           </label>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-nowrap gap-2">
             {taskTypeOptions.map(option => (
               <button
                 key={option.value}
@@ -63,7 +63,7 @@ export function TasksFilters({ filters, onFiltersChange, isPublic }: TasksFilter
         </div>
 
         {!isPublic && (
-          <div className="form-control">
+          <div className="form-control col-span-2 xl:col-span-1">
             <label className="label">
               <span className="label-text font-medium">Task State</span>
             </label>

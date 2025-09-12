@@ -84,8 +84,8 @@ export function TaskExecutionCard({
             </div>
 
             {/* Transaction ID */}
-            <div className="col-span-3">
-              <span className="font-mono text-sm font-semibold">{task.transactionId}</span>
+            <div className="col-span-3 overflow-hidden text-ellipsis">
+              <span className="font-mono text-sm font-semibold ">{task.transactionId}</span>
             </div>
 
             {/* Task Type - Clean text with color indicator */}
