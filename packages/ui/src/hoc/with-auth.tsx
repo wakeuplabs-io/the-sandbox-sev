@@ -20,7 +20,7 @@ interface ErrorStateProps {
 /**
  * Componente para mostrar estado de carga
  */
-function LoadingState({ showStatus }: LoadingStateProps) {
+function LoadingState({ showStatus = true }: LoadingStateProps) {
   if (!showStatus) return null;
   
   return (

@@ -3,6 +3,7 @@ import { AddETHModal } from "./add-eth-modal";
 import { formatAmount } from "@/shared/lib/utils";
 import { useLayout } from "@/context/layout-context";
 import { withAuth } from "@/hoc/with-auth";
+import { UserRoleEnum } from "@/shared/constants";
 export function WalletBalanceBanner({ onClose, isOpen }: { onClose: () => void; isOpen: boolean }) {
   const { balanceStatus, isLoading } = useWalletBalance();
 
@@ -52,5 +53,5 @@ export const WalletBalance = withAuth(function WalletBalance() {
       </span>
     </div>
   );
-}, );
+}, { showStatus: false, roles: [UserRoleEnum.ADMIN, UserRoleEnum.CONSULTANT] });
 
