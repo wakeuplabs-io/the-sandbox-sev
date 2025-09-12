@@ -56,8 +56,8 @@ export function TasksTable({ tasks, isLoading, onViewTask }: TasksTableProps) {
         <tbody>
           {tasks.map(task => (
             <tr key={task.id} className="hover">
-              <td className="font-mono text-sm">{task.transactionId}</td>
-              <td>
+              <td className="font-mono text-sm overflow-hidden text-ellipsis">{task.transactionId}</td>
+              <td className="">
                 <span className={clsx("text-xs font-mono font-semibold")}>{task.taskType}</span>
               </td>
 
