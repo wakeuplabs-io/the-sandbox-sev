@@ -29,7 +29,7 @@ export function TasksFilters({ filters, onFiltersChange, isPublic }: TasksFilter
       <div className="flex flex-wrap justify-between gap-4 xl:gap-6">
         <div className="form-control col-span-1">
           <label className="label">
-            <span className="label-text">Search Transaction ID</span>
+            <span className="label-text">Search by Tx ID / Task Hash / Tx Hash</span>
           </label>
           <div className="relative">
             <input
