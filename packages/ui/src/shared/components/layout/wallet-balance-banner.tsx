@@ -12,22 +12,22 @@ export function WalletBalanceBanner({ onClose, isOpen }: { onClose: () => void; 
 
   const title =
     isWarning || isCritical
-      ? "Saldo de Wallet Bajo"
+      ? "Low Wallet Balance"
       : isCritical
-        ? "Saldo de Wallet Crítico"
-        : "Saldo suficiente";
+        ? "Critical Wallet Balance"
+        : "Sufficient Balance";
 
   const description = isWarning
-    ? "Se recomienda recargar pronto para evitar interrupciones en operaciones de blockchain."
+    ? "It is recommended to reload soon to avoid interruptions in blockchain operations."
     : isCritical
-      ? "Puede ocurrir una interrupción en las operaciones de blockchain si no se recarga el saldo."
-      : "El saldo es utilizado para las acciones de backoffice que requieran transacciones en la blockchain y para pagar el gas del canje de tokens.";
+      ? "An interruption in blockchain operations can occur if the balance is not reloaded."
+      : "The balance is used for backoffice actions that require transactions on the blockchain and for paying the gas for token swaps.";
 
   return (
     <div className={`modal ${isOpen ? "modal-open" : ""}`}>
       <div className="modal-box w-full max-w-2xl">
         <div className={`px-4 py-3 mb-4 flex flex-col items-center gap-3`}>
-          {isLoading && <span className="text-sm text-gray-500">Cargando...</span>}
+          {isLoading && <span className="text-sm text-gray-500">Loading...</span>}
 
           <div className="flex-1">
             <p className="font-medium">{title}</p>

@@ -13,7 +13,7 @@ export function AddETHModal() {
         <div className="flex items-center justify-between p-6 border-b border-gray-800">
           <div className="flex items-center gap-3">
             <FaWallet className="w-6 h-6 text-blue-400" />
-            <h2 className="text-xl font-semibold text-white">Agregar ETH al Wallet</h2>
+            <h2 className="text-xl font-semibold text-white">Add ETH to Wallet</h2>
           </div>
         </div>
 
@@ -30,19 +30,19 @@ export function AddETHModal() {
                 />
               </div>
               <p className="text-sm text-gray-300 text-center mt-3">
-                Escanea el QR desde tu wallet para enviar {network?.nativeCurrency?.symbol || "ETH"}
+                Scan the QR from your wallet to send {network?.nativeCurrency?.symbol || "ETH"}
               </p>
             </div>
 
             <div className="space-y-4">
               <div className="bg-gray-800 rounded-lg p-4">
-                <h3 className="text-lg font-semibold text-white mb-3">Información de Wallet</h3>
+                <h3 className="text-lg font-semibold text-white mb-3">Wallet Information</h3>
 
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-400">Red:</span>
+                    <span className="text-sm text-gray-400">Network:</span>
                     <span className="text-white font-semibold">
-                      {network?.name || "Cargando..."}
+                      {network?.name || "Loading..."}
                     </span>
                   </div>
 
@@ -54,7 +54,7 @@ export function AddETHModal() {
                   </div>
 
                   <div className="pt-2 border-t border-gray-700">
-                    <span className="text-sm text-gray-400 block mb-2">Dirección del Wallet:</span>
+                    <span className="text-sm text-gray-400 block mb-2">Wallet Address:</span>
                     <div className="flex items-center justify-between bg-gray-900 rounded p-3">
                       <span className="text-white font-mono text-sm">
                         {truncateHash(address || "")}
@@ -69,11 +69,11 @@ export function AddETHModal() {
                 <div className="flex items-start gap-3">
                   <FaExclamationTriangle className="w-5 h-5 text-red-400 mt-0.5" />
                   <div>
-                    <h4 className="text-red-300 font-semibold text-sm mb-1">Importante</h4>
+                    <h4 className="text-red-300 font-semibold text-sm mb-1">Important</h4>
                     <p className="text-red-200 text-xs">
-                      Esta dirección solo acepta {network?.nativeCurrency?.symbol || "ETH"} en la
-                      red {network?.name || "la red configurada"}. Enviar desde otra red puede
-                      causar pérdida de fondos.
+                      This address only accepts {network?.nativeCurrency?.symbol || "ETH"} on the
+                      {network?.name || "configured network"}. Sending from another network can
+                      cause loss of funds.
                     </p>
                   </div>
                 </div>
