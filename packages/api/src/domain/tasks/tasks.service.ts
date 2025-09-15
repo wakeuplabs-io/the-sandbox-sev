@@ -495,6 +495,7 @@ export const getTasks = async (query: z.infer<typeof GetTasksQuerySchema>) => {
               id: true,
               email: true,
               nickname: true,
+              address: true,
             },
           },
         },
