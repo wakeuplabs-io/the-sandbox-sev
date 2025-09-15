@@ -34,4 +34,6 @@ export interface GetPublicTasksQuery {
   limit?: number
   taskType?: TaskType
   search?: string
+  dateFrom?: string
+  dateTo?: string
 }

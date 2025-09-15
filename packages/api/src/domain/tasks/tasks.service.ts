@@ -608,7 +608,7 @@ export const batchExecuteTasks = async (data: BatchExecuteTasksInput, user: User
  * Gets public executed tasks (no authentication required)
  */
 export const getPublicTasks = async (query: GetPublicTasksQuery) => {
-  const { page, limit, taskType, search } = query;
+  const { page, limit, taskType, search, dateFrom, dateTo } = query;
 
   const where: any = {
     state: TaskState.EXECUTED,
@@ -625,6 +625,16 @@ export const getPublicTasks = async (query: GetPublicTasksQuery) => {
       { nftName: { contains: search, mode: "insensitive" } },
       { companyAndArtist: { contains: search, mode: "insensitive" } },
     ];
+  }
+
+  if (dateFrom || dateTo) {
+    where.createdAt = {};
+    if (dateFrom) {
+      where.createdAt.gte = new Date(dateFrom);
+    }
+    if (dateTo) {
+      where.createdAt.lte = new Date(dateTo);
+    }
   }
 
   // Get total count for pagination

@@ -75,7 +75,7 @@ export function TaskExecutionCard({
         >
           <div className="grid grid-cols-12 items-center gap-4">
             {/* Expand/Collapse Icon */}
-            <div className="col-span-1 flex justify-center">
+            <div className="col-span-1 flex justify-start">
               {isExpanded ? (
                 <FaChevronDown className="h-4 w-4 text-base-content/60" />
               ) : (
@@ -99,7 +99,7 @@ export function TaskExecutionCard({
             <div className="col-span-2">
               {task.priority && (
                 <div className="flex items-center gap-1">
-                  <span className={clsx("badge text-xs", getPriorityBadgeClasses(task.priority))}>{task.priority}</span>
+                  <span className={clsx("badge w-[100px] text-xs", getPriorityBadgeClasses(task.priority))}>{task.priority}</span>
                 </div>
               )}
             </div>

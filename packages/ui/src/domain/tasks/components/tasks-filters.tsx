@@ -1,7 +1,7 @@
 import { FaSearch } from "react-icons/fa";
 import type { TasksListFilters } from "../types/tasks-list.types";
 import { TaskTypeEnum, TaskStateEnum, TaskStateLabelEnum } from "@/shared/constants";
-import type { SelectOption } from "@/shared/components";
+import { Select, type SelectOption } from "@/shared/components";
 
 interface TasksFiltersProps {
   filters: TasksListFilters;
@@ -43,48 +43,57 @@ export function TasksFilters({ filters, onFiltersChange, isPublic }: TasksFilter
           </div>
         </div>
 
-        <div className="form-control col-span-2 xl:col-span-1">
-          <label className="label">
-            <span className="label-text font-medium">Task Type</span>
-          </label>
-          <div className="flex flex-nowrap gap-2">
-            {taskTypeOptions.map(option => (
-              <button
-                key={option.value}
-                className={`btn btn-md ${
-                  filters.taskType === option.value ? "btn-primary" : "btn-outline"
-                }`}
-                onClick={() => onFiltersChange({ taskType: option.value || (undefined as any) })}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
+        <div className="form-control col-span-1">
+          <Select
+            label="Task Type"
+            placeholder="All Types"
+            options={taskTypeOptions}
+            value={filters.taskType || ""}
+            onChange={e => onFiltersChange({ taskType: e.target.value || (undefined as any) })}
+            fullWidth={false}
+          />
         </div>
 
         {!isPublic && (
-          <div className="form-control col-span-2 xl:col-span-1">
-            <label className="label">
-              <span className="label-text font-medium">Task State</span>
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {taskStateOptions.map(option => (
-                <button
-                  key={option.value}
-                  className={`btn btn-md ${
-                    filters.state === option.value ? "btn-primary" : "btn-outline"
-                  }`}
-                  onClick={() => onFiltersChange({ state: option.value as any })}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
+          <div className="form-control col-span-1">
+            <Select
+              label="Task State"
+              placeholder="All States"
+              options={taskStateOptions}
+              value={filters.state || ""}
+              onChange={e => onFiltersChange({ state: e.target.value || (undefined as any) })}
+              fullWidth={false}
+            />
           </div>
         )}
+
+        {/* Date Range Filters */}
+        <div className="form-control col-span-2 xl:col-span-1">
+          
+          <div className="flex flex-wrap gap-2">
+            <div className="flex flex-col">
+              <label className="text-md text-base-content/70">From</label>
+              <input
+                type="date"
+                className="base-input text-md"
+                value={filters.dateFrom || ""}
+                onChange={e => onFiltersChange({ dateFrom: e.target.value || undefined })}
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="text-md text-base-content/70">To</label>
+              <input
+                type="date"
+                className="base-input text-md"
+                value={filters.dateTo || ""}
+                onChange={e => onFiltersChange({ dateTo: e.target.value || undefined })}
+              />
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* <div className="flex justify-end my-4">
+       <div className="flex justify-end my-4">
         <button
           className="btn btn-outline btn-sm"
           onClick={() =>
@@ -99,7 +108,7 @@ export function TasksFilters({ filters, onFiltersChange, isPublic }: TasksFilter
         >
           Clear Filters
         </button>
-      </div> */}
+      </div>
     </div>
   );
 }

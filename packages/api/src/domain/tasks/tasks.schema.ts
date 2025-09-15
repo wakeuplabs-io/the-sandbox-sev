@@ -132,6 +132,8 @@ export const GetPublicTasksQuerySchema = z.object({
   limit: z.coerce.number().min(1).max(50).default(10), // Max 50 for public endpoint
   taskType: z.enum(['LIQUIDATION', 'ACQUISITION', 'AUTHORIZATION', 'ARBITRAGE']).optional(),
   search: z.string().optional(),
+  dateFrom: z.string().optional(),
+  dateTo: z.string().optional(),
 })
 
 // Schema for batch creating multiple tasks

@@ -236,8 +236,10 @@ export const getPublicTasksController = async (c: Context) => {
       typeof GetPublicTasksQuerySchema
     >["taskType"];
     const search = c.req.query("search") as z.infer<typeof GetPublicTasksQuerySchema>["search"];
+    const dateFrom = c.req.query("dateFrom") as z.infer<typeof GetPublicTasksQuerySchema>["dateFrom"];
+    const dateTo = c.req.query("dateTo") as z.infer<typeof GetPublicTasksQuerySchema>["dateTo"];
 
-    const query = { page, limit, taskType, search } as z.infer<typeof GetPublicTasksQuerySchema>;
+    const query = { page, limit, taskType, search, dateFrom, dateTo } as z.infer<typeof GetPublicTasksQuerySchema>;
     const result = await getPublicTasks(query);
 
     return c.json(result);
