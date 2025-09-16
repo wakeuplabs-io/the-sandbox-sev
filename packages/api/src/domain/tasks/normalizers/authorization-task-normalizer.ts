@@ -30,6 +30,7 @@ export class AuthorizationTaskNormalizer extends BaseTaskNormalizer {
 			tokenId: authorizationData.tokenId,
 			targetPriceBudget: authorizationData.targetPriceBudget,
 			dateDeadline: authorizationData.dateDeadline,
+			tokenLink: authorizationData.tokenLink,
 		}
 	}
 }

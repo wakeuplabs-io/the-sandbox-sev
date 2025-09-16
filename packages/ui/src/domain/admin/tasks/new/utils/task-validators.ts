@@ -82,6 +82,27 @@ function validateDetails(data: Record<string, any>, rowIndex: number): Validatio
   return errors
 }
 
+function validateTokenLink(data: Record<string, any>, rowIndex: number): ValidationError[] {
+  const errors: ValidationError[] = []
+  const tokenLink = data.tokenLink
+  
+  if (tokenLink && tokenLink.toString().trim() !== '') {
+    const url = tokenLink.toString().trim()
+    try {
+      new URL(url)
+    } catch {
+      errors.push({
+        rowIndex,
+        columnName: 'tokenLink',
+        message: 'Token Link must be a valid URL',
+        type: 'error'
+      })
+    }
+  }
+  
+  return errors
+}
+
 function validateLiquidationData(data: Record<string, any>, rowIndex: number): ValidationError[] {
   const errors: ValidationError[] = []
   
@@ -120,6 +141,18 @@ function validateLiquidationData(data: Record<string, any>, rowIndex: number): V
       message: 'Token ID is required',
       type: 'error'
     })
+  }
+
+  const tokenLink = data.tokenLink
+  if (!tokenLink || tokenLink.toString().trim() === '') {
+    errors.push({
+      rowIndex,
+      columnName: 'tokenLink',
+      message: 'Token Link is required',
+      type: 'error'
+    })
+  } else {
+    errors.push(...validateTokenLink(data, rowIndex))
   }
 
   const tokenType = data.tokenType
@@ -195,6 +228,28 @@ function validateAcquisitionData(data: Record<string, any>, rowIndex: number): V
     })
   }
 
+  const tokenId = data.tokenId
+  if (!tokenId || tokenId.toString().trim() === '') {
+    errors.push({
+      rowIndex,
+      columnName: 'tokenId',
+      message: 'Token ID is required',
+      type: 'error'
+    })
+  }
+
+  const tokenLink = data.tokenLink
+  if (!tokenLink || tokenLink.toString().trim() === '') {
+    errors.push({
+      rowIndex,
+      columnName: 'tokenLink',
+      message: 'Token Link is required',
+      type: 'error'
+    })
+  } else {
+    errors.push(...validateTokenLink(data, rowIndex))
+  }
+
   const tokenType = data.tokenType
   if (tokenType && tokenType.toString().trim() !== '') {
     errors.push(...validateTokenType(data, rowIndex))
@@ -231,6 +286,12 @@ function validateAuthorizationData(data: Record<string, any>, rowIndex: number):
       message: 'Collection Name is required',
       type: 'error'
     })
+  }
+
+  // tokenLink is optional for AUTHORIZATION, but validate format if provided
+  const tokenLink = data.tokenLink
+  if (tokenLink && tokenLink.toString().trim() !== '') {
+    errors.push(...validateTokenLink(data, rowIndex))
   }
 
   const tokenType = data.tokenType

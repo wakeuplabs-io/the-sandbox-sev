@@ -165,6 +165,7 @@ class TaskRepository {
           targetPriceEth: task.targetPriceEth,
           dateDeadline: task.dateDeadline,
           technicalVerification: task.technicalVerification,
+          tokenLink: task.tokenLink,
         };
       case TaskType.ACQUISITION:
         return {
@@ -174,6 +175,7 @@ class TaskRepository {
           targetPriceBudget: task.targetPriceBudget,
           transactionExecutionDate: task.transactionExecutionDate,
           priorityDeadline: task.priorityDeadline,
+          tokenLink: task.tokenLink,
         };
       case TaskType.AUTHORIZATION:
         return {
@@ -181,6 +183,7 @@ class TaskRepository {
           tokenId: task.tokenId,
           targetPriceBudget: task.targetPriceBudget,
           dateDeadline: task.dateDeadline,
+          tokenLink: task.tokenLink,
         };
       case TaskType.ARBITRAGE:
         return {
@@ -241,6 +244,7 @@ export const createLiquidationTask = async (
       technicalVerification: data.technicalVerification,
       priority: data.priority,
       userId: user.id,
+      tokenLink: data.tokenLink,
     },
   });
 
@@ -284,6 +288,7 @@ export const createAcquisitionTask = async (
       priorityDeadline: data.priorityDeadline,
       priority: data.priority,
       userId: user.id,
+      tokenLink: data.tokenLink,
     },
   });
 
@@ -325,6 +330,7 @@ export const createAuthorizationTask = async (
       dateDeadline: data.dateDeadline,
       priority: data.priority,
       userId: user.id,
+      tokenLink: data.tokenLink,
     },
   });
 
@@ -751,6 +757,7 @@ export const getPublicTasksCSV = async (query: Omit<GetPublicTasksQuery, 'page' 
     'Company and Artist',
     'Collection Name',
     'Token ID',
+    'Token Link',
     'Target Price ETH',
     'Date Deadline',
     'Technical Verification',
@@ -799,6 +806,7 @@ export const getPublicTasksCSV = async (query: Omit<GetPublicTasksQuery, 'page' 
       task.companyAndArtist || '',
       task.collectionName || '',
       task.tokenId || '',
+      task.tokenLink || '',
       task.targetPriceEth || '',
       task.dateDeadline || '',
       task.technicalVerification || '',
@@ -927,6 +935,7 @@ export const getTasksCSV = async (query: Omit<z.infer<typeof GetTasksQuerySchema
     'Company and Artist',
     'Collection Name',
     'Token ID',
+    'Token Link',
     'Target Price ETH',
     'Date Deadline',
     'Technical Verification',
@@ -976,6 +985,7 @@ export const getTasksCSV = async (query: Omit<z.infer<typeof GetTasksQuerySchema
       task.companyAndArtist || '',
       task.collectionName || '',
       task.tokenId || '',
+      task.tokenLink || '',
       task.targetPriceEth || '',
       task.dateDeadline || '',
       task.technicalVerification || '',

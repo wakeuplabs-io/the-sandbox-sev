@@ -32,6 +32,7 @@ export class LiquidationTaskNormalizer extends BaseTaskNormalizer {
 			targetPriceEth: liquidationData.targetPriceEth,
 			dateDeadline: liquidationData.dateDeadline,
 			technicalVerification: liquidationData.technicalVerification,
+			tokenLink: liquidationData.tokenLink,
 		}
 	}
 }
