@@ -28,7 +28,7 @@ export function TasksFilters({ filters, onFiltersChange, isPublic }: TasksFilter
     <div className="w-full">
       <div className="flex flex-wrap justify-start gap-4 xl:gap-10 my-10">
         <div className="form-control">
-          <label className="label">
+          <label className="label text-xs">
             <span className="label-text">Search by Tx ID / Task Hash / Tx Hash</span>
           </label>
           <div className="relative">
@@ -69,27 +69,28 @@ export function TasksFilters({ filters, onFiltersChange, isPublic }: TasksFilter
 
         {/* Date Range Filters */}
         <div className="form-control">
-          <div className="flex flex-wrap gap-2">
-            <div className="flex flex-col">
-              <label className="text-md text-base-content/70">From</label>
-              <input
-                type="date"
-                className="base-input text-md"
-                value={filters.dateFrom || ""}
-                onChange={e => onFiltersChange({ dateFrom: e.target.value || undefined })}
-              />
-            </div>
-            <div className="flex flex-col">
-              <label className="text-md text-base-content/70">To</label>
-              <input
-                type="date"
-                className="base-input text-md"
-                value={filters.dateTo || ""}
-                onChange={e => onFiltersChange({ dateTo: e.target.value || undefined })}
-              />
-            </div>
-          </div>
+          <label className="label text-xs">
+            <span className="label-text">From</span>
+          </label>
+          <input
+            type="date"
+            className="base-input text-md"
+            value={filters.dateFrom || ""}
+            onChange={e => onFiltersChange({ dateFrom: e.target.value || undefined })}
+          />
         </div>
+        <div className="form-control">
+          <label className="label text-xs">
+            <span className="label-text">To</span>
+          </label>
+          <input
+            type="date"
+            className="base-input text-md"
+            value={filters.dateTo || ""}
+            onChange={e => onFiltersChange({ dateTo: e.target.value || undefined })}
+          />
+        </div>
+
         <div className="flex flex-col justify-end">
           <button
             className="btn btn-ghost btn-sm"

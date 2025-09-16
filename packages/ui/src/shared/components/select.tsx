@@ -30,7 +30,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className="form-control">
         {label && (
-          <label className="label">
+          <label className="label text-xs">
             <span className="label-text">{label}</span>
           </label>
         )}
