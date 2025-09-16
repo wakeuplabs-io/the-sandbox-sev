@@ -1,406 +1,127 @@
+import { z } from 'zod'
 import { TaskTypeEnum } from '@/shared/constants'
 import { ValidationError } from '../types/tasks-new.types'
 import { TaskType } from '@the-sandbox-sev/api'
 
-function validateTransactionId(data: Record<string, any>, rowIndex: number): ValidationError[] {
-  const errors: ValidationError[] = []
-  const transactionId = data.transactionId
-  if (!transactionId || transactionId.toString().trim() === '') {
-    errors.push({
-      rowIndex,
-      columnName: 'transactionId',
-      message: 'Transaction ID is required',
-      type: 'error'
-    })
-  }
-  return errors
-}
+// Schemas Zod para cada tipo de tarea con validaciones estrictas
 
-function validatePriority(data: Record<string, any>, rowIndex: number): ValidationError[] {
-  console.log('validatePriority', data, rowIndex)
-  return []
-}
+const LiquidationTaskUISchema = z.object({
+  transactionId: z.string().min(1, "Transaction ID is required"),
+  companyAndArtist: z.string().min(1, "Company & Artist is required"),
+  collectionName: z.string().min(1, "Collection Name is required"),
+  tokenId: z.string().min(1, "Token ID is required"),
+  tokenLink: z.string().url("Token Link must be a valid URL"),
+  tokenType: z.string().optional(),
+  chain: z.string().min(1, "Chain is required"),
+  platform: z.string().min(1, "Platform is required"),
+  targetPriceEth: z.string().refine(val => {
+    const num = parseFloat(val);
+    return !isNaN(num) && num >= 0;
+  }, "Target Price ETH must be a valid positive number"),
+  typeOfTx: z.string().min(1, "Type of TX is required"),
+  details: z.string().optional(),
+  dateDeadline: z.string().min(1, "Date Deadline is required"),
+  priority: z.string().optional(),
+  technicalVerification: z.string().refine(val => 
+    ['true', 'false', 'TRUE', 'FALSE'].includes(val),
+    "Technical Verification must be true or false"
+  ),
+})
 
-function validateTokenType(data: Record<string, any>, rowIndex: number): ValidationError[] {
-  console.log('validateTokenType', data, rowIndex)
-  return []
-}
+const AcquisitionTaskUISchema = z.object({
+  transactionId: z.string().min(1, "Transaction ID is required"),
+  nftName: z.string().min(1, "NFT Name is required"),
+  collectionName: z.string().min(1, "Collection Name is required"),
+  tokenId: z.string().min(1, "Token ID is required"),
+  tokenLink: z.string().url("Token Link must be a valid URL"),
+  tokenType: z.string().optional(),
+  chain: z.string().min(1, "Chain is required"),
+  platform: z.string().min(1, "Platform is required"),
+  targetPriceBudget: z.string().min(1, "Target Price Budget is required"),
+  typeOfTx: z.string().min(1, "Type of TX is required"),
+  details: z.string().optional(),
+  transactionExecutionDate: z.string().optional(),
+  priorityDeadline: z.string().optional(),
+  priority: z.string().min(1, "Priority is required"),
+})
 
-function validateChain(data: Record<string, any>, rowIndex: number): ValidationError[] {
-  const errors: ValidationError[] = []
-  const chain = data.chain
-  if (!chain || chain.toString().trim() === '') {
-    errors.push({
-      rowIndex,
-      columnName: 'chain',
-      message: 'Chain is required',
-      type: 'error'
-    })
-  }
-  return errors
-}
+const AuthorizationTaskUISchema = z.object({
+  transactionId: z.string().min(1, "Transaction ID is required"),
+  collectionName: z.string().min(1, "Collection Name is required"),
+  tokenId: z.string().optional(),
+  tokenLink: z.string().url("Token Link must be a valid URL").optional().or(z.literal("")),
+  tokenType: z.string().optional(),
+  chain: z.string().min(1, "Chain is required"),
+  platform: z.string().min(1, "Platform is required"),
+  targetPriceBudget: z.string().optional(),
+  typeOfTx: z.string().min(1, "Type of TX is required"),
+  details: z.string().optional(),
+  dateDeadline: z.string().optional(),
+  priority: z.string().min(1, "Priority is required"),
+})
 
-function validatePlatform(data: Record<string, any>, rowIndex: number): ValidationError[] {
-  const errors: ValidationError[] = []
-  const platform = data.platform
-  if (!platform || platform.toString().trim() === '') {
-    errors.push({
-      rowIndex,
-      columnName: 'platform',
-      message: 'Platform is required',
-      type: 'error'
-    })
-  }
-  return errors
-}
+const ArbitrageTaskUISchema = z.object({
+  transactionId: z.string().min(1, "Transaction ID is required"),
+  chain: z.string().min(1, "Chain is required"),
+  platform: z.string().min(1, "Platform is required"),
+  targetPricePerToken: z.string().min(1, "Target Price Per Token is required"),
+  amount: z.string().min(1, "Amount is required"),
+  currencyName: z.string().min(1, "Currency Name is required"),
+  proportion: z.string().refine(val => {
+    if (!val || val.trim() === '') return true; // Optional field
+    return val.includes('%');
+  }, "Proportion should include % symbol").optional(),
+  typeOfTx: z.string().min(1, "Type of TX is required"),
+  details: z.string().optional(),
+  duration: z.string().min(1, "Duration is required"),
+  deadline: z.string().min(1, "Deadline is required"),
+  priority: z.string().min(1, "Priority is required"),
+})
 
-function validateTypeOfTx(data: Record<string, any>, rowIndex: number): ValidationError[] {
-  const errors: ValidationError[] = []
-  const typeOfTx = data.typeOfTx
-  if (!typeOfTx || typeOfTx.toString().trim() === '') {
-    errors.push({
-      rowIndex,
-      columnName: 'typeOfTx',
-      message: 'Type of TX is required',
-      type: 'error'
-    })
-  }
-  return errors
-}
-
-function validateDetails(data: Record<string, any>, rowIndex: number): ValidationError[] {
-  const errors: ValidationError[] = []
-  const details = data.details
-  if (details && details.toString().trim() === '') {
-    errors.push({
-      rowIndex,
-      columnName: 'details',
-      message: 'Details cannot be empty if provided',
-      type: 'error'
-    })
-  }
-  return errors
-}
-
-function validateTokenLink(data: Record<string, any>, rowIndex: number): ValidationError[] {
-  const errors: ValidationError[] = []
-  const tokenLink = data.tokenLink
-  
-  if (tokenLink && tokenLink.toString().trim() !== '') {
-    const url = tokenLink.toString().trim()
-    try {
-      new URL(url)
-    } catch {
-      errors.push({
-        rowIndex,
-        columnName: 'tokenLink',
-        message: 'Token Link must be a valid URL',
-        type: 'error'
-      })
-    }
-  }
-  
-  return errors
-}
-
-function validateLiquidationData(data: Record<string, any>, rowIndex: number): ValidationError[] {
-  const errors: ValidationError[] = []
-  
-  errors.push(...validateTransactionId(data, rowIndex))
-  errors.push(...validateChain(data, rowIndex))
-  errors.push(...validatePlatform(data, rowIndex))
-  errors.push(...validateTypeOfTx(data, rowIndex))
-  errors.push(...validateDetails(data, rowIndex))
-  errors.push(...validatePriority(data, rowIndex))
-  
-  const companyAndArtist = data.companyAndArtist
-  if (!companyAndArtist || companyAndArtist.toString().trim() === '') {
-    errors.push({
-      rowIndex,
-      columnName: 'companyAndArtist',
-      message: 'Company & Artist is required',
-      type: 'error'
-    })
-  }
-
-  const collectionName = data.collectionName
-  if (!collectionName || collectionName.toString().trim() === '') {
-    errors.push({
-      rowIndex,
-      columnName: 'collectionName',
-      message: 'Collection Name is required',
-      type: 'error'
-    })
-  }
-
-  const tokenId = data.tokenId
-  if (!tokenId || tokenId.toString().trim() === '') {
-    errors.push({
-      rowIndex,
-      columnName: 'tokenId',
-      message: 'Token ID is required',
-      type: 'error'
-    })
-  }
-
-  const tokenLink = data.tokenLink
-  if (!tokenLink || tokenLink.toString().trim() === '') {
-    errors.push({
-      rowIndex,
-      columnName: 'tokenLink',
-      message: 'Token Link is required',
-      type: 'error'
-    })
-  } else {
-    errors.push(...validateTokenLink(data, rowIndex))
-  }
-
-  const tokenType = data.tokenType
-  if (tokenType && tokenType.toString().trim() !== '') {
-    errors.push(...validateTokenType(data, rowIndex))
-  }
-
-  const targetPriceEth = data.targetPriceEth
-  if (targetPriceEth !== undefined && targetPriceEth !== null && targetPriceEth !== '') {
-    const numValue = parseFloat(targetPriceEth.toString())
-    if (isNaN(numValue) || numValue < 0) {
-      errors.push({
-        rowIndex,
-        columnName: 'targetPriceEth',
-        message: 'Target Price ETH must be a valid positive number',
-        type: 'error'
-      })
-    }
-  }
-
-  const dateDeadline = data.dateDeadline
-  if (!dateDeadline || dateDeadline.toString().trim() === '') {
-    errors.push({
-      rowIndex,
-      columnName: 'dateDeadline',
-      message: 'Date Deadline is required',
-      type: 'error'
-    })
-  }
-
-  const technicalVerification = data.technicalVerification
-  if (technicalVerification !== undefined && technicalVerification !== null && technicalVerification !== '') {
-    if (typeof technicalVerification !== 'boolean' && !['true', 'false', 'TRUE', 'FALSE'].includes(technicalVerification.toString())) {
-      errors.push({
-        rowIndex,
-        columnName: 'technicalVerification',
-        message: 'Technical Verification must be true or false',
-        type: 'error'
-      })
-    }
-  }
-
-  return errors
-}
-
-function validateAcquisitionData(data: Record<string, any>, rowIndex: number): ValidationError[] {
-  const errors: ValidationError[] = []
-  
-  errors.push(...validateTransactionId(data, rowIndex))
-  errors.push(...validateChain(data, rowIndex))
-  errors.push(...validatePlatform(data, rowIndex))
-  errors.push(...validateTypeOfTx(data, rowIndex))
-  errors.push(...validateDetails(data, rowIndex))
-  errors.push(...validatePriority(data, rowIndex))
-  
-  const nftName = data.nftName
-  if (!nftName || nftName.toString().trim() === '') {
-    errors.push({
-      rowIndex,
-      columnName: 'nftName',
-      message: 'NFT Name is required',
-      type: 'error'
-    })
-  }
-
-  const collectionName = data.collectionName
-  if (!collectionName || collectionName.toString().trim() === '') {
-    errors.push({
-      rowIndex,
-      columnName: 'collectionName',
-      message: 'Collection Name is required',
-      type: 'error'
-    })
-  }
-
-  const tokenId = data.tokenId
-  if (!tokenId || tokenId.toString().trim() === '') {
-    errors.push({
-      rowIndex,
-      columnName: 'tokenId',
-      message: 'Token ID is required',
-      type: 'error'
-    })
-  }
-
-  const tokenLink = data.tokenLink
-  if (!tokenLink || tokenLink.toString().trim() === '') {
-    errors.push({
-      rowIndex,
-      columnName: 'tokenLink',
-      message: 'Token Link is required',
-      type: 'error'
-    })
-  } else {
-    errors.push(...validateTokenLink(data, rowIndex))
-  }
-
-  const tokenType = data.tokenType
-  if (tokenType && tokenType.toString().trim() !== '') {
-    errors.push(...validateTokenType(data, rowIndex))
-  }
-
-  const targetPriceBudget = data.targetPriceBudget
-  if (!targetPriceBudget || targetPriceBudget.toString().trim() === '') {
-    errors.push({
-      rowIndex,
-      columnName: 'targetPriceBudget',
-      message: 'Target Price Budget is required',
-      type: 'error'
-    })
-  }
-
-  return errors
-}
-
-function validateAuthorizationData(data: Record<string, any>, rowIndex: number): ValidationError[] {
-  const errors: ValidationError[] = []
-  
-  errors.push(...validateTransactionId(data, rowIndex))
-  errors.push(...validateChain(data, rowIndex))
-  errors.push(...validatePlatform(data, rowIndex))
-  errors.push(...validateTypeOfTx(data, rowIndex))
-  errors.push(...validateDetails(data, rowIndex))
-  errors.push(...validatePriority(data, rowIndex))
-  
-  const collectionName = data.collectionName
-  if (!collectionName || collectionName.toString().trim() === '') {
-    errors.push({
-      rowIndex,
-      columnName: 'collectionName',
-      message: 'Collection Name is required',
-      type: 'error'
-    })
-  }
-
-  // tokenLink is optional for AUTHORIZATION, but validate format if provided
-  const tokenLink = data.tokenLink
-  if (tokenLink && tokenLink.toString().trim() !== '') {
-    errors.push(...validateTokenLink(data, rowIndex))
-  }
-
-  const tokenType = data.tokenType
-  if (tokenType && tokenType.toString().trim() !== '') {
-    errors.push(...validateTokenType(data, rowIndex))
-  }
-
-  const targetPriceBudget = data.targetPriceBudget
-  if (targetPriceBudget && targetPriceBudget.toString().trim() !== '') {
-  }
-
-  const dateDeadline = data.dateDeadline
-  if (dateDeadline && dateDeadline.toString().trim() !== '') {
-  }
-
-  return errors
-}
-
-function validateArbitrageData(data: Record<string, any>, rowIndex: number): ValidationError[] {
-  const errors: ValidationError[] = []
-  
-  errors.push(...validateTransactionId(data, rowIndex))
-  errors.push(...validateChain(data, rowIndex))
-  errors.push(...validateTypeOfTx(data, rowIndex))
-  errors.push(...validateDetails(data, rowIndex))
-  errors.push(...validatePriority(data, rowIndex))
-  
-  const targetPricePerToken = data.targetPricePerToken
-  if (!targetPricePerToken || targetPricePerToken.toString().trim() === '') {
-    errors.push({
-      rowIndex,
-      columnName: 'targetPricePerToken',
-      message: 'Target Price Per Token is required',
-      type: 'error'
-    })
-  }
-
-  const amount = data.amount
-  if (!amount || amount.toString().trim() === '') {
-    errors.push({
-      rowIndex,
-      columnName: 'amount',
-      message: 'Amount is required',
-      type: 'error'
-    })
-  }
-
-  const currencyName = data.currencyName
-  if (!currencyName || currencyName.toString().trim() === '') {
-    errors.push({
-      rowIndex,
-      columnName: 'currencyName',
-      message: 'Currency Name is required',
-      type: 'error'
-    })
-  }
-
-  const proportion = data.proportion
-  if (proportion && proportion.toString().trim() !== '') {
-    if (!proportion.toString().includes('%')) {
-      errors.push({
-        rowIndex,
-        columnName: 'proportion',
-        message: 'Proportion should include % symbol',
-        type: 'warning'
-      })
-    }
-  }
-
-  const duration = data.duration
-  if (!duration || duration.toString().trim() === '') {
-    errors.push({
-      rowIndex,
-      columnName: 'duration',
-      message: 'Duration is required',
-      type: 'error'
-    })
-  }
-
-  const deadline = data.deadline
-  if (!deadline || deadline.toString().trim() === '') {
-    errors.push({
-      rowIndex,
-      columnName: 'deadline',
-      message: 'Deadline is required',
-      type: 'error'
-    })
-  }
-
-  return errors
-}
-
-export function validateTaskData(data: Record<string, any>, rowIndex: number, taskType: TaskType): ValidationError[] {
+// Función para obtener el schema correcto según el tipo de tarea
+function getSchemaForTaskType(taskType: TaskType) {
   switch (taskType) {
     case TaskTypeEnum.LIQUIDATION:
-      return validateLiquidationData(data, rowIndex)
+      return LiquidationTaskUISchema
     case TaskTypeEnum.ACQUISITION:
-      return validateAcquisitionData(data, rowIndex)
+      return AcquisitionTaskUISchema
     case TaskTypeEnum.AUTHORIZATION:
-      return validateAuthorizationData(data, rowIndex)
+      return AuthorizationTaskUISchema
     case TaskTypeEnum.ARBITRAGE:
-      return validateArbitrageData(data, rowIndex)
+      return ArbitrageTaskUISchema
     default:
-      console.error(`Unknown task type: "${taskType}" (typeof: ${typeof taskType})`)
-      return [{
-        rowIndex,
-        columnName: 'general',
-        message: `Unknown task type: ${taskType}`,
-        type: 'error'
-      }]
+      throw new Error(`Unknown task type: ${taskType}`)
+  }
+}
+
+// Función para convertir errores de Zod a ValidationError[]
+function convertZodErrorsToValidationErrors(zodError: z.ZodError, rowIndex: number): ValidationError[] {
+  return zodError.issues.map((err: z.ZodIssue) => ({
+    rowIndex,
+    columnName: err.path[0] as string,
+    message: err.message,
+    type: 'error' as const
+  }))
+}
+
+// Función principal de validación (misma interfaz que antes)
+export function validateTaskData(data: Record<string, any>, rowIndex: number, taskType: TaskType): ValidationError[] {
+  try {
+    const schema = getSchemaForTaskType(taskType)
+    const result = schema.safeParse(data)
+    
+    if (result.success) {
+      return []
+    }
+    
+    return convertZodErrorsToValidationErrors(result.error, rowIndex)
+  } catch (error) {
+    console.error(`Error validating task data for row ${rowIndex}:`, error)
+    return [{
+      rowIndex,
+      columnName: 'general',
+      message: `Validation error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      type: 'error'
+    }]
   }
 }
