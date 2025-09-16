@@ -24,7 +24,7 @@ export function TaskExecutionHeader({ onDownloadCSV, isDownloading, isLoading }:
         <button
           onClick={onDownloadCSV}
           disabled={isDownloading || isLoading}
-          className="btn btn-outline btn-sm gap-2"
+          className="btn btn-outline btn-md gap-2"
         >
           <FaDownload className="h-4 w-4" />
           {isDownloading ? "Downloading..." : "Download CSV"}

@@ -77,7 +77,7 @@ export function TasksListPage() {
           <button
             onClick={handleDownloadCSV}
             disabled={isDownloading || isLoading}
-            className="btn btn-primary btn-sm gap-2"
+            className="btn btn-primary btn-md gap-2"
           >
             <FaDownload className="h-4 w-4" />
             {isDownloading ? "Downloading..." : "Download CSV"}
