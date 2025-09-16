@@ -26,8 +26,8 @@ const taskStateOptions: SelectOption[] = [
 export function TasksFilters({ filters, onFiltersChange, isPublic }: TasksFiltersProps) {
   return (
     <div className="w-full">
-      <div className="flex flex-wrap justify-between gap-4 xl:gap-6">
-        <div className="form-control col-span-1">
+      <div className="flex flex-wrap justify-start gap-4 xl:gap-10 my-10">
+        <div className="form-control">
           <label className="label">
             <span className="label-text">Search by Tx ID / Task Hash / Tx Hash</span>
           </label>
@@ -43,7 +43,7 @@ export function TasksFilters({ filters, onFiltersChange, isPublic }: TasksFilter
           </div>
         </div>
 
-        <div className="form-control col-span-1">
+        <div className="form-control">
           <Select
             label="Task Type"
             placeholder="All Types"
@@ -55,7 +55,7 @@ export function TasksFilters({ filters, onFiltersChange, isPublic }: TasksFilter
         </div>
 
         {!isPublic && (
-          <div className="form-control col-span-1">
+          <div className="form-control">
             <Select
               label="Task State"
               placeholder="All States"
@@ -68,8 +68,7 @@ export function TasksFilters({ filters, onFiltersChange, isPublic }: TasksFilter
         )}
 
         {/* Date Range Filters */}
-        <div className="form-control col-span-2 xl:col-span-1">
-          
+        <div className="form-control">
           <div className="flex flex-wrap gap-2">
             <div className="flex flex-col">
               <label className="text-md text-base-content/70">From</label>
@@ -91,23 +90,22 @@ export function TasksFilters({ filters, onFiltersChange, isPublic }: TasksFilter
             </div>
           </div>
         </div>
-      </div>
-
-       <div className="flex justify-end my-4">
-        <button
-          className="btn btn-outline btn-sm"
-          onClick={() =>
-            onFiltersChange({
-              search: undefined,
-              taskType: undefined,
-              state: undefined,
-              dateFrom: undefined,
-              dateTo: undefined,
-            })
-          }
-        >
-          Clear Filters
-        </button>
+        <div className="flex flex-col justify-end">
+          <button
+            className="btn btn-ghost btn-sm"
+            onClick={() =>
+              onFiltersChange({
+                search: undefined,
+                taskType: undefined,
+                state: undefined,
+                dateFrom: undefined,
+                dateTo: undefined,
+              })
+            }
+          >
+            Clear Filters
+          </button>
+        </div>
       </div>
     </div>
   );
