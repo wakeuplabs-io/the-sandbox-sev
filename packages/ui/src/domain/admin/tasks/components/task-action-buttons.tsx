@@ -59,7 +59,7 @@ function AddProofButton({
   return (
     <button 
       onClick={onExecute} 
-      className="btn btn-secondary btn-sm"
+      className="btn btn-primary btn-sm"
       disabled={isExecuting}
       aria-label={isExecuting ? "Adding proof to executed task" : "Add proof to executed task"}
     >
