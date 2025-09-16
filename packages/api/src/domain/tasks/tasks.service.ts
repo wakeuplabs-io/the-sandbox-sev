@@ -481,10 +481,8 @@ export const getTasks = async (query: z.infer<typeof GetTasksQuerySchema>) => {
     include: {
       user: {
         select: {
-          id: true,
           address: true,
           nickname: true,
-          email: true,
         },
       },
       executionProofs: {
@@ -492,8 +490,6 @@ export const getTasks = async (query: z.infer<typeof GetTasksQuerySchema>) => {
         include: {
           uploadedByUser: {
             select: {
-              id: true,
-              email: true,
               nickname: true,
               address: true,
             },
@@ -559,10 +555,8 @@ export const executeTask = async (data: ExecuteTaskInput, user: User): Promise<a
 
         user: {
           select: {
-            id: true,
             address: true,
             nickname: true,
-            email: true,
           },
         },
       },
@@ -660,10 +654,8 @@ export const getPublicTasks = async (query: GetPublicTasksQuery) => {
       },
       user: {
         select: {
-          id: true,
           address: true,
           nickname: true,
-          email: true,
         },
       },
     },
@@ -679,6 +671,353 @@ export const getPublicTasks = async (query: GetPublicTasksQuery) => {
       hasNext,
       hasPrev,
     },
+  };
+};
+
+/**
+ * Gets public executed tasks as CSV (no authentication required)
+ */
+export const getPublicTasksCSV = async (query: Omit<GetPublicTasksQuery, 'page' | 'limit'>) => {
+  const { taskType, search, dateFrom, dateTo } = query;
+
+  const where: any = {
+    state: TaskState.EXECUTED,
+  };
+
+  if (taskType) {
+    where.taskType = taskType;
+  }
+
+  if (search) {
+    where.OR = [
+      { transactionId: { contains: search, mode: "insensitive" } },
+      { collectionName: { contains: search, mode: "insensitive" } },
+      { nftName: { contains: search, mode: "insensitive" } },
+      { companyAndArtist: { contains: search, mode: "insensitive" } },
+    ];
+  }
+
+  if (dateFrom || dateTo) {
+    where.createdAt = {};
+    if (dateFrom) {
+      where.createdAt.gte = new Date(dateFrom);
+    }
+    if (dateTo) {
+      where.createdAt.lte = new Date(dateTo);
+    }
+  }
+
+  // Get all tasks without pagination - include only public-safe data
+  const tasks = await prisma.task.findMany({
+    where,
+    orderBy: { createdAt: "desc" },
+    include: {
+      executionProofs: {
+        include: {
+          uploadedByUser: {
+            select: {
+              nickname: true,
+              address: true,
+            },
+          },
+        },
+      },
+      user: {
+        select: {
+          address: true,
+          nickname: true,
+        },
+      },
+    },
+  });
+
+  // Generate CSV content
+  const csvHeaders = [
+    'Transaction ID',
+    'Task Type',
+    'State',
+    'Token Type',
+    'Chain',
+    'Platform',
+    'Type of Transaction',
+    'Details',
+    'Priority',
+    'Created At',
+    'Updated At',
+    // User fields
+    'User Address',
+    'User Nickname',
+    // Liquidation specific fields
+    'Company and Artist',
+    'Collection Name',
+    'Token ID',
+    'Target Price ETH',
+    'Date Deadline',
+    'Technical Verification',
+    // Acquisition specific fields
+    'NFT Name',
+    'Target Price Budget',
+    'Transaction Execution Date',
+    'Priority Deadline',
+    // Arbitrage specific fields
+    'Target Price Per Token',
+    'Amount',
+    'Currency Name',
+    'Proportion',
+    'Duration',
+    'Deadline',
+    // Task data (JSON)
+    'Task Data',
+    'Task Hash',
+    'Transaction Hash',
+    // Execution proofs summary
+    'Execution Proofs Count',
+    'Execution Proofs Details'
+  ];
+
+  const csvRows = tasks.map(task => {
+    const executionProofsDetails = task.executionProofs
+      .map(proof => `${proof.proofType}: ${proof.proofValue || 'N/A'} (by ${proof.uploadedByUser?.nickname || 'Unknown'})`)
+      .join('; ');
+
+    return [
+      task.transactionId,
+      task.taskType,
+      task.state,
+      task.tokenType || '',
+      task.chain || '',
+      task.platform || '',
+      task.typeOfTx || '',
+      task.details || '',
+      task.priority || '',
+      task.createdAt.toISOString(),
+      task.updatedAt.toISOString(),
+      // User fields
+      task.user?.address || '',
+      task.user?.nickname || '',
+      // Liquidation specific fields
+      task.companyAndArtist || '',
+      task.collectionName || '',
+      task.tokenId || '',
+      task.targetPriceEth || '',
+      task.dateDeadline || '',
+      task.technicalVerification || '',
+      // Acquisition specific fields
+      task.nftName || '',
+      task.targetPriceBudget || '',
+      task.transactionExecutionDate || '',
+      task.priorityDeadline || '',
+      // Arbitrage specific fields
+      task.targetPricePerToken || '',
+      task.amount || '',
+      task.currencyName || '',
+      task.proportion || '',
+      task.duration || '',
+      task.deadline || '',
+      // Task data and hashes
+      JSON.stringify(task.taskData),
+      task.taskHash,
+      task.transactionHash,
+      // Execution proofs
+      task.executionProofs.length.toString(),
+      executionProofsDetails
+    ];
+  });
+
+  // Escape CSV values (handle commas, quotes, newlines)
+  const escapeCsvValue = (value: string): string => {
+    if (value.includes(',') || value.includes('"') || value.includes('\n') || value.includes('\r')) {
+      return `"${value.replace(/"/g, '""')}"`;
+    }
+    return value;
+  };
+
+  const csvContent = [
+    csvHeaders.map(escapeCsvValue).join(','),
+    ...csvRows.map(row => row.map(value => escapeCsvValue(String(value))).join(','))
+  ].join('\n');
+
+  return {
+    csvContent,
+    totalTasks: tasks.length,
+    filename: `tasks-export-${new Date().toISOString().split('T')[0]}.csv`
+  };
+};
+
+/**
+ * Gets admin tasks as CSV (authentication required)
+ */
+export const getTasksCSV = async (query: Omit<z.infer<typeof GetTasksQuerySchema>, 'page' | 'limit'>) => {
+  const { taskType, search, dateFrom, dateTo, status, state } = query;
+  const where: any = {};
+
+  if (taskType) {
+    where.taskType = taskType;
+  }
+
+  if (search) {
+    where.OR = [
+      { transactionId: { contains: search, mode: "insensitive" } },
+      { taskHash: { contains: search, mode: "insensitive" } },
+      { transactionHash: { contains: search, mode: "insensitive" } },
+    ];
+  }
+
+  if (dateFrom || dateTo) {
+    where.createdAt = {};
+    if (dateFrom) {
+      where.createdAt.gte = new Date(dateFrom);
+    }
+    if (dateTo) {
+      where.createdAt.lte = new Date(dateTo);
+    }
+  }
+
+  if (status) {
+    where.status = status;
+  }
+
+  if (state) {
+    where.state = state;
+  }
+
+  // Get all tasks without pagination - include all data for admin
+  const tasks = await prisma.task.findMany({
+    where,
+    orderBy: { createdAt: "desc" },
+    include: {
+      executionProofs: {
+        orderBy: { createdAt: "desc" },
+        include: {
+          uploadedByUser: {
+            select: {
+              nickname: true,
+              address: true,
+            },
+          },
+        },
+      },
+      user: {
+        select: {
+          address: true,
+          nickname: true,
+        },
+      },
+    },
+  });
+
+  // Generate CSV content
+  const csvHeaders = [
+    'Transaction ID',
+    'Task Type',
+    'State',
+    'Status',
+    'Token Type',
+    'Chain',
+    'Platform',
+    'Type of Transaction',
+    'Details',
+    'Priority',
+    'Created At',
+    'Updated At',
+    // User fields
+    'User Address',
+    'User Nickname',
+    // Liquidation specific fields
+    'Company and Artist',
+    'Collection Name',
+    'Token ID',
+    'Target Price ETH',
+    'Date Deadline',
+    'Technical Verification',
+    // Acquisition specific fields
+    'NFT Name',
+    'Target Price Budget',
+    'Transaction Execution Date',
+    'Priority Deadline',
+    // Arbitrage specific fields
+    'Target Price Per Token',
+    'Amount',
+    'Currency Name',
+    'Proportion',
+    'Duration',
+    'Deadline',
+    // Task data (JSON)
+    'Task Data',
+    'Task Hash',
+    'Transaction Hash',
+    // Execution proofs summary
+    'Execution Proofs Count',
+    'Execution Proofs Details'
+  ];
+
+  const csvRows = tasks.map(task => {
+    const executionProofsDetails = task.executionProofs
+      .map(proof => `${proof.proofType}: ${proof.proofValue || 'N/A'} (by ${proof.uploadedByUser?.nickname || 'Unknown'})`)
+      .join('; ');
+
+    return [
+      task.transactionId,
+      task.taskType,
+      task.state,
+      '', // Status field doesn't exist in Task model
+      task.tokenType || '',
+      task.chain || '',
+      task.platform || '',
+      task.typeOfTx || '',
+      task.details || '',
+      task.priority || '',
+      task.createdAt.toISOString(),
+      task.updatedAt.toISOString(),
+      // User fields
+      task.user?.address || '',
+      task.user?.nickname || '',
+      // Liquidation specific fields
+      task.companyAndArtist || '',
+      task.collectionName || '',
+      task.tokenId || '',
+      task.targetPriceEth || '',
+      task.dateDeadline || '',
+      task.technicalVerification || '',
+      // Acquisition specific fields
+      task.nftName || '',
+      task.targetPriceBudget || '',
+      task.transactionExecutionDate || '',
+      task.priorityDeadline || '',
+      // Arbitrage specific fields
+      task.targetPricePerToken || '',
+      task.amount || '',
+      task.currencyName || '',
+      task.proportion || '',
+      task.duration || '',
+      task.deadline || '',
+      // Task data and hashes
+      JSON.stringify(task.taskData),
+      task.taskHash,
+      task.transactionHash,
+      // Execution proofs
+      task.executionProofs.length.toString(),
+      executionProofsDetails
+    ];
+  });
+
+  // Escape CSV values (handle commas, quotes, newlines)
+  const escapeCsvValue = (value: string): string => {
+    if (value.includes(',') || value.includes('"') || value.includes('\n') || value.includes('\r')) {
+      return `"${value.replace(/"/g, '""')}"`;
+    }
+    return value;
+  };
+
+  const csvContent = [
+    csvHeaders.map(escapeCsvValue).join(','),
+    ...csvRows.map(row => row.map(value => escapeCsvValue(String(value))).join(','))
+  ].join('\n');
+
+  return {
+    csvContent,
+    totalTasks: tasks.length,
+    filename: `admin-tasks-export-${new Date().toISOString().split('T')[0]}.csv`
   };
 };
 

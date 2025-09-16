@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { usePublicTasksList } from "./hooks/use-public-tasks-list";
+import { useDownloadTasksCSV } from "./hooks/use-download-tasks-csv";
 import type { Task } from "@the-sandbox-sev/api";
 import { TasksFilters } from "./components/tasks-filters";
 import { TasksTable } from "./components/tasks-table";
 import { PaginationActions } from "../../shared/components/pagination-actions";
 import { TaskDetailsModal } from "@/shared/components/task-details-modal";
+import { FaDownload } from "react-icons/fa";
 
 export function TasksListPage() {
   const {
@@ -24,6 +26,8 @@ export function TasksListPage() {
     refetch,
   } = usePublicTasksList();
 
+  const { downloadCSV, isDownloading, error: downloadError } = useDownloadTasksCSV();
+
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -37,6 +41,18 @@ export function TasksListPage() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedTask(null);
+  };
+
+  const handleDownloadCSV = () => {
+    // Extract only the filter fields needed for CSV (without pagination)
+    const csvFilters = {
+      taskType: filters.taskType,
+      search: filters.search,
+      dateFrom: filters.dateFrom,
+      dateTo: filters.dateTo,
+    };
+    
+    downloadCSV(csvFilters);
   };
 
   if (error) {
@@ -58,9 +74,24 @@ export function TasksListPage() {
       <div className="card-body space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="heading-1">DAO Transparency Dashboard </h1>
+          <button
+            onClick={handleDownloadCSV}
+            disabled={isDownloading || isLoading}
+            className="btn btn-primary btn-sm gap-2"
+          >
+            <FaDownload className="h-4 w-4" />
+            {isDownloading ? "Downloading..." : "Download CSV"}
+          </button>
         </div>
 
         <TasksFilters filters={filters} onFiltersChange={updateFilters} isPublic={true} />
+
+        {downloadError && (
+          <div className="alert alert-error">
+            <h3 className="font-bold">Error downloading CSV</h3>
+            <p>{downloadError.message}</p>
+          </div>
+        )}
 
         <div className="text-sm text-base-content/70">
           {isLoading ? (

@@ -6,6 +6,8 @@ import {
   executeTask,
   batchExecuteTasks,
   getPublicTasks,
+  getPublicTasksCSV,
+  getTasksCSV,
   batchCreateTasks,
 } from "./tasks.service";
 import {
@@ -247,3 +249,55 @@ export const getPublicTasksController = async (c: Context) => {
     return c.json({ error: error.message }, 500);
   }
 };
+
+export const getPublicTasksCSVController = async (c: Context) => {
+  try {
+    const taskType = c.req.query("taskType") as z.infer<
+      typeof GetPublicTasksQuerySchema
+    >["taskType"];
+    const search = c.req.query("search") as z.infer<typeof GetPublicTasksQuerySchema>["search"];
+    const dateFrom = c.req.query("dateFrom") as z.infer<typeof GetPublicTasksQuerySchema>["dateFrom"];
+    const dateTo = c.req.query("dateTo") as z.infer<typeof GetPublicTasksQuerySchema>["dateTo"];
+
+    const query = { taskType, search, dateFrom, dateTo };
+    const result = await getPublicTasksCSV(query);
+
+    // Set headers for CSV download
+    c.header('Content-Type', 'text/csv');
+    c.header('Content-Disposition', `attachment; filename="${result.filename}"`);
+    c.header('Cache-Control', 'no-cache');
+
+    return c.text(result.csvContent);
+  } catch (error: any) {
+    return c.json({ error: error.message }, 500);
+  }
+};
+
+export const getTasksCSVController = async (c: Context) => {
+  try {
+    const user = c.get("user");
+    if (!user) {
+      return c.json({ error: "User not authenticated" }, 401);
+    }
+
+    const taskType = c.req.query("taskType") as z.infer<typeof GetTasksQuerySchema>["taskType"];
+    const search = c.req.query("search") as z.infer<typeof GetTasksQuerySchema>["search"];
+    const dateFrom = c.req.query("dateFrom") as z.infer<typeof GetTasksQuerySchema>["dateFrom"];
+    const dateTo = c.req.query("dateTo") as z.infer<typeof GetTasksQuerySchema>["dateTo"];
+    const status = c.req.query("status") as z.infer<typeof GetTasksQuerySchema>["status"];
+    const state = c.req.query("state") as z.infer<typeof GetTasksQuerySchema>["state"];
+
+    const query = { taskType, search, dateFrom, dateTo, status, state };
+    const result = await getTasksCSV(query);
+
+    // Set headers for CSV download
+    c.header('Content-Type', 'text/csv');
+    c.header('Content-Disposition', `attachment; filename="${result.filename}"`);
+    c.header('Cache-Control', 'no-cache');
+
+    return c.text(result.csvContent);
+  } catch (error: any) {
+    return c.json({ error: error.message }, 500);
+  }
+};
+

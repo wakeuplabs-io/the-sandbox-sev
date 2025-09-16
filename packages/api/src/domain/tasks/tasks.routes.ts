@@ -11,6 +11,8 @@ import {
   uploadProofImageController,
   generateImageUploadUrlController,
   getPublicTasksController,
+  getPublicTasksCSVController,
+  getTasksCSVController,
   batchCreateTasksController,
 } from "./tasks.controller";
 import { CreateTaskSchema, GetTasksQuerySchema, GetPublicTasksQuerySchema, ExecuteTaskSchema, BatchExecuteTasksSchema, BatchCreateTasksSchema } from "./tasks.schema";
@@ -19,12 +21,14 @@ import { Role } from "@/generated/prisma";
 
 // Public routes (no authentication required)
 const publicTasks = new Hono()
-  .get("/", zValidator("query", GetPublicTasksQuerySchema), getPublicTasksController);
+  .get("/", zValidator("query", GetPublicTasksQuerySchema), getPublicTasksController)
+  .get("/csv", zValidator("query", GetPublicTasksQuerySchema.omit({ page: true, limit: true })), getPublicTasksCSVController);
 
 // Protected routes (authentication required)
 const tasks = new Hono()
   .use("/*", authMiddleware)
   .get("/", zValidator("query", GetTasksQuerySchema), getTasksController)
+  .get("/csv", zValidator("query", GetTasksQuerySchema.omit({ page: true, limit: true })), getTasksCSVController)
   .get(
     "/:transactionId",
     zValidator(
