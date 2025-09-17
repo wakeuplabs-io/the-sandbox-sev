@@ -45,12 +45,13 @@ export function TasksTable({ tasks, isLoading, onViewTask }: TasksTableProps) {
       <table className="table table-zebra table-fixed w-full">
         <thead>
           <tr>
-            <th className="w-1/6">Transaction ID</th>
-            <th className="w-1/6">Task Type</th>
-            <th className="w-1/6">Task Hash</th>
-            <th className="w-1/6">Transaction Hash</th>
-            <th className="w-1/6">Created At</th>
-            <th className="w-1/6"></th>
+            <th className="w-1/7">Transaction ID</th>
+            <th className="w-1/7">Task Type</th>
+            <th className="w-1/7">Token Link</th>
+            <th className="w-1/7">Task Hash</th>
+            <th className="w-1/7">Transaction Hash</th>
+            <th className="w-1/7">Created At</th>
+            <th className="w-1/7"></th>
           </tr>
         </thead>
         <tbody>
@@ -60,7 +61,21 @@ export function TasksTable({ tasks, isLoading, onViewTask }: TasksTableProps) {
               <td className="">
                 <span className={clsx("text-xs font-mono font-semibold")}>{task.taskType}</span>
               </td>
-
+              <td className="font-mono text-xs">
+                {task.tokenLink ? (
+                  <a 
+                    href={task.tokenLink} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-primary hover:text-primary-focus underline truncate block"
+                    title={task.tokenLink}
+                  >
+                    {task.tokenLink.length > 20 ? `${task.tokenLink.substring(0, 20)}...` : task.tokenLink}
+                  </a>
+                ) : (
+                  <span className="text-base-content/50">-</span>
+                )}
+              </td>
               <td className="font-mono text-xs">
                 <div className="flex items-center gap-2">
                   <span
