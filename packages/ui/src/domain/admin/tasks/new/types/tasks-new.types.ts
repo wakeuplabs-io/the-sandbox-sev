@@ -29,6 +29,7 @@ export const TASK_TYPE_CONFIGS: Record<TaskType, TaskTypeConfig> = {
       'companyAndArtist',
       'collectionName',
       'tokenId',
+      'tokenLink',
       'tokenType',
       'chain',
       'platform',
@@ -44,6 +45,7 @@ export const TASK_TYPE_CONFIGS: Record<TaskType, TaskTypeConfig> = {
       'companyAndArtist',
       'collectionName',
       'tokenId',
+      'tokenLink',
       'tokenType',
       'chain',
       'platform',
@@ -60,20 +62,23 @@ export const TASK_TYPE_CONFIGS: Record<TaskType, TaskTypeConfig> = {
       'nftName',                 // B
       'collectionName',          // C
       'tokenId',                 // D
-      'tokenType',               // E
-      'chain',                   // F
-      'platform',                // G
-      'targetPriceBudget',       // H
-      'typeOfTx',                // I
-      'details',                 // J
-      'transactionExecutionDate', // K
-      'priorityDeadline',        // L
-      'priority'                 // M
+      'tokenLink',               // E
+      'tokenType',               // F
+      'chain',                   // G
+      'platform',                // H
+      'targetPriceBudget',       // I
+      'typeOfTx',                // J
+      'details',                 // K
+      'transactionExecutionDate', // L
+      'priorityDeadline',        // M
+      'priority'                 // N
     ],
     requiredColumns: [
       'transactionId',
       'nftName',
       'collectionName',
+      'tokenId',
+      'tokenLink',
       'tokenType',
       'chain',
       'platform',
@@ -89,19 +94,21 @@ export const TASK_TYPE_CONFIGS: Record<TaskType, TaskTypeConfig> = {
       'transactionId',           // A
       'collectionName',          // B
       'tokenId',                 // C (Optional)
-      'tokenType',               // D (Optional)
-      'chain',                   // E
-      'platform',                // F
-      'targetPriceBudget',       // G (Optional)
-      'typeOfTx',                // H
-      'details',                 // I
-      'dateDeadline',            // J (Optional)
-      'priority'                 // K
+      'tokenLink',               // D (Optional)
+      'tokenType',               // E (Optional)
+      'chain',                   // F
+      'platform',                // G
+      'targetPriceBudget',       // H (Optional)
+      'typeOfTx',                // I
+      'details',                 // J
+      'dateDeadline',            // K (Optional)
+      'priority'                 // L
     ],
     requiredColumns: [
       'transactionId',
       'collectionName',
       // 'tokenId', // Now optional
+      // 'tokenLink', // Now optional
       // 'tokenType', // Now optional
       'chain',
       'platform',

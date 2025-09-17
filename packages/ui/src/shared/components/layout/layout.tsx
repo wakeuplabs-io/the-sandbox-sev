@@ -10,6 +10,7 @@ import { NicknameSetupModal } from "@/shared/components/nickname-setup-modal";
 import { UserRoleEnum } from "@/shared/constants";
 import { ProfileModal } from "./profile-modal";
 import { useLayout } from "@/context/layout-context";
+import { WalletBalanceBanner } from "./wallet-balance-banner";
 
 interface LayoutProps {
   children?: React.ReactNode;
@@ -36,7 +37,7 @@ export function Layout({ children, showSidebar = false }: LayoutProps) {
   const { account, email, logout } = useWeb3Auth();
   const { user } = useGetUser(account || "", email || "");
   const { shouldShowModal, updateNickname, isUpdating, error } = useNicknameSetup();
-  const { isProfileModalOpen, setIsProfileModalOpen } = useLayout();
+  const { isProfileModalOpen, setIsProfileModalOpen, isWalletBalanceModalOpen, setIsWalletBalanceModalOpen } = useLayout();
   const handleSidebarToggle = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
@@ -59,7 +60,7 @@ export function Layout({ children, showSidebar = false }: LayoutProps) {
         onSidebarToggle={handleSidebarToggle}
         showSidebarToggle={showSidebar}
       />
-      <div className="mx-auto max-w-screen-2xl pt-16">
+      <div className="mx-auto max-w-screen-2xl min-h-[calc(100vh-250px)] pt-16">
         <main className="flex-1 py-6">{children || <Outlet />}</main>
       </div>
       <Footer />
@@ -80,6 +81,10 @@ export function Layout({ children, showSidebar = false }: LayoutProps) {
         onLogout={handleLogout}
         isLoggingOut={false}
       />
+      <WalletBalanceBanner onClose={() => {
+        console.log("close");
+        setIsWalletBalanceModalOpen(false);
+      }} isOpen={isWalletBalanceModalOpen} />
     </div>
   );
 }

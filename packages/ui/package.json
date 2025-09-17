@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npx tsc && vite build",
+    "build": "npx tsc && vite build --mode development",
+    "build:staging": "npx tsc && vite build --mode staging",
     "build:prod": "npx tsc && vite build --mode production",
     "preview": "vite preview",
     "routes": "@tanstack/router-vite-plugin generate",
@@ -22,6 +23,7 @@
     "@the-sandbox-sev/api": "file:../api",
     "@web3auth/modal": "10.2.0",
     "dotenv": "17.2.1",
+    "qrcode.react": "^4.2.0",
     "react": "19.1.1",
     "react-dom": "19.1.1",
     "react-icons": "5.5.0",

@@ -1,7 +1,13 @@
-import { FaPlay, FaPlus } from "react-icons/fa";
+import { FaPlay, FaPlus, FaDownload } from "react-icons/fa";
 import { Link } from "@tanstack/react-router";
 
-export function TaskExecutionHeader() {
+interface TaskExecutionHeaderProps {
+  onDownloadCSV: () => void;
+  isDownloading: boolean;
+  isLoading: boolean;
+}
+
+export function TaskExecutionHeader({ onDownloadCSV, isDownloading, isLoading }: TaskExecutionHeaderProps) {
   return (
     <div className="mb-6 flex items-center justify-between">
       <div>
@@ -14,10 +20,20 @@ export function TaskExecutionHeader() {
         </p>
       </div>
 
-      <Link to="/admin/tasks/new" className="btn btn-primary">
-        <FaPlus className="h-4 w-4" />
-        Create New Task
-      </Link>
+      <div className="flex gap-2">
+        <button
+          onClick={onDownloadCSV}
+          disabled={isDownloading || isLoading}
+          className="btn btn-outline btn-md gap-2"
+        >
+          <FaDownload className="h-4 w-4" />
+          {isDownloading ? "Downloading..." : "Download CSV"}
+        </button>
+        <Link to="/admin/tasks/new" className="btn btn-primary">
+          <FaPlus className="h-4 w-4" />
+          Create New Task
+        </Link>
+      </div>
     </div>
   );
 }

@@ -19,7 +19,8 @@
     "build:ui": "npm run build --workspace=packages/ui",
     "dev:api": "npm run dev --workspace=packages/api",
     "dev:ui": "npm run dev --workspace=packages/ui",
-    "build:ui:prod": "npm run build:prod --workspace=packages/ui"
+    "build:ui:prod": "npm run build:prod --workspace=packages/ui",
+    "build:ui:staging": "npm run build:staging --workspace=packages/ui"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

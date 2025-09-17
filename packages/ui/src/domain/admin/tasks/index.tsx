@@ -3,6 +3,7 @@ import { useTaskExecution } from "./hooks/use-task-execution";
 import { TasksFilters } from "../../tasks/components/tasks-filters";
 import { TaskStateEnum } from "@/shared/constants";
 import { useAdminTasksList } from "./hooks/use-admin-tasks-list";
+import { useDownloadAdminTasksCSV } from "./hooks/use-download-admin-tasks-csv";
 import { TaskDetailsModal } from "@/shared/components/task-details-modal";
 import type { Task } from "@the-sandbox-sev/api";
 import { TaskExecutionHeader } from "./components/task-execution-header";
@@ -27,6 +28,7 @@ export function TaskExecutionPage() {
     totalTasks,
   } = useAdminTasksList();
   const { batchExecuteTasks, isExecuting } = useTaskExecution();
+  const { downloadCSV, isDownloading, error: downloadError } = useDownloadAdminTasksCSV();
   const [tasksWithProofs, setTasksWithProofs] = useState<Set<string>>(new Set());
   const [taskProofs, setTaskProofs] = useState<Record<string, any[]>>({});
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
@@ -120,6 +122,20 @@ export function TaskExecutionPage() {
     setSelectedTask(null);
   };
 
+  const handleDownloadCSV = () => {
+    // Extract only the filter fields needed for CSV (without pagination)
+    const csvFilters = {
+      taskType: filters.taskType,
+      search: filters.search,
+      dateFrom: filters.dateFrom,
+      dateTo: filters.dateTo,
+      status: filters.status,
+      state: filters.state,
+    };
+    
+    downloadCSV(csvFilters);
+  };
+
   // Extract conditions for better readability
   const hasTasksWithProofs = tasksWithProofs.size > 0;
   const hasStoredTasksWithProofs = allTasks.some(
@@ -139,8 +155,20 @@ export function TaskExecutionPage() {
   return (
     <section className="section space-y-4">
       <div className="flex flex-col h-full space-y-4">
-        <TaskExecutionHeader />
+        <TaskExecutionHeader 
+          onDownloadCSV={handleDownloadCSV}
+          isDownloading={isDownloading}
+          isLoading={isLoading}
+        />
         <TasksFilters filters={filters} onFiltersChange={updateFilters} />
+        
+        {downloadError && (
+          <div className="alert alert-error">
+            <h3 className="font-bold">Error downloading CSV</h3>
+            <p>{downloadError.message}</p>
+          </div>
+        )}
+
         {shouldShowBatchActions && (
           <BatchActionsPanel
             readyTasksCount={readyTasksCount}

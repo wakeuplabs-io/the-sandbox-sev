@@ -73,9 +73,9 @@ export function TaskExecutionCard({
           className="cursor-pointer hover:bg-gray-700/30 rounded-lg p-2 -m-2 transition-colors duration-200"
           onClick={() => setIsExpanded(!isExpanded)}
         >
-          <div className="grid grid-cols-12 items-center gap-4">
+          <div className="grid grid-cols-12 items-center gap-4 lg:gap-6">
             {/* Expand/Collapse Icon */}
-            <div className="col-span-1 flex justify-center">
+            <div className="col-span-1 flex justify-start">
               {isExpanded ? (
                 <FaChevronDown className="h-4 w-4 text-base-content/60" />
               ) : (
@@ -84,28 +84,46 @@ export function TaskExecutionCard({
             </div>
 
             {/* Transaction ID */}
-            <div className="col-span-3">
-              <span className="font-mono text-sm font-semibold">{task.transactionId}</span>
+            <div className="col-span-2 overflow-hidden text-ellipsis">
+              <span className="font-mono text-sm font-semibold ">{task.transactionId}</span>
             </div>
 
-            {/* Task Type - Clean text with color indicator */}
+            {/* Task Type */}
             <div className="col-span-2">
               <div className="flex items-center gap-2">
                 <span className="text-sm text-base-content/80 font-medium">{task.taskType}</span>
               </div>
             </div>
 
-            {/* Priority - Icon + text only */}
-            <div className="col-span-2">
+            {/* Token Link */}
+            <div className="col-span-3 overflow-hidden text-ellipsis">
+              {task.tokenLink ? (
+                <a 
+                  href={task.tokenLink} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-primary hover:text-primary-focus underline text-sm block truncate"
+                  title={task.tokenLink}
+                  onClick={e => e.stopPropagation()}
+                >
+                  {task.tokenLink}
+                </a>
+              ) : (
+                <span className="text-base-content/50 text-sm">-</span>
+              )}
+            </div>
+
+            {/* Priority */}
+            <div className="col-span-1">
               {task.priority && (
                 <div className="flex items-center gap-1">
-                  <span className={clsx("badge text-xs", getPriorityBadgeClasses(task.priority))}>{task.priority}</span>
+                  <span className={clsx("badge w-[100px] text-xs", getPriorityBadgeClasses(task.priority))}>{task.priority}</span>
                 </div>
               )}
             </div>
 
-            {/* State Badge - Only badge we keep */}
-            <div className="col-span-2">
+            {/* State Badge */}
+            <div className="col-span-1">
               <span className={clsx("badge text-xs badge-outline")}>
                 {TaskStateLabelEnum[task.state as keyof typeof TaskStateLabelEnum]}
               </span>
@@ -154,6 +172,20 @@ export function TaskExecutionCard({
                 <div>
                   <span className="font-semibold text-base-content/70">Platform:</span>
                   <span className="ml-2">{task.platform}</span>
+                </div>
+              )}
+              {task.tokenLink && (
+                <div className="md:col-span-2">
+                  <span className="font-semibold text-base-content/70">Token Link:</span>
+                  <a 
+                    href={task.tokenLink} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="ml-2 text-primary hover:text-primary-focus underline break-all"
+                    title={task.tokenLink}
+                  >
+                    {task.tokenLink}
+                  </a>
                 </div>
               )}
             </div>

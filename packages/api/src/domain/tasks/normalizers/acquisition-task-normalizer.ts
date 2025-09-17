@@ -32,6 +32,7 @@ export class AcquisitionTaskNormalizer extends BaseTaskNormalizer {
 			targetPriceBudget: acquisitionData.targetPriceBudget,
 			transactionExecutionDate: acquisitionData.transactionExecutionDate,
 			priorityDeadline: acquisitionData.priorityDeadline,
+			tokenLink: acquisitionData.tokenLink,
 		}
 	}
 }

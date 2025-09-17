@@ -1,7 +1,7 @@
 import { FaSearch } from "react-icons/fa";
 import type { TasksListFilters } from "../types/tasks-list.types";
 import { TaskTypeEnum, TaskStateEnum, TaskStateLabelEnum } from "@/shared/constants";
-import type { SelectOption } from "@/shared/components";
+import { Select, type SelectOption } from "@/shared/components";
 
 interface TasksFiltersProps {
   filters: TasksListFilters;
@@ -26,10 +26,10 @@ const taskStateOptions: SelectOption[] = [
 export function TasksFilters({ filters, onFiltersChange, isPublic }: TasksFiltersProps) {
   return (
     <div className="w-full">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="flex flex-wrap justify-start gap-4 xl:gap-10 my-10">
         <div className="form-control">
-          <label className="label">
-            <span className="label-text">Search Transaction ID</span>
+          <label className="label text-xs">
+            <span className="label-text">Search by Tx ID / Task Hash / Tx Hash</span>
           </label>
           <div className="relative">
             <input
@@ -44,62 +44,70 @@ export function TasksFilters({ filters, onFiltersChange, isPublic }: TasksFilter
         </div>
 
         <div className="form-control">
-          <label className="label">
-            <span className="label-text font-medium">Task Type</span>
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {taskTypeOptions.map(option => (
-              <button
-                key={option.value}
-                className={`btn btn-md ${
-                  filters.taskType === option.value ? "btn-primary" : "btn-outline"
-                }`}
-                onClick={() => onFiltersChange({ taskType: option.value || (undefined as any) })}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
+          <Select
+            label="Task Type"
+            placeholder="All Types"
+            options={taskTypeOptions}
+            value={filters.taskType || ""}
+            onChange={e => onFiltersChange({ taskType: e.target.value || (undefined as any) })}
+            fullWidth={false}
+          />
         </div>
 
         {!isPublic && (
           <div className="form-control">
-            <label className="label">
-              <span className="label-text font-medium">Task State</span>
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {taskStateOptions.map(option => (
-                <button
-                  key={option.value}
-                  className={`btn btn-md ${
-                    filters.state === option.value ? "btn-primary" : "btn-outline"
-                  }`}
-                  onClick={() => onFiltersChange({ state: option.value as any })}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
+            <Select
+              label="Task State"
+              placeholder="All States"
+              options={taskStateOptions}
+              value={filters.state || ""}
+              onChange={e => onFiltersChange({ state: e.target.value || (undefined as any) })}
+              fullWidth={false}
+            />
           </div>
         )}
-      </div>
 
-      {/* <div className="flex justify-end my-4">
-        <button
-          className="btn btn-outline btn-sm"
-          onClick={() =>
-            onFiltersChange({
-              search: undefined,
-              taskType: undefined,
-              state: undefined,
-              dateFrom: undefined,
-              dateTo: undefined,
-            })
-          }
-        >
-          Clear Filters
-        </button>
-      </div> */}
+        {/* Date Range Filters */}
+        <div className="form-control">
+          <label className="label text-xs">
+            <span className="label-text">From</span>
+          </label>
+          <input
+            type="date"
+            className="base-input text-md"
+            value={filters.dateFrom || ""}
+            onChange={e => onFiltersChange({ dateFrom: e.target.value || undefined })}
+          />
+        </div>
+        <div className="form-control">
+          <label className="label text-xs">
+            <span className="label-text">To</span>
+          </label>
+          <input
+            type="date"
+            className="base-input text-md"
+            value={filters.dateTo || ""}
+            onChange={e => onFiltersChange({ dateTo: e.target.value || undefined })}
+          />
+        </div>
+
+        <div className="flex flex-col justify-end">
+          <button
+            className="btn btn-ghost btn-sm"
+            onClick={() =>
+              onFiltersChange({
+                search: undefined,
+                taskType: undefined,
+                state: undefined,
+                dateFrom: undefined,
+                dateTo: undefined,
+              })
+            }
+          >
+            Clear Filters
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

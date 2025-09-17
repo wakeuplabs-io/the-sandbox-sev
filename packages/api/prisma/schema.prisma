@@ -80,6 +80,7 @@ model Task {
     companyAndArtist      String?
     collectionName        String?
     tokenId               String?
+    tokenLink             String?
     targetPriceEth        String?
     dateDeadline          String?
     technicalVerification String?

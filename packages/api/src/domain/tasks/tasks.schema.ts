@@ -15,6 +15,7 @@ export const LiquidationTaskSchema = z.object({
   dateDeadline: z.string(),
   priority: z.string(),
   technicalVerification: z.string(),
+  tokenLink: z.string(),
 })
 
 // Schema para ACQUISITION (columnas A-M)
@@ -32,6 +33,7 @@ export const AcquisitionTaskSchema = z.object({
   transactionExecutionDate: z.string(),
   priorityDeadline: z.string(),
   priority: z.string(),
+  tokenLink: z.string(),
 })
 
 // Schema para AUTHORIZATION (columnas A-K)
@@ -47,6 +49,7 @@ export const AuthorizationTaskSchema = z.object({
   details: z.string(),
   dateDeadline: z.string(),
   priority: z.string(),
+  tokenLink: z.string(),
 })
 
 // Schema para ARBITRAGE (columnas A-L)
@@ -132,6 +135,8 @@ export const GetPublicTasksQuerySchema = z.object({
   limit: z.coerce.number().min(1).max(50).default(10), // Max 50 for public endpoint
   taskType: z.enum(['LIQUIDATION', 'ACQUISITION', 'AUTHORIZATION', 'ARBITRAGE']).optional(),
   search: z.string().optional(),
+  dateFrom: z.string().optional(),
+  dateTo: z.string().optional(),
 })
 
 // Schema for batch creating multiple tasks

@@ -5,7 +5,8 @@ import { FaHamburger } from "react-icons/fa";
 import { LoginButton } from "../login-button";
 import { useLayout } from "@/context/layout-context";
 import classNames from "classnames";
-import Logo from "@/shared/assets/sandbox-logo.png"
+import Logo from "@/shared/assets/sandbox-logo.png";
+import { WalletBalance } from "./wallet-balance-banner";
 interface HeaderProps {
   links: Array<{ to: string; label: string; icon?: React.ReactNode }>;
   onSidebarToggle?: () => void;
@@ -20,28 +21,21 @@ export function Header({ links, onSidebarToggle, showSidebarToggle }: HeaderProp
   const [isVisible, setIsVisible] = useState(true);
   const [scrollProgress, setScrollProgress] = useState(0);
 
-  // Check if current pathname starts with /admin
   const isAdminRoute = routerState.location.pathname.startsWith("/admin");
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
-
-      // Calculate scroll progress (0 to 1)
       const progress = Math.min(currentScrollY / documentHeight, 1);
       setScrollProgress(progress);
 
-      // Show/hide header based on scroll direction
       if (currentScrollY > lastScrollY && currentScrollY > 100) {
         setIsVisible(false); // Scrolling down, hide header
       } else {
         setIsVisible(true); // Scrolling up, show header
       }
-
-      // Add scrolled effect when past 20px
       setIsScrolled(currentScrollY > 20);
-
       setLastScrollY(currentScrollY);
     };
 
@@ -52,17 +46,13 @@ export function Header({ links, onSidebarToggle, showSidebarToggle }: HeaderProp
   return (
     <header className="">
       <div
-        className={classNames(
-          "header",
-          {
-            "translate-y-0": isVisible,
-            "-translate-y-full": !isVisible,
-            "backdrop-blur-md": isScrolled,
-            "": !isScrolled,
-          }
-        )}
+        className={classNames("header", {
+          "translate-y-0": isVisible,
+          "-translate-y-full": !isVisible,
+          "backdrop-blur-md": isScrolled,
+          "": !isScrolled,
+        })}
       >
-        
         <div className="navbar-start">
           {showSidebarToggle && (
             <button
@@ -83,13 +73,20 @@ export function Header({ links, onSidebarToggle, showSidebarToggle }: HeaderProp
           <DesktopNav links={links} />
         </div>
 
-        <div className="navbar-end">{isAdminRoute && <LoginButton isLoading={isLoading} />}</div>
-        {/* Subtle top border */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-400 to-transparent"></div>
+        <div className="navbar-end">
+          {isAdminRoute && (
+            <>
+              <div className="flex items-center gap-4">
+                <WalletBalance />
+                <LoginButton isLoading={isLoading} />{" "}
+              </div>
+            </>
+          )}
+        </div>
 
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-400 to-transparent"></div>
       </div>
 
-      {/* Scroll Progress Indicator */}
       <div
         className="fixed top-0 left-0 right-0 z-40 h-1 bg-primary/20"
         style={{
@@ -100,7 +97,6 @@ export function Header({ links, onSidebarToggle, showSidebarToggle }: HeaderProp
       >
         <div className="h-full bg-gradient-to-r from-primary to-secondary transition-all duration-300" />
       </div>
-      
     </header>
   );
 }
