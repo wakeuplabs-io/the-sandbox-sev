@@ -5,13 +5,13 @@ import env from "@/env";
 
 export const getWalletBalance = async () => {
   try {
-    const publicClient = getPublicHttpsClient();
-    const walletClient = getWalletHttpsClient();
+    const chain = CHAIN_BY_ENV[env.NODE_ENV];
+    const publicClient = getPublicHttpsClient(chain);
+    const walletClient = getWalletHttpsClient(chain);
 
     const address = walletClient.account?.address;
     const balanceWei = await publicClient.getBalance({ address: address as `0x${string}` });
     const balanceEth = parseFloat(formatEther(balanceWei));
-    const chain = CHAIN_BY_ENV[env.NODE_ENV];
 
     const balanceStatus = balanceEth >= 0.5 ? "sufficient" : balanceEth >= 0.2 ? "warning" : "critical";
     return {
