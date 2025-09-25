@@ -149,5 +149,24 @@ export const TASK_TYPE_CONFIGS: Record<TaskType, TaskTypeConfig> = {
       'deadline',
       'priority'
     ]
+  },
+  VAULT: {
+    name: 'Vault',
+    columns: [
+      'transactionId',           // A
+      'companyAndArtist',        // B
+      'collectionName',          // C
+      'tokenId',                 // D
+      'typeOfTx',                // E
+      'technicalVerification'    // F
+    ],
+    requiredColumns: [
+      'transactionId',
+      'companyAndArtist',
+      'collectionName',
+      'tokenId',
+      'typeOfTx',
+      'technicalVerification'
+    ]
   }
 }

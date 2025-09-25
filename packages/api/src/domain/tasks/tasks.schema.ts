@@ -67,11 +67,21 @@ export const ArbitrageTaskSchema = z.object({
   priority: z.string(),
 })
 
+export const VaultTaskSchema = z.object({
+  transactionId: z.string(),
+  companyAndArtist: z.string(),
+  collectionName: z.string(),
+  tokenId: z.string(),
+  typeOfTx: z.string(),
+  technicalVerification: z.string(),
+})
+
 export const CreateTaskSchema = z.discriminatedUnion('taskType', [
   LiquidationTaskSchema.extend({ taskType: z.literal('LIQUIDATION') }),
   AcquisitionTaskSchema.extend({ taskType: z.literal('ACQUISITION') }),
   AuthorizationTaskSchema.extend({ taskType: z.literal('AUTHORIZATION') }),
   ArbitrageTaskSchema.extend({ taskType: z.literal('ARBITRAGE') }),
+  VaultTaskSchema.extend({ taskType: z.literal('VAULT') }),
 ])
 
 
@@ -79,12 +89,13 @@ export type LiquidationTaskInput = z.infer<typeof LiquidationTaskSchema>
 export type AcquisitionTaskInput = z.infer<typeof AcquisitionTaskSchema>
 export type AuthorizationTaskInput = z.infer<typeof AuthorizationTaskSchema>
 export type ArbitrageTaskInput = z.infer<typeof ArbitrageTaskSchema>
+export type VaultTaskInput = z.infer<typeof VaultTaskSchema>
 export type CreateTaskInput = z.infer<typeof CreateTaskSchema>
 
 export const GetTasksQuerySchema = z.object({
   page: z.coerce.number().min(1).default(1),
   limit: z.coerce.number().min(1).max(100).default(10),
-  taskType: z.enum(['LIQUIDATION', 'ACQUISITION', 'AUTHORIZATION', 'ARBITRAGE']).optional(),
+  taskType: z.enum(['LIQUIDATION', 'ACQUISITION', 'AUTHORIZATION', 'ARBITRAGE', 'VAULT']).optional(),
   search: z.string().optional(),
   dateFrom: z.string().optional(),
   dateTo: z.string().optional(),
@@ -125,7 +136,7 @@ export const BatchExecuteTasksSchema = z.object({
 export const GetPublicTasksQuerySchema = z.object({
   page: z.coerce.number().min(1).default(1),
   limit: z.coerce.number().min(1).max(50).default(10),
-  taskType: z.enum(['LIQUIDATION', 'ACQUISITION', 'AUTHORIZATION', 'ARBITRAGE']).optional(),
+  taskType: z.enum(['LIQUIDATION', 'ACQUISITION', 'AUTHORIZATION', 'ARBITRAGE', 'VAULT']).optional(),
   search: z.string().optional(),
   dateFrom: z.string().optional(),
   dateTo: z.string().optional(),

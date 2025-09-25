@@ -26,6 +26,7 @@ enum TaskType {
     ACQUISITION
     AUTHORIZATION
     ARBITRAGE
+    VAULT
 }
 
 enum TaskState {

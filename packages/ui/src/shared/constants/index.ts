@@ -11,6 +11,7 @@ export enum TaskTypeEnum {
   ACQUISITION = "ACQUISITION",
   AUTHORIZATION = "AUTHORIZATION",
   ARBITRAGE = "ARBITRAGE",
+  VAULT = "VAULT",
 }
 
 export enum TaskStateEnum {
