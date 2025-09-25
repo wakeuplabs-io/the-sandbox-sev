@@ -1,5 +1,11 @@
 import { z } from 'zod'
 
+// Priority enum values - based on actual DB values
+const PRIORITY_VALUES = ['Super-High', 'High', 'Medium', 'Low'] as const
+
+// Export priority type for use in other files
+export type TaskPriority = typeof PRIORITY_VALUES[number]
+
 // Schema para LIQUIDATION (columnas A-M)
 export const LiquidationTaskSchema = z.object({
   transactionId: z.string(),
@@ -94,6 +100,7 @@ export const GetTasksQuerySchema = z.object({
   dateTo: z.string().optional(),
   status: z.string().optional(),
   state: z.enum(['STORED', 'EXECUTED', 'BLOCKED', 'CANCELLED']).optional(),
+  priority: z.enum(PRIORITY_VALUES).optional(),
 })
 
 // Response schema for paginated tasks

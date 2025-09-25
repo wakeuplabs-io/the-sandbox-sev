@@ -37,6 +37,7 @@ const verifierService = new VerifierService({
   walletClient,
 });
 
+
 // Tipos para batch operations
 export interface NormalizedTask {
   transactionId: string;
@@ -440,7 +441,7 @@ export const getAllTasks = async (): Promise<any[]> => {
  * Gets tasks with filtering and pagination
  */
 export const getTasks = async (query: z.infer<typeof GetTasksQuerySchema>) => {
-  const { page, limit, taskType, search, dateFrom, dateTo, status, state } = query;
+  const { page, limit, taskType, search, dateFrom, dateTo, status, state, priority } = query;
   const where: any = {};
 
   if (taskType) {
@@ -471,6 +472,13 @@ export const getTasks = async (query: z.infer<typeof GetTasksQuerySchema>) => {
 
   if (state) {
     where.state = state;
+  }
+
+  if (priority) {
+    where.priority = {
+      mode: 'insensitive',
+      equals: priority,
+    };
   }
 
   const total = await prisma.task.count({ where });
@@ -856,7 +864,7 @@ export const getPublicTasksCSV = async (query: Omit<GetPublicTasksQuery, 'page' 
  * Gets admin tasks as CSV (authentication required)
  */
 export const getTasksCSV = async (query: Omit<z.infer<typeof GetTasksQuerySchema>, 'page' | 'limit'>) => {
-  const { taskType, search, dateFrom, dateTo, status, state } = query;
+  const { taskType, search, dateFrom, dateTo, status, state, priority } = query;
   const where: any = {};
 
   if (taskType) {
@@ -887,6 +895,14 @@ export const getTasksCSV = async (query: Omit<z.infer<typeof GetTasksQuerySchema
 
   if (state) {
     where.state = state;
+  }
+
+  if (priority) {
+    // Use exact match for priority to avoid "High" matching "Super-High"
+    where.priority = {
+      mode: 'insensitive',
+      equals: priority,
+    };
   }
 
   // Get all tasks without pagination - include all data for admin

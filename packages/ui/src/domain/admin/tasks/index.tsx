@@ -131,6 +131,7 @@ export function TaskExecutionPage() {
       dateTo: filters.dateTo,
       status: filters.status,
       state: filters.state,
+      priority: filters.priority,
     };
     
     downloadCSV(csvFilters);

@@ -27,6 +27,20 @@ export enum TaskStateLabelEnum {
   CANCELLED = "Cancelled",
 }
 
+export enum TaskPriorityEnum {
+  SUPER_HIGH = "Super-High",
+  HIGH = "High",
+  MEDIUM = "Medium",
+  LOW = "Low",
+}
+
+export enum TaskPriorityLabelEnum {
+  SUPER_HIGH = "Super High",
+  HIGH = "High",
+  MEDIUM = "Medium",
+  LOW = "Low",
+}
+
 
 export const ETHERSCAN_BY_CHAIN_ID: Record<number, string> = {
   //arbitrum mainnet

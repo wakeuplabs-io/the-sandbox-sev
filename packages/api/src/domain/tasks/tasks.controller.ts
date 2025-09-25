@@ -35,7 +35,8 @@ export const getTasksController = async (c: Context) => {
     const dateTo = c.req.query("dateTo") as z.infer<typeof GetTasksQuerySchema>["dateTo"];
     const status = c.req.query("status") as z.infer<typeof GetTasksQuerySchema>["status"];
     const state = c.req.query("state") as z.infer<typeof GetTasksQuerySchema>["state"];
-    const query = { page, limit, taskType, search, dateFrom, dateTo, status, state } as z.infer<
+    const priority = c.req.query("priority") as z.infer<typeof GetTasksQuerySchema>["priority"];
+    const query = { page, limit, taskType, search, dateFrom, dateTo, status, state, priority } as z.infer<
       typeof GetTasksQuerySchema
     >;
     const result = await getTasks(query);
@@ -286,8 +287,9 @@ export const getTasksCSVController = async (c: Context) => {
     const dateTo = c.req.query("dateTo") as z.infer<typeof GetTasksQuerySchema>["dateTo"];
     const status = c.req.query("status") as z.infer<typeof GetTasksQuerySchema>["status"];
     const state = c.req.query("state") as z.infer<typeof GetTasksQuerySchema>["state"];
+    const priority = c.req.query("priority") as z.infer<typeof GetTasksQuerySchema>["priority"];
 
-    const query = { taskType, search, dateFrom, dateTo, status, state };
+    const query = { taskType, search, dateFrom, dateTo, status, state, priority };
     const result = await getTasksCSV(query);
 
     // Set headers for CSV download

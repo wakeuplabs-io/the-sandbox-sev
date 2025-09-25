@@ -1,6 +1,6 @@
 import { FaSearch } from "react-icons/fa";
 import type { TasksListFilters } from "../types/tasks-list.types";
-import { TaskTypeEnum, TaskStateEnum, TaskStateLabelEnum } from "@/shared/constants";
+import { TaskTypeEnum, TaskStateEnum, TaskStateLabelEnum, TaskPriorityEnum, TaskPriorityLabelEnum } from "@/shared/constants";
 import { Select, type SelectOption } from "@/shared/components";
 
 interface TasksFiltersProps {
@@ -21,6 +21,14 @@ const taskStateOptions: SelectOption[] = [
   { value: "", label: "All States" },
   { value: TaskStateEnum.STORED, label: TaskStateLabelEnum.STORED },
   { value: TaskStateEnum.EXECUTED, label: TaskStateLabelEnum.EXECUTED },
+];
+
+const taskPriorityOptions: SelectOption[] = [
+  { value: "", label: "All Priorities" },
+  { value: TaskPriorityEnum.SUPER_HIGH, label: TaskPriorityLabelEnum.SUPER_HIGH },
+  { value: TaskPriorityEnum.HIGH, label: TaskPriorityLabelEnum.HIGH },
+  { value: TaskPriorityEnum.MEDIUM, label: TaskPriorityLabelEnum.MEDIUM },
+  { value: TaskPriorityEnum.LOW, label: TaskPriorityLabelEnum.LOW },
 ];
 
 export function TasksFilters({ filters, onFiltersChange, isPublic }: TasksFiltersProps) {
@@ -67,6 +75,19 @@ export function TasksFilters({ filters, onFiltersChange, isPublic }: TasksFilter
           </div>
         )}
 
+        {!isPublic && (
+          <div className="form-control">
+            <Select
+              label="Priority"
+              placeholder="All Priorities"
+              options={taskPriorityOptions}
+              value={filters.priority || ""}
+              onChange={e => onFiltersChange({ priority: e.target.value || (undefined as any) })}
+              fullWidth={false}
+            />
+          </div>
+        )}
+
         {/* Date Range Filters */}
         <div className="form-control">
           <label className="label text-xs">
@@ -99,6 +120,7 @@ export function TasksFilters({ filters, onFiltersChange, isPublic }: TasksFilter
                 search: undefined,
                 taskType: undefined,
                 state: undefined,
+                priority: undefined,
                 dateFrom: undefined,
                 dateTo: undefined,
               })
