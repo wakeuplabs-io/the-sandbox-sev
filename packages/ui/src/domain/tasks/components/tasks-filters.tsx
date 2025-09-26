@@ -15,6 +15,7 @@ const taskTypeOptions: SelectOption[] = [
   { value: TaskTypeEnum.ACQUISITION, label: "Acquisition" },
   { value: TaskTypeEnum.AUTHORIZATION, label: "Authorization" },
   { value: TaskTypeEnum.ARBITRAGE, label: "Arbitrage" },
+  { value: TaskTypeEnum.VAULT, label: "Vault" },
 ];
 
 const taskStateOptions: SelectOption[] = [

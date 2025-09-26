@@ -24,6 +24,7 @@ import { LiquidationTaskNormalizer } from "./normalizers/liquidation-task-normal
 import { AcquisitionTaskNormalizer } from "./normalizers/acquisition-task-normalizer";
 import { AuthorizationTaskNormalizer } from "./normalizers/authorization-task-normalizer";
 import { ArbitrageTaskNormalizer } from "./normalizers/arbitrage-task-normalizer";
+import { VaultTaskNormalizer } from "./normalizers/vault-task-normalizer";
 
 const chain = CHAIN_BY_ENV[env.NODE_ENV];
 const contractAddress = env.EXECUTION_VERIFIER_ADDRESS as `0x${string}`;
@@ -76,6 +77,7 @@ class TaskFactory {
     this.normalizers.set(TaskType.ACQUISITION, new AcquisitionTaskNormalizer());
     this.normalizers.set(TaskType.AUTHORIZATION, new AuthorizationTaskNormalizer());
     this.normalizers.set(TaskType.ARBITRAGE, new ArbitrageTaskNormalizer());
+    this.normalizers.set(TaskType.VAULT, new VaultTaskNormalizer());
   }
 
   normalizeTask(data: CreateTaskInput, userId: number): NormalizedTask {
@@ -194,6 +196,13 @@ class TaskRepository {
           proportion: task.proportion,
           duration: task.duration,
           deadline: task.deadline,
+        };
+      case TaskType.VAULT:
+        return {
+          companyAndArtist: task.companyAndArtist,
+          collectionName: task.collectionName,
+          tokenId: task.tokenId,
+          technicalVerification: task.technicalVerification,
         };
       default:
         return {};
