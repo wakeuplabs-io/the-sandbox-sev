@@ -24,6 +24,7 @@ import { LiquidationTaskNormalizer } from "./normalizers/liquidation-task-normal
 import { AcquisitionTaskNormalizer } from "./normalizers/acquisition-task-normalizer";
 import { AuthorizationTaskNormalizer } from "./normalizers/authorization-task-normalizer";
 import { ArbitrageTaskNormalizer } from "./normalizers/arbitrage-task-normalizer";
+import { VaultTaskNormalizer } from "./normalizers/vault-task-normalizer";
 
 const chain = CHAIN_BY_ENV[env.NODE_ENV];
 const contractAddress = env.EXECUTION_VERIFIER_ADDRESS as `0x${string}`;
@@ -36,6 +37,7 @@ const verifierService = new VerifierService({
   publicClient,
   walletClient,
 });
+
 
 // Tipos para batch operations
 export interface NormalizedTask {
@@ -75,6 +77,7 @@ class TaskFactory {
     this.normalizers.set(TaskType.ACQUISITION, new AcquisitionTaskNormalizer());
     this.normalizers.set(TaskType.AUTHORIZATION, new AuthorizationTaskNormalizer());
     this.normalizers.set(TaskType.ARBITRAGE, new ArbitrageTaskNormalizer());
+    this.normalizers.set(TaskType.VAULT, new VaultTaskNormalizer());
   }
 
   normalizeTask(data: CreateTaskInput, userId: number): NormalizedTask {
@@ -164,7 +167,6 @@ class TaskRepository {
           tokenId: task.tokenId,
           targetPriceEth: task.targetPriceEth,
           dateDeadline: task.dateDeadline,
-          technicalVerification: task.technicalVerification,
           tokenLink: task.tokenLink,
         };
       case TaskType.ACQUISITION:
@@ -194,6 +196,13 @@ class TaskRepository {
           duration: task.duration,
           deadline: task.deadline,
         };
+      case TaskType.VAULT:
+        return {
+          companyAndArtist: task.companyAndArtist,
+          collectionName: task.collectionName,
+          tokenId: task.tokenId,
+          technicalVerification: task.technicalVerification,
+        };
       default:
         return {};
     }
@@ -208,214 +217,26 @@ const taskRepository = new TaskRepository();
 const MAX_BATCH_SIZE = 20;
 
 /**
- * Creates a liquidation task
- */
-export const createLiquidationTask = async (
-  data: LiquidationTaskInput,
-  user: User
-): Promise<any> => {
-  const taskData = { taskType: TaskType.LIQUIDATION, ...data };
-  const taskHash = hashTaskData(taskData);
-
-  // Store hash on chain
-  const transactionHash = await verifierService.storeHash({
-    hash: taskHash as any,
-    userAddress: user.address as any,
-  });
-
-  // Save to database
-  const task = await prisma.task.create({
-    data: {
-      transactionId: data.transactionId,
-      taskType: TaskType.LIQUIDATION,
-      taskData: taskData,
-      taskHash: taskHash,
-      transactionHash: transactionHash,
-      tokenType: data.tokenType,
-      chain: data.chain,
-      platform: data.platform,
-      typeOfTx: data.typeOfTx,
-      details: data.details,
-      companyAndArtist: data.companyAndArtist,
-      collectionName: data.collectionName,
-      tokenId: data.tokenId,
-      targetPriceEth: data.targetPriceEth,
-      dateDeadline: data.dateDeadline,
-      technicalVerification: data.technicalVerification,
-      priority: data.priority,
-      userId: user.id,
-      tokenLink: data.tokenLink,
-    },
-  });
-
-  return task;
-};
-
-/**
- * Creates an acquisition task
- */
-export const createAcquisitionTask = async (
-  data: AcquisitionTaskInput,
-  user: User
-): Promise<any> => {
-  const taskData = { taskType: TaskType.ACQUISITION, ...data };
-  const taskHash = hashTaskData(taskData);
-
-  // Store hash on chain
-  const transactionHash = await verifierService.storeHash({
-    hash: taskHash as any,
-    userAddress: user.address as any,
-  });
-
-  // Save to database
-  const task = await prisma.task.create({
-    data: {
-      transactionId: data.transactionId,
-      taskType: TaskType.ACQUISITION,
-      taskData: taskData,
-      taskHash: taskHash,
-      transactionHash: transactionHash,
-      tokenType: data.tokenType,
-      chain: data.chain,
-      platform: data.platform,
-      typeOfTx: data.typeOfTx,
-      details: data.details,
-      nftName: data.nftName,
-      collectionName: data.collectionName,
-      tokenId: data.tokenId,
-      targetPriceBudget: data.targetPriceBudget,
-      transactionExecutionDate: data.transactionExecutionDate,
-      priorityDeadline: data.priorityDeadline,
-      priority: data.priority,
-      userId: user.id,
-      tokenLink: data.tokenLink,
-    },
-  });
-
-  return task;
-};
-
-/**
- * Creates an authorization task
- */
-export const createAuthorizationTask = async (
-  data: AuthorizationTaskInput,
-  user: User
-): Promise<any> => {
-  const taskData = { taskType: TaskType.AUTHORIZATION, ...data };
-  const taskHash = hashTaskData(taskData);
-
-  // Store hash on chain
-  const transactionHash = await verifierService.storeHash({
-    hash: taskHash as any,
-    userAddress: user.address as any,
-  });
-
-  // Save to database
-  const task = await prisma.task.create({
-    data: {
-      transactionId: data.transactionId,
-      taskType: TaskType.AUTHORIZATION,
-      taskData: taskData,
-      taskHash: taskHash,
-      transactionHash: transactionHash,
-      tokenType: data.tokenType,
-      chain: data.chain,
-      platform: data.platform,
-      typeOfTx: data.typeOfTx,
-      details: data.details,
-      collectionName: data.collectionName,
-      tokenId: data.tokenId,
-      targetPriceBudget: data.targetPriceBudget,
-      dateDeadline: data.dateDeadline,
-      priority: data.priority,
-      userId: user.id,
-      tokenLink: data.tokenLink,
-    },
-  });
-
-  return task;
-};
-
-/**
- * Creates an arbitrage task
- */
-export const createArbitrageTask = async (data: ArbitrageTaskInput, user: User): Promise<any> => {
-  const taskData = { taskType: TaskType.ARBITRAGE, ...data };
-  const taskHash = hashTaskData(taskData);
-
-  // Store hash on chain
-  const transactionHash = await verifierService.storeHash({
-    hash: taskHash as any,
-    userAddress: user.address as any,
-  });
-
-  // Save to database
-  const task = await prisma.task.create({
-    data: {
-      transactionId: data.transactionId,
-      taskType: TaskType.ARBITRAGE,
-      taskData: taskData,
-      taskHash: taskHash,
-      transactionHash: transactionHash,
-      chain: data.chain,
-      platform: data.platform,
-      typeOfTx: data.typeOfTx,
-      details: data.details,
-      targetPricePerToken: data.targetPricePerToken,
-      amount: data.amount,
-      currencyName: data.currencyName,
-      proportion: data.proportion,
-      duration: data.duration,
-      deadline: data.deadline,
-      priority: data.priority,
-      userId: user.id,
-    },
-  });
-
-  return task;
-};
-
-/**
- * Main function that delegates to specific task type functions
+ * Main function that creates a single task using Factory + Repository pattern
  */
 export const createTask = async (data: CreateTaskInput, user: User): Promise<any> => {
   // Check if task already exists
-  const existingTask = await checkTaskExists(data.transactionId);
+  const existingTask = await taskRepository.checkTaskExists(data.transactionId);
   if (existingTask) {
     throw new Error(`Task with transaction ID ${data.transactionId} already exists`);
   }
 
-  switch (data.taskType) {
-    case TaskType.LIQUIDATION:
-      return createLiquidationTask(data, user);
-    case TaskType.ACQUISITION:
-      return createAcquisitionTask(data, user);
-    case TaskType.AUTHORIZATION:
-      return createAuthorizationTask(data, user);
-    case TaskType.ARBITRAGE:
-      return createArbitrageTask(data, user);
-    default:
-      throw new Error(`Invalid task type: ${(data as any).taskType}`);
-  }
-};
-
-/**
- * Hashes task data using keccak256
- */
-const hashTaskData = (taskData: any) => {
-  const jsonString = JSON.stringify(taskData, Object.keys(taskData).sort());
-  return keccak256(stringToHex(jsonString));
-};
-
-/**
- * Checks if a task exists by transaction ID
- */
-export const checkTaskExists = async (transactionId: string): Promise<boolean> => {
-  const task = await prisma.task.findUnique({
-    where: { transactionId },
+  // Normalize task data using factory
+  const normalizedTask = taskFactory.normalizeTask(data, user.id);
+  
+  // Create hash and store on blockchain
+  const transactionHash = await verifierService.storeHash({
+    hash: normalizedTask.taskHash as any,
+    userAddress: user.address as any,
   });
-  return !!task;
+
+  // Save to database using repository
+  return taskRepository.createTask(normalizedTask, transactionHash);
 };
 
 /**
@@ -440,7 +261,7 @@ export const getAllTasks = async (): Promise<any[]> => {
  * Gets tasks with filtering and pagination
  */
 export const getTasks = async (query: z.infer<typeof GetTasksQuerySchema>) => {
-  const { page, limit, taskType, search, dateFrom, dateTo, status, state } = query;
+  const { page, limit, taskType, search, dateFrom, dateTo, status, state, priority } = query;
   const where: any = {};
 
   if (taskType) {
@@ -471,6 +292,13 @@ export const getTasks = async (query: z.infer<typeof GetTasksQuerySchema>) => {
 
   if (state) {
     where.state = state;
+  }
+
+  if (priority) {
+    where.priority = {
+      mode: 'insensitive',
+      equals: priority,
+    };
   }
 
   const total = await prisma.task.count({ where });
@@ -856,7 +684,7 @@ export const getPublicTasksCSV = async (query: Omit<GetPublicTasksQuery, 'page' 
  * Gets admin tasks as CSV (authentication required)
  */
 export const getTasksCSV = async (query: Omit<z.infer<typeof GetTasksQuerySchema>, 'page' | 'limit'>) => {
-  const { taskType, search, dateFrom, dateTo, status, state } = query;
+  const { taskType, search, dateFrom, dateTo, status, state, priority } = query;
   const where: any = {};
 
   if (taskType) {
@@ -887,6 +715,14 @@ export const getTasksCSV = async (query: Omit<z.infer<typeof GetTasksQuerySchema
 
   if (state) {
     where.state = state;
+  }
+
+  if (priority) {
+    // Use exact match for priority to avoid "High" matching "Super-High"
+    where.priority = {
+      mode: 'insensitive',
+      equals: priority,
+    };
   }
 
   // Get all tasks without pagination - include all data for admin
@@ -988,7 +824,7 @@ export const getTasksCSV = async (query: Omit<z.infer<typeof GetTasksQuerySchema
       task.tokenLink || '',
       task.targetPriceEth || '',
       task.dateDeadline || '',
-      task.technicalVerification || '',
+      task.taskType === 'VAULT' ? (task.technicalVerification || '') : '',
       // Acquisition specific fields
       task.nftName || '',
       task.targetPriceBudget || '',

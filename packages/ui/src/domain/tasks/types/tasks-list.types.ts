@@ -1,5 +1,5 @@
 import { PaginationInfo } from "@/shared/types"
-import { TaskStateEnum } from "@/shared/constants"
+import { TaskStateEnum, TaskPriorityEnum } from "@/shared/constants"
 import { Task, TaskExecutionProof, TaskType } from "@the-sandbox-sev/api"
 
 export interface TaskWithProofs extends Task {
@@ -18,6 +18,7 @@ export interface TasksListFilters {
   dateFrom?: string
   dateTo?: string
   search?: string
+  priority?: TaskPriorityEnum
   page?: number
   limit?: number
 }

@@ -148,6 +148,7 @@ export const Web3AuthProvider = ({ children }: { children: ReactNode }) => {
             logoLight: "/logo.png",
             logoDark: "/logo.png",
             mode: "dark",
+            defaultLanguage: "en",
           },
         });
 

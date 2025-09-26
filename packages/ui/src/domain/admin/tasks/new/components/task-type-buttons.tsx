@@ -27,11 +27,16 @@ export function TaskTypeButtons({ selectedType, onTypeChange }: TaskTypeButtonsP
       type: TaskTypeEnum.ARBITRAGE,
       label: 'Arbitrage',
       description: 'Arbitrage opportunities'
+    },
+    {
+      type: TaskTypeEnum.VAULT,
+      label: 'Vault',
+      description: 'Vault operations'
     }
   ]
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
       {taskTypes.map(({ type, label, description }) => (
         <button
           key={type}

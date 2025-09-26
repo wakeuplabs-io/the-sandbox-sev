@@ -34,6 +34,10 @@ export const useDownloadAdminTasksCSV = () => {
 				params.append('state', filters.state)
 			}
 
+			if (filters.priority) {
+				params.append('priority', filters.priority)
+			}
+
 			const response = await client.api.tasks.csv.$get({
 				query: Object.fromEntries(params),
 			})

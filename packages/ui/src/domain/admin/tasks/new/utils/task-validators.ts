@@ -22,10 +22,6 @@ const LiquidationTaskUISchema = z.object({
   details: z.string().optional(),
   dateDeadline: z.string().min(1, "Date Deadline is required"),
   priority: z.string().optional(),
-  technicalVerification: z.string().refine(val => 
-    ['true', 'false', 'TRUE', 'FALSE'].includes(val),
-    "Technical Verification must be true or false"
-  ),
 })
 
 const AcquisitionTaskUISchema = z.object({
@@ -78,6 +74,18 @@ const ArbitrageTaskUISchema = z.object({
   priority: z.string().min(1, "Priority is required"),
 })
 
+const VaultTaskUISchema = z.object({
+  transactionId: z.string().min(1, "Transaction ID is required"),
+  companyAndArtist: z.string().min(1, "Company & Artist is required"),
+  collectionName: z.string().min(1, "Collection Name is required"),
+  tokenId: z.string().min(1, "Token ID is required"),
+  typeOfTx: z.string().min(1, "Type of TX is required"),
+  technicalVerification: z.string().refine(val => 
+    ['true', 'false', 'TRUE', 'FALSE'].includes(val),
+    "Technical Verification must be true or false"
+  ),
+})
+
 // Función para obtener el schema correcto según el tipo de tarea
 function getSchemaForTaskType(taskType: TaskType) {
   switch (taskType) {
@@ -89,6 +97,8 @@ function getSchemaForTaskType(taskType: TaskType) {
       return AuthorizationTaskUISchema
     case TaskTypeEnum.ARBITRAGE:
       return ArbitrageTaskUISchema
+    case TaskTypeEnum.VAULT:
+      return VaultTaskUISchema
     default:
       throw new Error(`Unknown task type: ${taskType}`)
   }

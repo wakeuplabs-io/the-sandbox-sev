@@ -21,6 +21,8 @@ export function parseExcelData(rawData: string, taskType: TaskType): ParsedRow[]
       return parseLiquidationData(cleanedData, config, parsedRows);
     case TaskTypeEnum.AUTHORIZATION:
       return parseAuthorizationData(cleanedData, config, parsedRows);
+    case TaskTypeEnum.VAULT:
+      return parseVaultData(cleanedData, config, parsedRows);
     default:
       console.error(`Unknown task type: ${taskType}`);
       return [];
@@ -260,6 +262,26 @@ function parseAuthorizationData(
       TaskTypeEnum.AUTHORIZATION
     );
   }
+
+  return parsedRows;
+}
+
+function parseVaultData(
+  cleanedData: string,
+  config: any,
+  parsedRows: ParsedRow[]
+): ParsedRow[] {
+  const rows = cleanedData.split('\n').filter(row => row.trim() !== '');
+  
+  rows.forEach((row, index) => {
+    processRow(
+      row,
+      index,
+      config,
+      parsedRows,
+      TaskTypeEnum.VAULT
+    );
+  });
 
   return parsedRows;
 }
