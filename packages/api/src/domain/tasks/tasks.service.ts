@@ -167,7 +167,6 @@ class TaskRepository {
           tokenId: task.tokenId,
           targetPriceEth: task.targetPriceEth,
           dateDeadline: task.dateDeadline,
-          technicalVerification: task.technicalVerification,
           tokenLink: task.tokenLink,
         };
       case TaskType.ACQUISITION:
@@ -251,7 +250,6 @@ export const createLiquidationTask = async (
       tokenId: data.tokenId,
       targetPriceEth: data.targetPriceEth,
       dateDeadline: data.dateDeadline,
-      technicalVerification: data.technicalVerification,
       priority: data.priority,
       userId: user.id,
       tokenLink: data.tokenLink,
@@ -1013,7 +1011,7 @@ export const getTasksCSV = async (query: Omit<z.infer<typeof GetTasksQuerySchema
       task.tokenLink || '',
       task.targetPriceEth || '',
       task.dateDeadline || '',
-      task.technicalVerification || '',
+      task.taskType === 'VAULT' ? (task.technicalVerification || '') : '',
       // Acquisition specific fields
       task.nftName || '',
       task.targetPriceBudget || '',

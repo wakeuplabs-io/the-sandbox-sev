@@ -22,10 +22,6 @@ const LiquidationTaskUISchema = z.object({
   details: z.string().optional(),
   dateDeadline: z.string().min(1, "Date Deadline is required"),
   priority: z.string().optional(),
-  technicalVerification: z.string().refine(val => 
-    ['true', 'false', 'TRUE', 'FALSE'].includes(val),
-    "Technical Verification must be true or false"
-  ),
 })
 
 const AcquisitionTaskUISchema = z.object({
