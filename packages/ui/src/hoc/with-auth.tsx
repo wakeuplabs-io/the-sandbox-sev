@@ -17,9 +17,6 @@ interface ErrorStateProps {
   message: string;
 }
 
-/**
- * Componente para mostrar estado de carga
- */
 function LoadingState({ showStatus = true }: LoadingStateProps) {
   if (!showStatus) return null;
   
@@ -30,9 +27,6 @@ function LoadingState({ showStatus = true }: LoadingStateProps) {
   );
 }
 
-/**
- * Componente para mostrar estado de error/permisos
- */
 function ErrorState({ message }: ErrorStateProps) {
   return (
     <div className="text-center w-full h-screen flex items-center justify-center text-2xl font-bold text-danger">
@@ -41,16 +35,10 @@ function ErrorState({ message }: ErrorStateProps) {
   );
 }
 
-/**
- * Type guard para verificar si un rol es válido
- */
 function isValidRole(role: unknown): role is UserRoleEnum {
   return typeof role === 'string' && Object.values(UserRoleEnum).includes(role as UserRoleEnum);
 }
 
-/**
- * Verifica si el usuario tiene los permisos necesarios
- */
 function hasRequiredPermissions(
   isAuthenticated: boolean,
   user: { role: string } | undefined,
@@ -64,10 +52,10 @@ function hasRequiredPermissions(
 }
 
 /**
- * HOC para proteger componentes que requieren autenticación
- * @param Component - Componente a proteger
- * @param options - Opciones de configuración
- * @returns Componente protegido con autenticación
+ * HOC to protect components that require authentication
+ * @param Component - Component to protect
+ * @param options - Configuration options
+ * @returns Component protected with authentication
  */
 export function withAuth<P extends object>(
   Component: React.ComponentType<P>,
@@ -77,30 +65,25 @@ export function withAuth<P extends object>(
     const { isAuthenticated, account, email, isLoading: isAuthLoading } = useWeb3Auth();
     const { user, isLoading: isUserLoading } = useGetUser(account || "", email || "");
 
-    // Memoizar el cálculo de permisos para evitar re-renders innecesarios
     const isAllowed = useMemo(() => 
       hasRequiredPermissions(isAuthenticated, user, roles),
       [isAuthenticated, user, roles]
     );
 
-    // Memoizar el estado de loading
     const isLoading = useMemo(() => 
       isAuthLoading || isUserLoading,
       [isAuthLoading, isUserLoading]
     );
 
-    // Callback para el mensaje de error
     const getErrorMessage = useCallback(() => 
-      "No tienes permisos para acceder a esta página",
+      "Access denied",
       []
     );
 
-    // Guard clause: si el contexto no está listo, mostrar loading
     if (isLoading) {
       return <LoadingState showStatus={showStatus} />;
     }
 
-    // Guard clause: si no está autenticado o no tiene permisos
     if (!isAllowed) {
       if (showStatus) {
         return <ErrorState message={getErrorMessage()} />;

@@ -24,6 +24,7 @@ import { LiquidationTaskNormalizer } from "./normalizers/liquidation-task-normal
 import { AcquisitionTaskNormalizer } from "./normalizers/acquisition-task-normalizer";
 import { AuthorizationTaskNormalizer } from "./normalizers/authorization-task-normalizer";
 import { ArbitrageTaskNormalizer } from "./normalizers/arbitrage-task-normalizer";
+import { VaultTaskNormalizer } from "./normalizers/vault-task-normalizer";
 
 const chain = CHAIN_BY_ENV[env.NODE_ENV];
 const contractAddress = env.EXECUTION_VERIFIER_ADDRESS as `0x${string}`;
@@ -36,6 +37,7 @@ const verifierService = new VerifierService({
   publicClient,
   walletClient,
 });
+
 
 // Tipos para batch operations
 export interface NormalizedTask {
@@ -75,6 +77,7 @@ class TaskFactory {
     this.normalizers.set(TaskType.ACQUISITION, new AcquisitionTaskNormalizer());
     this.normalizers.set(TaskType.AUTHORIZATION, new AuthorizationTaskNormalizer());
     this.normalizers.set(TaskType.ARBITRAGE, new ArbitrageTaskNormalizer());
+    this.normalizers.set(TaskType.VAULT, new VaultTaskNormalizer());
   }
 
   normalizeTask(data: CreateTaskInput, userId: number): NormalizedTask {
@@ -193,6 +196,13 @@ class TaskRepository {
           proportion: task.proportion,
           duration: task.duration,
           deadline: task.deadline,
+        };
+      case TaskType.VAULT:
+        return {
+          companyAndArtist: task.companyAndArtist,
+          collectionName: task.collectionName,
+          tokenId: task.tokenId,
+          technicalVerification: task.technicalVerification,
         };
       default:
         return {};
@@ -440,7 +450,7 @@ export const getAllTasks = async (): Promise<any[]> => {
  * Gets tasks with filtering and pagination
  */
 export const getTasks = async (query: z.infer<typeof GetTasksQuerySchema>) => {
-  const { page, limit, taskType, search, dateFrom, dateTo, status, state } = query;
+  const { page, limit, taskType, search, dateFrom, dateTo, status, state, priority } = query;
   const where: any = {};
 
   if (taskType) {
@@ -471,6 +481,13 @@ export const getTasks = async (query: z.infer<typeof GetTasksQuerySchema>) => {
 
   if (state) {
     where.state = state;
+  }
+
+  if (priority) {
+    where.priority = {
+      mode: 'insensitive',
+      equals: priority,
+    };
   }
 
   const total = await prisma.task.count({ where });
@@ -856,7 +873,7 @@ export const getPublicTasksCSV = async (query: Omit<GetPublicTasksQuery, 'page' 
  * Gets admin tasks as CSV (authentication required)
  */
 export const getTasksCSV = async (query: Omit<z.infer<typeof GetTasksQuerySchema>, 'page' | 'limit'>) => {
-  const { taskType, search, dateFrom, dateTo, status, state } = query;
+  const { taskType, search, dateFrom, dateTo, status, state, priority } = query;
   const where: any = {};
 
   if (taskType) {
@@ -887,6 +904,14 @@ export const getTasksCSV = async (query: Omit<z.infer<typeof GetTasksQuerySchema
 
   if (state) {
     where.state = state;
+  }
+
+  if (priority) {
+    // Use exact match for priority to avoid "High" matching "Super-High"
+    where.priority = {
+      mode: 'insensitive',
+      equals: priority,
+    };
   }
 
   // Get all tasks without pagination - include all data for admin

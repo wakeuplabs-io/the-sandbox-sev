@@ -11,6 +11,7 @@ export enum TaskTypeEnum {
   ACQUISITION = "ACQUISITION",
   AUTHORIZATION = "AUTHORIZATION",
   ARBITRAGE = "ARBITRAGE",
+  VAULT = "VAULT",
 }
 
 export enum TaskStateEnum {
@@ -25,6 +26,20 @@ export enum TaskStateLabelEnum {
   EXECUTED = "Executed",
   BLOCKED = "Blocked",
   CANCELLED = "Cancelled",
+}
+
+export enum TaskPriorityEnum {
+  SUPER_HIGH = "Super-High",
+  HIGH = "High",
+  MEDIUM = "Medium",
+  LOW = "Low",
+}
+
+export enum TaskPriorityLabelEnum {
+  SUPER_HIGH = "Super High",
+  HIGH = "High",
+  MEDIUM = "Medium",
+  LOW = "Low",
 }
 
 

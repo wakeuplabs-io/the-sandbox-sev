@@ -7,7 +7,7 @@ import { useLayout } from "@/context/layout-context";
 function SkeletonButton() {
   return (
     <div className="btn btn-outline bg-primary/50 animate-pulse">
-      <span className="">Iniciando sesión</span>
+      <span className="">Logging in</span>
     </div>
   );
 }
@@ -37,7 +37,7 @@ export const LoginButton = ({ isLoading: isLoadingUser }: { isLoading: boolean }
       await login();
     } catch (e: unknown) {
       console.error("Login error:", e);
-      setError(e instanceof Error ? e.message : "Error al conectar");
+      setError(e instanceof Error ? e.message : "Error connecting");
     }
   };
 
