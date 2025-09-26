@@ -3,7 +3,7 @@ import { Outlet } from "@tanstack/react-router";
 import { useGetUser } from "@/hooks/use-get-user";
 import { useWeb3Auth } from "@/context/web3auth";
 import { useNicknameSetup } from "@/hooks/use-nickname-setup";
-import { FaUser, FaUserShield } from "react-icons/fa";
+import { FaUser, FaUserShield, FaPlus } from "react-icons/fa";
 import { Header } from "@/shared/components/layout/header";
 import { Footer } from "@/shared/components/layout/footer";
 import { NicknameSetupModal } from "@/shared/components/nickname-setup-modal";
@@ -22,6 +22,12 @@ const nlinks = [
     to: "/admin/tasks",
     label: "Tasks",
     icon: <FaUserShield />,
+    roles: [UserRoleEnum.ADMIN, UserRoleEnum.CONSULTANT],
+  },
+  {
+    to: "/admin/tasks/new",
+    label: "New Task",
+    icon: <FaPlus />,
     roles: [UserRoleEnum.ADMIN, UserRoleEnum.CONSULTANT],
   },
   {

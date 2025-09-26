@@ -29,10 +29,10 @@ export enum TaskStateLabelEnum {
 }
 
 export enum TaskPriorityEnum {
-  SUPER_HIGH = "Super-High",
-  HIGH = "High",
-  MEDIUM = "Medium",
-  LOW = "Low",
+  SUPER_HIGH = "super",
+  HIGH = "high",
+  MEDIUM = "medium",
+  LOW = "low",
 }
 
 export enum TaskPriorityLabelEnum {
