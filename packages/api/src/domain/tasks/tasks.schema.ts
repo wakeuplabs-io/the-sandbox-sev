@@ -16,7 +16,6 @@ export const LiquidationTaskSchema = z.object({
   details: z.string(),
   dateDeadline: z.string(),
   priority: z.string(),
-  technicalVerification: z.string(),
   tokenLink: z.string(),
 })
 

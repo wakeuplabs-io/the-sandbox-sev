@@ -37,8 +37,7 @@ export const TASK_TYPE_CONFIGS: Record<TaskType, TaskTypeConfig> = {
       'typeOfTx',
       'details',
       'dateDeadline',
-      'priority',
-      'technicalVerification'
+      'priority'
     ],
     requiredColumns: [
       'transactionId',
@@ -51,8 +50,7 @@ export const TASK_TYPE_CONFIGS: Record<TaskType, TaskTypeConfig> = {
       'platform',
       'targetPriceEth',
       'typeOfTx',
-      'dateDeadline',
-      'technicalVerification'
+      'dateDeadline'
     ]
   },
   ACQUISITION: {
