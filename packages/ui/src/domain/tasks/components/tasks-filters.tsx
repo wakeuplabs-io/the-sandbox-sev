@@ -28,8 +28,11 @@ const taskPriorityOptions: SelectOption[] = [
   { value: "", label: "All Priorities" },
   { value: TaskPriorityEnum.SUPER_HIGH, label: TaskPriorityLabelEnum.SUPER_HIGH },
   { value: TaskPriorityEnum.HIGH, label: TaskPriorityLabelEnum.HIGH },
+  { value: TaskPriorityEnum.HIGH_24H, label: TaskPriorityLabelEnum.HIGH_24H },
   { value: TaskPriorityEnum.MEDIUM, label: TaskPriorityLabelEnum.MEDIUM },
+  { value: TaskPriorityEnum.MEDIUM_48H, label: TaskPriorityLabelEnum.MEDIUM_48H },
   { value: TaskPriorityEnum.LOW, label: TaskPriorityLabelEnum.LOW },
+  { value: TaskPriorityEnum.LOW_72H, label: TaskPriorityLabelEnum.LOW_72H },
 ];
 
 export function TasksFilters({ filters, onFiltersChange, isPublic }: TasksFiltersProps) {

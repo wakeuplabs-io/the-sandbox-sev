@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-const PRIORITY_VALUES = ['super', 'high', 'medium', 'low'] as const
+const PRIORITY_VALUES = ['Super-High', 'High', 'High 24h', 'Medium', 'Medium 48h', 'Low', 'Low 72h'] as const
 export type TaskPriority = typeof PRIORITY_VALUES[number]
 
 export const LiquidationTaskSchema = z.object({

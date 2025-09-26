@@ -29,17 +29,23 @@ export enum TaskStateLabelEnum {
 }
 
 export enum TaskPriorityEnum {
-  SUPER_HIGH = "super",
-  HIGH = "high",
-  MEDIUM = "medium",
-  LOW = "low",
+  SUPER_HIGH = "Super-High",
+  HIGH = "High",
+  HIGH_24H = "High 24h",
+  MEDIUM = "Medium",
+  MEDIUM_48H = "Medium 48h",
+  LOW = "Low",
+  LOW_72H = "Low 72h",
 }
 
 export enum TaskPriorityLabelEnum {
   SUPER_HIGH = "Super High",
   HIGH = "High",
+  HIGH_24H = "High 24h",
   MEDIUM = "Medium",
+  MEDIUM_48H = "Medium 48h",
   LOW = "Low",
+  LOW_72H = "Low 72h",
 }
 
 
