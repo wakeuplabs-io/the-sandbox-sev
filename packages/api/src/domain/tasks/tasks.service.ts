@@ -484,7 +484,7 @@ export const getTasks = async (query: z.infer<typeof GetTasksQuerySchema>) => {
   if (priority) {
     where.priority = {
       mode: 'insensitive',
-      equals: priority,
+      contains: priority,
     };
   }
 
