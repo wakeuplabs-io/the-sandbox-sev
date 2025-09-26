@@ -52,14 +52,21 @@ export function useNewTask() {
 
     try {
       const parsed = parseExcelData(data, selectedTaskType);
-      setParsedData(parsed);
 
       const validationErrors: ValidationError[] = [];
-      parsed.forEach((row, index) => {
+      const updatedParsedData = parsed.map((row, index) => {
         const rowErrors = validateTaskData(row.data, index, selectedTaskType);
         validationErrors.push(...rowErrors);
+        
+        // Update isValid based on whether this row has errors
+        return {
+          ...row,
+          isValid: rowErrors.length === 0,
+          errors: rowErrors
+        };
       });
 
+      setParsedData(updatedParsedData);
       setErrors(validationErrors);
       setValidationStatus(validationErrors.length > 0 ? "invalid" : "valid");
     } catch (error) {
