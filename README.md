@@ -22,12 +22,13 @@
    - [Administration](#administration)
      - [Users — Role Management (Admin only)](#users--role-management-admin-only)
 6. [Business Rules](#business-rules)
-7. [Empty States, Errors & Edge Cases](#empty-states-errors--edge-cases)
-8. [Analytics & Events](#analytics--events)
-9. [Accessibility & i18n](#accessibility--i18n)
-10. [Conventions for Screenshots](#conventions-for-screenshots)
-11. [Glossary](#glossary)
-12. [Changelog](#changelog)
+7. [Task Hash & Immutability](#task-hash--immutability)
+8. [Empty States, Errors & Edge Cases](#empty-states-errors--edge-cases)
+9. [Analytics & Events](#analytics--events)
+10. [Accessibility & i18n](#accessibility--i18n)
+11. [Conventions for Screenshots](#conventions-for-screenshots)
+12. [Glossary](#glossary)
+13. [Changelog](#changelog)
 
 ---
 
@@ -253,6 +254,30 @@ Restricted to **authenticated & authorized** roles: *Admin* and *Consultant*.
 
 ---
 
+## Task Hash & Immutability
+
+**What is a Task Hash?**  
+A Task Hash is a unique digital fingerprint generated from all the task data (transaction ID, task type, details, priority, etc.). Think of it as a "digital signature" that uniquely identifies each task.
+
+**Why do we generate Task Hashes?**  
+Every task created in the system generates a hash that gets stored on the blockchain (Polygon). This serves a crucial purpose:
+
+- **Immutability**: Once a task hash is stored on-chain, it cannot be modified or tampered with. The blockchain acts as an immutable ledger.
+- **Transparency**: Anyone can verify that a task exists and hasn't been altered by checking the hash on the blockchain.
+- **Auditability**: The hash provides cryptographic proof that the task data is authentic and hasn't been changed since creation.
+- **Trust**: Community members can independently verify task integrity without relying on the platform's database.
+
+**How it works (simplified):**
+1. When a task is created, all its data is processed through a cryptographic function
+2. This generates a unique hash (like a digital fingerprint)
+3. The hash is stored on the blockchain in a smart contract
+4. The original task data remains in our database, but the hash on-chain serves as proof of its authenticity
+
+**For users:**  
+When you see a "Task Hash" in the dashboard, this is the immutable proof stored on the blockchain. You can use this hash to independently verify that the task data hasn't been modified since it was created.
+
+---
+
 ## Empty States, Errors & Edge Cases
 - **Search with no results** → helpful empty state, quick “Clear filters” action.
 - **Pagination boundaries** → disable prev/next appropriately.
@@ -278,4 +303,5 @@ Restricted to **authenticated & authorized** roles: *Admin* and *Consultant*.
 ---
 
 ## Changelog
+- **2025‑01‑27**: Added Task Hash & Immutability section explaining the purpose and benefits of blockchain-stored task hashes.
 - **2025‑09‑11**: Added Public Dashboard, Task Details modal, Admin Tasks list, Create New Tasks (batch), Admin Sign‑in, Users — Role Management, and Tech Stack/Environments.
