@@ -23,6 +23,7 @@ const nlinks = [
     label: "Tasks",
     icon: <FaUserShield />,
     roles: [UserRoleEnum.ADMIN, UserRoleEnum.CONSULTANT],
+    exact: true,
   },
   {
     to: "/admin/tasks/new",
@@ -35,6 +36,7 @@ const nlinks = [
     label: "Users",
     icon: <FaUser />,
     roles: [UserRoleEnum.ADMIN],
+    exact: true,
   },
 ];
 
