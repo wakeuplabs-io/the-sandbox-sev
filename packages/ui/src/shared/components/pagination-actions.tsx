@@ -6,6 +6,7 @@ interface PaginationActionsProps {
   currentPage: number;
   totalPages: number;
   totalItems: number;
+  itemsPerPage: number;
   hasNext: boolean;
   hasPrev: boolean;
   onPageChange: (page: number) => void;
@@ -17,6 +18,7 @@ export function PaginationActions({
   currentPage,
   totalPages,
   totalItems,
+  itemsPerPage,
   hasNext,
   hasPrev,
   onPageChange,
@@ -62,7 +64,7 @@ export function PaginationActions({
   return (
     <div className="flex items-center justify-between mt-6">
       <div className="text-sm text-base-content/70">
-        Showing {(currentPage - 1) * 10 + 1} to {Math.min(currentPage * 10, totalItems)} of{" "}
+        Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, totalItems)} of{" "}
         {totalItems} items
       </div>
 
