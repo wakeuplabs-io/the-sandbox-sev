@@ -80,6 +80,7 @@ export function UserRoleTable({
             hasPrev={pagination.hasPrev}
             onNextPage={() => onPageChange(pagination.page + 1)}
             onPrevPage={() => onPageChange(pagination.page - 1)}
+            itemsPerPage={pagination.limit}
           />
         </div>
       )}

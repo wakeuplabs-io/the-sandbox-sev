@@ -9,7 +9,7 @@ export const useAdminTasksList = () => {
 	// Initialize pagination
 	const pagination = usePagination({
 		initialPage: 1,
-		initialLimit: 10,
+		initialLimit: 30,
 	})
 	
 	// Initialize filters with pagination values
@@ -73,6 +73,7 @@ export const useAdminTasksList = () => {
 		// Pagination
 		currentPage: pagination.page,
 		totalPages: tasksResponse?.pagination?.totalPages || 1,
+		itemsPerPage: pagination.limit,
 		hasNext: tasksResponse?.pagination?.hasNext || false,
 		hasPrev: tasksResponse?.pagination?.hasPrev || false,
 		goToPage,

@@ -19,7 +19,6 @@ export function UserRoleRow({ user, onRoleChange, isCurrentUser }: UserRoleRowPr
   };
 
   const handleRemoveRole = () => {
-    // Remover rol es equivalente a asignar MEMBER
     onRoleChange(user.id, UserRoleEnum.MEMBER);
   };
 
