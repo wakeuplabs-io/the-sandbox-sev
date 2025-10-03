@@ -462,7 +462,10 @@ export const getPublicTasks = async (query: GetPublicTasksQuery) => {
       where.createdAt.gte = new Date(dateFrom);
     }
     if (dateTo) {
-      where.createdAt.lte = new Date(dateTo);
+      // Add 23:59:59.999 to include the entire day
+      const endDate = new Date(dateTo);
+      endDate.setHours(23, 59, 59, 999);
+      where.createdAt.lte = endDate;
     }
   }
 
@@ -537,7 +540,10 @@ export const getPublicTasksCSV = async (query: Omit<GetPublicTasksQuery, 'page' 
       where.createdAt.gte = new Date(dateFrom);
     }
     if (dateTo) {
-      where.createdAt.lte = new Date(dateTo);
+      // Add 23:59:59.999 to include the entire day
+      const endDate = new Date(dateTo);
+      endDate.setHours(23, 59, 59, 999);
+      where.createdAt.lte = endDate;
     }
   }
 
