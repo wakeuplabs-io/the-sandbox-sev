@@ -45,6 +45,9 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             },
             className
           )}
+          style={{
+            colorScheme: 'dark'
+          }}
           {...props}
         >
           {placeholder && (

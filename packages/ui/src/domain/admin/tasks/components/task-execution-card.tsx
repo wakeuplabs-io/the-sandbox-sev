@@ -117,14 +117,14 @@ export function TaskExecutionCard({
             <div className="col-span-1">
               {task.priority && (
                 <div className="flex items-center gap-1">
-                  <span className={clsx("badge w-[100px] text-xs", getPriorityBadgeClasses(task.priority))}>{task.priority}</span>
+                  <span className={clsx("badge w-20 text-xs text-center whitespace-nowrap overflow-hidden", getPriorityBadgeClasses(task.priority))} title={task.priority}>{task.priority}</span>
                 </div>
               )}
             </div>
 
             {/* State Badge */}
             <div className="col-span-1">
-              <span className={clsx("badge text-xs badge-outline")}>
+              <span className={clsx("badge w-20 text-xs text-center badge-outline")} title={TaskStateLabelEnum[task.state as keyof typeof TaskStateLabelEnum]}>
                 {TaskStateLabelEnum[task.state as keyof typeof TaskStateLabelEnum]}
               </span>
             </div>
