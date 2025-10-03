@@ -458,12 +458,16 @@ export const getPublicTasks = async (query: GetPublicTasksQuery) => {
 
   if (dateFrom || dateTo) {
     where.createdAt = {};
-    if (dateFrom) {
-      where.createdAt.gte = new Date(dateFrom);
-    }
-    if (dateTo) {
-      where.createdAt.lte = new Date(dateTo);
-    }
+      if (dateFrom) {
+        // Create date in UTC to ensure consistent behavior
+        const startDate = new Date(dateFrom + 'T00:00:00.000Z');
+        where.createdAt.gte = startDate;
+      }
+      if (dateTo) {
+        // Create date in UTC and add one day to include the entire day
+        const endDate = new Date(dateTo + 'T23:59:59.999Z');
+        where.createdAt.lte = endDate;
+      }
   }
 
   // Get total count for pagination
@@ -533,12 +537,16 @@ export const getPublicTasksCSV = async (query: Omit<GetPublicTasksQuery, 'page' 
 
   if (dateFrom || dateTo) {
     where.createdAt = {};
-    if (dateFrom) {
-      where.createdAt.gte = new Date(dateFrom);
-    }
-    if (dateTo) {
-      where.createdAt.lte = new Date(dateTo);
-    }
+      if (dateFrom) {
+        // Create date in UTC to ensure consistent behavior
+        const startDate = new Date(dateFrom + 'T00:00:00.000Z');
+        where.createdAt.gte = startDate;
+      }
+      if (dateTo) {
+        // Create date in UTC and add one day to include the entire day
+        const endDate = new Date(dateTo + 'T23:59:59.999Z');
+        where.createdAt.lte = endDate;
+      }
   }
 
   // Get all tasks without pagination - include only public-safe data

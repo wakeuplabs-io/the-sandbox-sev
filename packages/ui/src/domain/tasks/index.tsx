@@ -18,6 +18,7 @@ export function TasksListPage() {
     updateFilters,
     currentPage,
     totalPages,
+    itemsPerPage,
     hasNext,
     hasPrev,
     goToPage,
@@ -107,6 +108,7 @@ export function TasksListPage() {
           currentPage={currentPage}
           totalPages={totalPages}
           totalItems={totalTasks}
+          itemsPerPage={itemsPerPage}
           hasNext={hasNext}
           hasPrev={hasPrev}
           onPageChange={goToPage}

@@ -57,4 +57,19 @@ body {
   .modal-background {
     @apply modal-backdrop bg-black/50 backdrop-blur-sm;
   }
+  
+  /* Fix select dropdown styling across platforms */
+  select {
+    color-scheme: dark;
+  }
+  
+  select option {
+    background-color: #1b1921;
+    color: #ffffff;
+  }
+  
+  select:focus option {
+    background-color: #20212B;
+    color: #ffffff;
+  }
 }

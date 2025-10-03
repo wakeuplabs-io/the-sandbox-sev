@@ -20,6 +20,7 @@ export function TaskExecutionPage() {
     updateFilters,
     currentPage,
     totalPages,
+    itemsPerPage,
     hasNext,
     hasPrev,
     goToPage,
@@ -57,7 +58,6 @@ export function TaskExecutionPage() {
   };
 
   const handleExecuteAll = async () => {
-    // Only execute STORED tasks that have proofs
     const readyTasks = allTasks.filter(
       task => task.state === TaskStateEnum.STORED && tasksWithProofs.has(task.id)
     );
@@ -66,31 +66,26 @@ export function TaskExecutionPage() {
       return;
     }
 
-    // Prepare batch execution data
     const batchData = readyTasks.map(task => ({
       taskId: task.id,
       proofs: taskProofs[task.id] || [],
     }));
 
-    // Execute batch
     const result = await batchExecuteTasks(batchData);
 
     if (result) {
-      // Clear executed tasks from state
       setTasksWithProofs(prev => {
         const newSet = new Set(prev);
         readyTasks.forEach(task => newSet.delete(task.id));
         return newSet;
       });
 
-      // Clear proofs for executed tasks
       setTaskProofs(prev => {
         const newProofs = { ...prev };
         readyTasks.forEach(task => delete newProofs[task.id]);
         return newProofs;
       });
 
-      // Clear inputs for executed tasks
       readyTasks.forEach(task => {
         const clearRef = clearInputsRefs.current[task.id];
         if (clearRef?.current) {
@@ -104,7 +99,6 @@ export function TaskExecutionPage() {
     setTasksWithProofs(new Set());
     setTaskProofs({});
 
-    // Clear all inputs
     Object.values(clearInputsRefs.current).forEach(clearRef => {
       if (clearRef?.current) {
         clearRef.current();
@@ -137,7 +131,6 @@ export function TaskExecutionPage() {
     downloadCSV(csvFilters);
   };
 
-  // Extract conditions for better readability
   const hasTasksWithProofs = tasksWithProofs.size > 0;
   const hasStoredTasksWithProofs = allTasks.some(
     task => task.state === TaskStateEnum.STORED && tasksWithProofs.has(task.id)
@@ -194,6 +187,7 @@ export function TaskExecutionPage() {
               currentPage={currentPage}
               totalPages={totalPages}
               totalTasks={totalTasks}
+              itemsPerPage={itemsPerPage}
               hasNext={hasNext}
               hasPrev={hasPrev}
               onPageChange={goToPage}

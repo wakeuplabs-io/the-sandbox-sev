@@ -13,6 +13,7 @@ interface TaskExecutionListProps {
   currentPage: number;
   totalPages: number;
   totalTasks: number;
+  itemsPerPage: number;
   hasNext: boolean;
   hasPrev: boolean;
   onPageChange: (page: number) => void;
@@ -30,6 +31,7 @@ export function TaskExecutionList({
   currentPage,
   totalPages,
   totalTasks,
+  itemsPerPage,
   hasNext,
   hasPrev,
   onPageChange,
@@ -64,6 +66,7 @@ export function TaskExecutionList({
         currentPage={currentPage}
         totalPages={totalPages}
         totalItems={totalTasks}
+        itemsPerPage={itemsPerPage}
         hasNext={hasNext}
         hasPrev={hasPrev}
         onPageChange={onPageChange}
