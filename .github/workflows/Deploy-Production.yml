@@ -34,6 +34,11 @@ jobs:
     environment: production
     env:
       VITE_WEB3AUTH_CLIENT_ID: ${{ secrets.VITE_WEB3AUTH_CLIENT_ID }}
+      
+    permissions:
+      id-token: write   # Required for OIDC authentication
+      contents: read    # Required for actions/checkout
+    
     steps:
       - name: Git clone the repository
         uses: actions/checkout@v6
