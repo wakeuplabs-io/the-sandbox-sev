@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: staging
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
       
       - name: Validate Configuration
         run: |
@@ -32,12 +32,24 @@ jobs:
     environment: staging
     env:
       VITE_WEB3AUTH_CLIENT_ID: ${{ secrets.VITE_WEB3AUTH_CLIENT_ID }}
+      
+    permissions:
+      id-token: write   # Required for OIDC authentication
+      contents: read    # Required for actions/checkout
+
     steps:
       - name: Git clone the repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: github-actions-deploy-sandbox
+          aws-region: sa-east-1
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: 'npm'
@@ -80,8 +92,6 @@ jobs:
             exit 1
           fi
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: sa-east-1
           ASSETS_BUCKET_NAME: ${{ secrets.ASSETS_BUCKET_NAME }}
           ASSETS_URL: ${{ secrets.ASSETS_URL }}
