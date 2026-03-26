@@ -67,6 +67,11 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
+      - name: Remove system Pulumi (avoid version conflicts)
+        run: |
+          sudo rm -f /usr/local/bin/pulumi*
+          rm -rf ~/.pulumi
+
       - name: Deploy (API + UI)
         run: |
           # Set detailed log level
